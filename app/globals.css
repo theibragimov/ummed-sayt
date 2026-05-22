@@ -1,26 +1,481 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html {
+  scroll-behavior: smooth;
 }
+* {
+  scroll-margin-top: 80px;
+}
+
+/* ============ Pixend uslubidagi Header ============ */
+.site-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+html[data-theme="dark"] .site-header {
+  background-color: #181818;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-link {
+  color: #18181b;
+}
+.nav-link:hover { color: #E8491D; }
+html[data-theme="dark"] .nav-link { color: #f5f5f5; }
+html[data-theme="dark"] .nav-link:hover { color: #FF6B35; }
+
+.lang-btn {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #18181b;
+  font-family: inherit;
+}
+.lang-btn:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+html[data-theme="dark"] .lang-btn {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f5f5f5;
+}
+html[data-theme="dark"] .lang-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.lang-dropdown {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.lang-item { color: #18181b; font-family: inherit; }
+.lang-item:hover { background-color: rgba(0, 0, 0, 0.04); }
+html[data-theme="dark"] .lang-dropdown {
+  background-color: #232323;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+html[data-theme="dark"] .lang-item { color: #f5f5f5; }
+html[data-theme="dark"] .lang-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+.theme-btn {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #18181b;
+}
+.theme-btn:hover {
+  color: #E8491D;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+html[data-theme="dark"] .theme-btn {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f5f5f5;
+}
+html[data-theme="dark"] .theme-btn:hover {
+  color: #FF6B35;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.contact-btn {
+  border: 1px solid #E8491D;
+  color: #E8491D;
+  background-color: transparent;
+}
+.contact-btn:hover {
+  background-color: #E8491D;
+  color: #ffffff;
+}
+html[data-theme="dark"] .contact-btn {
+  border-color: #FF6B35;
+  color: #FF6B35;
+}
+html[data-theme="dark"] .contact-btn:hover {
+  background-color: #FF6B35;
+  color: #0a0a0a;
+}
+
+.mobile-menu {
+  background-color: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+html[data-theme="dark"] .mobile-menu {
+  background-color: rgba(24, 24, 24, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.mobile-link { color: #18181b; }
+.mobile-link:hover { background-color: rgba(0, 0, 0, 0.04); }
+html[data-theme="dark"] .mobile-link { color: #f5f5f5; }
+html[data-theme="dark"] .mobile-link:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+/* ============ Pixend uslubidagi Hero ============ */
+.hero-pixend {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+html[data-theme="dark"] .hero-pixend {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+html[data-theme="dark"] .hero-dots {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.10) 1px, transparent 1px) !important;
+}
+
+.hero-cta {
+  background-color: #E8491D;
+  color: #ffffff;
+}
+.hero-cta:hover {
+  background-color: #3DB851;
+}
+html[data-theme="dark"] .hero-cta {
+  background-color: #FF6B35;
+}
+html[data-theme="dark"] .hero-cta:hover {
+  background-color: #3DB851;
+}
+
+.hero-social {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #18181b;
+}
+.hero-social:hover {
+  background-color: #E8491D;
+  border-color: #E8491D;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+html[data-theme="dark"] .hero-social {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f5f5f5;
+}
+html[data-theme="dark"] .hero-social:hover {
+  background-color: #FF6B35;
+  border-color: #FF6B35;
+  color: #0a0a0a;
+}
+
+html[data-theme="dark"] .hero-pixend h1,
+html[data-theme="dark"] .hero-pixend h2 {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .hero-pixend [data-marquee-item] span {
+  color: #f5f5f5 !important;
+}
+
+/* ============ Pixend uslubidagi Section sarlavhasi ============ */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #18181b;
+}
+.section-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background-color: #E8491D;
+  border-radius: 0px;
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .section-label { color: #f5f5f5; }
+html[data-theme="dark"] .section-label::before { background-color: #FF6B35; }
+
+/* ============ "OUR SERVICES" uslubidagi qora bo'lim ============ */
+.services-section {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+}
+html[data-theme="dark"] .services-section {
+  background-color: #050505;
+}
+.services-label {
+  color: #f5f5f5 !important;
+}
+
+/* Pixend uslubidagi katakli grid (border chiziqlar bilan) */
+.services-grid {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+.service-card {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+.service-card:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.service-icon {
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #f5f5f5;
+}
+.service-card:hover .service-icon {
+  border-color: #E8491D;
+  color: #E8491D;
+}
+
+.service-title {
+  color: #f5f5f5;
+}
+.service-desc {
+  color: rgba(245, 245, 245, 0.55);
+}
+
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #E8491D;
+  --color-secondary: #3DB851;
+  --font-sans: "Satoshi", var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body, html {
+  font-family: "Satoshi", var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-card-outer: #f6f5f3;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  --text: #0a0a0a;
+  --text-muted: #7c7c80;
+  --primary: #E8491D;
+  --secondary: #3DB851;
+}
+
+html[data-theme="dark"] {
+  --bg: #181818;
+  --bg-soft: #1e1e1e;
+  --bg-card: #232323;
+  --bg-card-outer: #1f1f1f;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #f5f5f5;
+  --text-muted: #a3a3a8;
+  --primary: #FF6B35;
+  --secondary: #3DB851;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Dark mode — Hero qismi (keng tarqalgan orange glow) */
+html[data-theme="dark"] .hero-bg-light {
+  background: radial-gradient(ellipse 180% 150% at 50% 130%, rgba(255, 107, 53, 0.45) 0%, rgba(232, 73, 29, 0.25) 22%, rgba(140, 50, 20, 0.14) 45%, rgba(50, 30, 22, 0.6) 65%, #1c1816 85%, #181818 100%) !important;
+}
+html[data-theme="dark"] .hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px) !important;
+}
+html[data-theme="dark"] .hero-water {
+  background: #181818;
+}
+
+/* Dark mode — cursor glow yorqinroq orange */
+html[data-theme="dark"] .hero-cursor-glow {
+  background: radial-gradient(circle 550px at var(--mx) var(--my), rgba(255, 107, 53, 0.30), transparent 65%) !important;
+}
+
+/* Sections, cards, footer auto-uyg'unlashish */
+html[data-theme="dark"] body { background: #181818; }
+
+/* Bo'limlar dark mode'da */
+html[data-theme="dark"] section.bg-white {
+  background-color: #181818 !important;
+}
+html[data-theme="dark"] section.bg-gray-50 {
+  background-color: #1e1e1e !important;
+}
+
+/* Kartochkalar */
+html[data-theme="dark"] .group.bg-white {
+  background-color: #232323 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+html[data-theme="dark"] .group.bg-white:hover {
+  border-color: rgba(255, 107, 53, 0.4) !important;
+}
+html[data-theme="dark"] .group.bg-white h3 {
+  color: #f5f5f5 !important;
+}
+html[data-theme="dark"] .group.bg-white p {
+  color: #9ca3af !important;
+}
+
+/* Sarlavhalar va matnlar — Hero ichida */
+html[data-theme="dark"] .hero-water h1,
+html[data-theme="dark"] .hero-water h2,
+html[data-theme="dark"] .hero-water h3,
+html[data-theme="dark"] .hero-water .text-gray-900,
+html[data-theme="dark"] section h1,
+html[data-theme="dark"] section h2,
+html[data-theme="dark"] section h3 {
+  color: #f5f5f5 !important;
+}
+
+/* Hero badge oq fon */
+html[data-theme="dark"] .hero-water .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .hero-water .bg-white\/90 .text-gray-800 {
+  color: #f5f5f5 !important;
+}
+
+/* Stats sonlari va boshqa orange matnlar */
+html[data-theme="dark"] .hero-water .text-gray-700,
+html[data-theme="dark"] .hero-water p {
+  color: #d1d5db !important;
+}
+
+/* Hamkorlarimiz marquee — qora matn -> oq */
+html[data-theme="dark"] .hero-water [data-marquee-item] span {
+  color: #f5f5f5 !important;
+}
+
+/* "+ B2B yetkazib berish" badge matn */
+html[data-theme="dark"] .hero-water .text-gray-800 {
+  color: #f5f5f5 !important;
+}
+
+/* Pastdagi oq fade — dark mode'da qora, uzunroq smooth */
+html[data-theme="dark"] .hero-bottom-fade {
+  background: linear-gradient(to bottom, rgba(24, 24, 24, 0) 0%, rgba(24, 24, 24, 0.35) 50%, rgba(24, 24, 24, 0.8) 80%, #181818 100%) !important;
+}
+
+/* Statistika — sonlar va yorliqlar */
+.stat-num { color: #E8491D; }
+.stat-label { color: #0a0a0a; }
+html[data-theme="dark"] .stat-num { color: #FF6B35; }
+html[data-theme="dark"] .stat-label { color: #f5f5f5; }
+
+/* Uzum mega frame — katta banner */
+.uzum-mega-frame {
+  box-shadow: 0 25px 50px -15px rgba(107, 33, 168, 0.35),
+              0 10px 30px -10px rgba(253, 224, 71, 0.18);
+}
+html[data-theme="dark"] .uzum-mega-frame {
+  box-shadow: 0 25px 60px -15px rgba(253, 224, 71, 0.18),
+              0 10px 30px -10px rgba(107, 33, 168, 0.5);
+}
+
+/* Do'kon tugmalari — "yonadigan" hover */
+.uzum-shop-btn {
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.uzum-shop-btn:hover {
+  box-shadow: 0 12px 30px -6px rgba(253, 224, 71, 0.65),
+              0 6px 18px -4px rgba(107, 33, 168, 0.35);
+}
+
+/* Karusel — scrollbarni yashirish */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Distribyutor mahsulotlar — portfolio uslubi hover */
+.distrib-card {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.distrib-card:hover {
+  transform: translateY(-4px);
+}
+
+/* CTA button — oq aylana qoladi (light mode'dagidek) */
+html[data-theme="dark"] .hero-water .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Animatsiyalar */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(20px, -20px) scale(1.05); }
+  66%      { transform: translate(-15px, 15px) scale(0.97); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-18px) rotate(3deg); }
+}
+@keyframes floatYSlow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes pulseRing {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.anim-float      { animation: floatY 5s ease-in-out infinite; }
+.anim-float-slow { animation: floatYSlow 6s ease-in-out infinite; }
+.anim-spin-slow  { animation: spinSlow 20s linear infinite; }
+.anim-pulse-ring { animation: pulseRing 2.4s ease-out infinite; }
+
+.anim-fade-up    { opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-fade-down  { opacity: 0; animation: fadeDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-fade-in    { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+.anim-fade-left  { opacity: 0; animation: fadeLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-fade-right { opacity: 0; animation: fadeRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-scale-in   { opacity: 0; animation: scaleIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-blob       { animation: blob 14s ease-in-out infinite; }
+
+/* Reveal-on-scroll: dastlab ko'rinmas, in-view bo'lsa animatsiya */
+.reveal { opacity: 0; }
+.reveal.in-view.r-up    { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.reveal.in-view.r-in    { animation: fadeIn 0.8s ease-out forwards; }
+.reveal.in-view.r-left  { animation: fadeLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.reveal.in-view.r-right { animation: fadeRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.reveal.in-view.r-scale { animation: scaleIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up, .anim-fade-down, .anim-fade-in, .anim-fade-left,
+  .anim-fade-right, .anim-scale-in, .anim-blob, .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
