@@ -8,8 +8,6 @@ export default function Logo({ size = "md", variant = "dark" }) {
     lg: { icon: 48, text: "text-2xl" },
   };
   const s = sizes[size] || sizes.md;
-  const textColor = variant === "light" ? "text-gray-900" : "text-white";
-
   return (
     <Link href="/" className="flex items-center gap-2.5 select-none">
       <Image
@@ -20,7 +18,10 @@ export default function Logo({ size = "md", variant = "dark" }) {
         className="object-contain flex-shrink-0"
         priority
       />
-      <span className={`${s.text} font-medium ${textColor} tracking-tight`}>
+      <span
+        className={`${s.text} font-medium tracking-tight`}
+        style={{ color: variant === "dark" ? "#ffffff" : "var(--text)" }}
+      >
         Ummed
       </span>
     </Link>

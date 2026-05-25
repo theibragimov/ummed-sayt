@@ -13,10 +13,7 @@ export default {
       name: 'slug',
       title: 'Slug (URL)',
       type: 'slug',
-      options: {
-        source: 'nom',
-        maxLength: 96,
-      },
+      options: { source: 'nom', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     },
     {
@@ -76,7 +73,7 @@ export default {
           ],
           lists: [
             { title: "Ro'yxat", value: 'bullet' },
-            { title: 'Raqamli ro\'yxat', value: 'number' },
+            { title: "Raqamli ro'yxat", value: 'number' },
           ],
           marks: {
             decorators: [
@@ -85,10 +82,7 @@ export default {
             ],
           },
         },
-        {
-          type: 'image',
-          options: { hotspot: true },
-        },
+        { type: 'image', options: { hotspot: true } },
       ],
     },
     {
@@ -97,9 +91,16 @@ export default {
       type: 'string',
     },
     {
-      name: 'model',
-      title: 'Model',
+      name: 'modelRaqami',
+      title: 'Model raqami',
       type: 'string',
+    },
+    {
+      name: 'featured',
+      title: 'Bosh sahifada ko\'rsatish',
+      type: 'boolean',
+      description: 'Belgilansa, ushbu mahsulot bosh sahifada ko\'rsatiladi',
+      initialValue: false,
     },
     {
       name: 'sertifikatlar',

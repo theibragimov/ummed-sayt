@@ -13,10 +13,7 @@ export default {
       name: 'slug',
       title: 'Slug (URL)',
       type: 'slug',
-      options: {
-        source: 'nom',
-        maxLength: 96,
-      },
+      options: { source: 'nom', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     },
     {
@@ -36,6 +33,20 @@ export default {
       name: 'tavsif',
       title: 'Tavsif',
       type: 'text',
+    },
+    {
+      name: 'tartibRaqami',
+      title: 'Tartib raqami',
+      type: 'number',
+      description: 'Sidebar da tartib uchun (kichik raqam — yuqorida)',
+      initialValue: 100,
+    },
+  ],
+  orderings: [
+    {
+      title: 'Tartib raqami bo\'yicha',
+      name: 'tartibAsc',
+      by: [{ field: 'tartibRaqami', direction: 'asc' }],
     },
   ],
   preview: {

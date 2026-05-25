@@ -55,7 +55,7 @@ export default function InteractiveHero() {
         }
       `}</style>
 
-      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 pt-20 md:pt-28 pb-20">
+      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 md:pt-14 pb-20">
         {/* Label */}
         <div className="anim-fade-up" style={{ animationDelay: "80ms" }}>
           <span className="section-label">{t.hero.badge}</span>
@@ -80,7 +80,7 @@ export default function InteractiveHero() {
             href="/aloqa"
             className="hero-cta inline-flex items-center px-9 py-4 rounded-full text-base font-medium transition-all hover:scale-[1.03]"
           >
-            {L("Biz bilan bog'laning", "Связаться с нами")}
+            {L("Biz bilan bog'laning!", "Связаться с нами!")}
           </Link>
 
           {/* Ijtimoiy ikonkalar */}

@@ -6,19 +6,21 @@ import { PRODUCTS } from "@/lib/products";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { useLang } from "@/lib/i18n";
 
 const ALL_PRODUCTS = PRODUCTS;
 
-const CATEGORIES = [
-  { value: "hammasi", label: "Hammasi" },
-  { value: "diagnostika", label: "Diagnostika" },
-  { value: "nafas", label: "Nafas jihozlari" },
-  { value: "yurak", label: "Yurak jihozlari" },
-  { value: "mebel", label: "Tibbiy mebel" },
-  { value: "sterilizatsiya", label: "Sterilizatsiya" },
-];
+const CATEGORY_KEYS = ["hammasi", "diagnostika", "nafas", "yurak", "mebel", "sterilizatsiya"];
 
 export default function KatalogPage() {
+  const { t, lang } = useLang();
+  const cat = t.catalog;
+
+  const CATEGORIES = CATEGORY_KEYS.map((value) => ({
+    value,
+    label: cat.categories[value],
+  }));
+
   const [category, setCategory] = useState("hammasi");
   const [search, setSearch] = useState("");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -28,7 +30,10 @@ export default function KatalogPage() {
 
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter((p) => p.name.toLowerCase().includes(q));
+      list = list.filter((p) => {
+        const name = lang === "ru" ? (p.nameRu || p.name) : p.name;
+        return name.toLowerCase().includes(q);
+      });
     }
 
     if (category !== "hammasi") {
@@ -36,7 +41,7 @@ export default function KatalogPage() {
     }
 
     return list;
-  }, [category, search]);
+  }, [category, search, lang]);
 
   const FilterPanel = () => (
     <div className="space-y-8">
@@ -46,11 +51,11 @@ export default function KatalogPage() {
           className="block text-xs font-medium uppercase tracking-widest mb-3"
           style={{ color: "var(--text-muted, #888)" }}
         >
-          Qidiruv
+          {cat.search}
         </label>
         <input
           type="text"
-          placeholder="Mahsulot nomi..."
+          placeholder={cat.searchPlaceholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-3 text-sm font-light focus:outline-none transition-colors"
@@ -68,7 +73,7 @@ export default function KatalogPage() {
           className="text-xs font-medium uppercase tracking-widest mb-4"
           style={{ color: "var(--text-muted, #888)" }}
         >
-          Kategoriya
+          {cat.category}
         </p>
         <ul className="space-y-1">
           {CATEGORIES.map((c) => (
@@ -105,7 +110,7 @@ export default function KatalogPage() {
             color: "var(--text-muted, #888)",
           }}
         >
-          Filtrni tozalash
+          {cat.reset}
         </button>
       )}
     </div>
@@ -120,18 +125,18 @@ export default function KatalogPage() {
 
           {/* Sarlavha */}
           <Reveal variant="up" className="mb-14">
-            <span className="section-label">Katalog</span>
+            <span className="section-label">{cat.label}</span>
             <h1
               className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6"
               style={{ color: "var(--text)" }}
             >
-              Barcha mahsulotlar
+              {cat.title}
             </h1>
             <p
               className="mt-4 text-base font-light"
               style={{ color: "var(--text-muted, #888)" }}
             >
-              {filtered.length} ta mahsulot
+              {filtered.length} {cat.countSuffix}
             </p>
           </Reveal>
 
@@ -145,7 +150,7 @@ export default function KatalogPage() {
                 color: "var(--text)",
               }}
             >
-              {mobileFilterOpen ? "Filtrni yopish" : "Filtr"}
+              {mobileFilterOpen ? cat.filterClose : cat.filterOpen}
             </button>
           </div>
 
@@ -173,84 +178,90 @@ export default function KatalogPage() {
                   className="flex flex-col items-center justify-center py-24"
                   style={{ color: "var(--text-muted, #888)" }}
                 >
-                  <p className="text-lg font-medium">Mahsulot topilmadi</p>
-                  <p className="text-sm font-light mt-2">Filtr yoki qidiruvni o'zgartiring</p>
+                  <p className="text-lg font-medium">{cat.notFound}</p>
+                  <p className="text-sm font-light mt-2">{cat.notFoundHint}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
                   style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-                  {filtered.map((product, idx) => (
-                    <Link
-                      key={product.id}
-                      href={`/katalog/${product.id}`}
-                      className="group flex flex-col overflow-hidden transition-colors"
-                      style={{
-                        backgroundColor: "var(--bg)",
-                        borderRight: "1px solid var(--border-strong, #e5e5e5)",
-                        borderBottom: "1px solid var(--border-strong, #e5e5e5)",
-                      }}
-                    >
-                      {/* Rasm */}
-                      <div
-                        className="relative flex items-center justify-center text-7xl transition-colors"
+                  {filtered.map((product) => {
+                    const name = lang === "ru" ? (product.nameRu || product.name) : product.name;
+                    const desc = lang === "ru" ? (product.descRu || product.desc) : product.desc;
+                    const badge = product.badge
+                      ? (lang === "ru" ? (product.badgeRu || product.badge) : product.badge)
+                      : null;
+                    const catLabel = lang === "ru"
+                      ? (product.categoryLabelRu || product.categoryLabel)
+                      : product.categoryLabel;
+
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/katalog/${product.id}`}
+                        className="group flex flex-col overflow-hidden transition-colors"
                         style={{
-                          height: 220,
-                          backgroundColor: "var(--card-bg, #f8f8f8)",
+                          backgroundColor: "var(--bg)",
+                          borderRight: "1px solid var(--border-strong, #e5e5e5)",
+                          borderBottom: "1px solid var(--border-strong, #e5e5e5)",
                         }}
                       >
-                        {product.badge && (
-                          <span
-                            className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white"
-                            style={{
-                              backgroundColor:
-                                product.badge === "Yangi"
-                                  ? "#3DB851"
-                                  : product.badge === "Ommabop"
-                                  ? "#E8491D"
+                        {/* Rasm */}
+                        <div
+                          className="relative flex items-center justify-center text-7xl transition-colors"
+                          style={{ height: 220, backgroundColor: "var(--card-bg, #f8f8f8)" }}
+                        >
+                          {badge && (
+                            <span
+                              className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white"
+                              style={{
+                                backgroundColor:
+                                  product.badge === "Yangi" ? "#3DB851"
+                                  : product.badge === "Ommabop" ? "#E8491D"
                                   : "#6366f1",
-                            }}
+                              }}
+                            >
+                              {badge}
+                            </span>
+                          )}
+                          {product.img}
+                        </div>
+
+                        {/* Ma'lumot */}
+                        <div className="p-6 flex flex-col flex-1">
+                          <span
+                            className="text-xs font-medium uppercase tracking-widest mb-2"
+                            style={{ color: "#E8491D" }}
                           >
-                            {product.badge}
+                            {catLabel}
                           </span>
-                        )}
-                        {product.img}
-                      </div>
+                          <h3
+                            className="text-base font-medium leading-snug mb-2"
+                            style={{ color: "var(--text)" }}
+                          >
+                            {name}
+                          </h3>
+                          <p
+                            className="text-sm font-light leading-relaxed flex-1 mb-6"
+                            style={{ color: "var(--text-muted, #888)" }}
+                          >
+                            {desc}
+                          </p>
 
-                      {/* Ma'lumot */}
-                      <div className="p-6 flex flex-col flex-1">
-                        <span
-                          className="text-xs font-medium uppercase tracking-widest mb-2"
-                          style={{ color: "#E8491D" }}
-                        >
-                          {CATEGORIES.find((c) => c.value === product.category)?.label}
-                        </span>
-                        <h3
-                          className="text-base font-medium leading-snug mb-2"
-                          style={{ color: "var(--text)" }}
-                        >
-                          {product.name}
-                        </h3>
-                        <p
-                          className="text-sm font-light leading-relaxed flex-1 mb-6"
-                          style={{ color: "var(--text-muted, #888)" }}
-                        >
-                          {product.desc}
-                        </p>
-
-                        <span
-                          className="text-sm font-medium tracking-wide flex items-center gap-1 transition-colors group-hover:gap-2"
-                          style={{ color: "var(--text)" }}
-                        >
-                          Batafsil
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" strokeWidth="2"
-                            strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M7 17L17 7M9 7h8v8" />
-                          </svg>
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
+                          <span
+                            className="text-sm font-medium tracking-wide flex items-center gap-1 transition-colors group-hover:gap-2"
+                            style={{ color: "var(--text)" }}
+                          >
+                            {cat.detail}
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                              stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M7 17L17 7M9 7h8v8" />
+                            </svg>
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

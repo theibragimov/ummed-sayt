@@ -5,44 +5,30 @@ import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CountUp from "@/components/CountUp";
-
-const STATS = [
-  { value: 550, suffix: "+", label: "Hamkor dorixona" },
-  { value: 12,  suffix: "+", label: "Yil tajriba" },
-  { value: 98,  suffix: "%", label: "Mijozlar mamnun" },
-];
+import { useLang } from "@/lib/i18n";
 
 const PARTNERS = [
-  { name: "Omron" },
-  { name: "Philips" },
-  { name: "Siemens" },
-  { name: "GE Healthcare" },
-  { name: "Medtronic" },
-  { name: "B.Braun" },
-  { name: "Roche" },
-  { name: "Bayer" },
-  { name: "Abbott" },
-  { name: "Nipro" },
-  { name: "3M Health" },
-  { name: "Mindray" },
-];
-
-const VALUES = [
-  {
-    title: "Sifat kafolati",
-    desc: "Barcha mahsulotlarimiz xalqaro ISO sertifikatlariga ega va qat'iy sifat nazoratidan o'tgan.",
-  },
-  {
-    title: "Ishonchli hamkorlik",
-    desc: "550 dan ortiq dorixona va tibbiy muassasalar bilan uzoq muddatli hamkorlik o'rnatganmiz.",
-  },
-  {
-    title: "Tezkor yetkazib berish",
-    desc: "Butun O'zbekiston bo'ylab o'z vaqtida va xavfsiz yetkazib berish xizmatini taqdim etamiz.",
-  },
+  { name: "Elta",         logo: "/partners/elta.png" },
+  { name: "Grand",        logo: "/partners/grand.png" },
+  { name: "IHMA",         logo: "/partners/ihma.png" },
+  { name: "LDH",          logo: "/partners/ldh.png" },
+  { name: "Makon Mirzo",  logo: "/partners/makonmirzo.png" },
+  { name: "Palma",        logo: "/partners/palma.png" },
+  { name: "Sandstone",    logo: "/partners/sandstone.png" },
+  { name: "Sterilance",   logo: "/partners/sterilance.png" },
+  { name: "Vaksina",      logo: "/partners/vaksina.png" },
 ];
 
 export default function HaqimzdaPage() {
+  const { t } = useLang();
+  const a = t.about;
+
+  const STATS = [
+    { value: 11,  suffix: "+", label: a.stats.experience },
+    { value: 550, suffix: "+", label: a.stats.partners },
+    { value: 700, suffix: "+", label: a.stats.products },
+  ];
+
   return (
     <>
       <SiteHeader />
@@ -56,7 +42,7 @@ export default function HaqimzdaPage() {
               className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight"
               style={{ color: "var(--text)" }}
             >
-              Biz haqimizda
+              {a.title}
             </h1>
           </Reveal>
         </div>
@@ -73,36 +59,23 @@ export default function HaqimzdaPage() {
             >
               <Image
                 src="/team.jpg"
-                alt="Ummed jamoasi"
+                alt={a.teamAlt}
                 fill
                 className="object-cover"
                 priority
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
               />
-              {/* Rasm yo'q bo'lsa placeholder */}
-              <div
-                className="absolute inset-0 flex items-center justify-center text-sm font-light"
-                style={{
-                  backgroundColor: "var(--card-bg, #f4f4f4)",
-                  color: "var(--text-muted, #999)",
-                }}
-              >
-                <span>Jamoa rasmi</span>
-              </div>
             </div>
           </div>
         </Reveal>
 
-        {/* ===== ABOUT US qismi: chap label + o'ng statistika + matn ===== */}
+        {/* ===== ABOUT US qismi ===== */}
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-24">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
 
             {/* Chap — label */}
             <div className="lg:w-64 flex-shrink-0">
               <Reveal variant="up">
-                <span className="section-label">Biz haqimizda</span>
+                <span className="section-label">{a.label}</span>
               </Reveal>
             </div>
 
@@ -116,9 +89,9 @@ export default function HaqimzdaPage() {
                     <div key={s.label}>
                       <p
                         className="text-[52px] md:text-[64px] font-medium leading-none tracking-tight"
-                        style={{ color: "var(--text)" }}
+                        style={{ color: "#E8491D" }}
                       >
-                        <CountUp end={s.value} />{s.suffix}
+                        <CountUp to={s.value} suffix={s.suffix} />
                       </p>
                       <p
                         className="text-sm font-light mt-2"
@@ -134,16 +107,28 @@ export default function HaqimzdaPage() {
               {/* Asosiy matn */}
               <Reveal variant="up" delay={160}>
                 <p
-                  className="text-2xl md:text-3xl font-medium leading-[1.3] mb-8 max-w-2xl"
+                  className="text-2xl md:text-[28px] font-medium leading-[1.3] mb-8"
                   style={{ color: "var(--text)" }}
                 >
-                  O'zbekistonda tibbiy jihozlar sohasida ishonchli hamkor bo'lgan kompaniya.
+                  {a.text1}
                 </p>
                 <p
-                  className="text-base font-light leading-relaxed max-w-2xl"
+                  className="text-base md:text-lg font-light leading-relaxed mb-5"
                   style={{ color: "var(--text-muted, #888)" }}
                 >
-                  Ummed — 2012 yildan buyon O'zbekiston bo'ylab 550 dan ortiq dorixona va tibbiy muassasalarga sifatli tibbiy jihozlar yetkazib berib kelmoqda. Biz xalqaro standartlarga javob beradigan mahsulotlarni raqobatbardosh narxlarda taqdim etamiz va har bir hamkorga individual yondashamiz.
+                  {a.text2}
+                </p>
+                <p
+                  className="text-base md:text-lg font-light leading-relaxed mb-5"
+                  style={{ color: "var(--text-muted, #888)" }}
+                >
+                  {a.text3}
+                </p>
+                <p
+                  className="text-base md:text-lg font-light leading-relaxed"
+                  style={{ color: "var(--text-muted, #888)" }}
+                >
+                  {a.text4}
                 </p>
               </Reveal>
             </div>
@@ -154,19 +139,19 @@ export default function HaqimzdaPage() {
         <div>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20">
             <Reveal variant="up" className="mb-14">
-              <span className="section-label">Qadriyatlarimiz</span>
+              <span className="section-label">{a.values.label}</span>
             </Reveal>
 
             <div
               className="grid grid-cols-1 md:grid-cols-3"
               style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
             >
-              {VALUES.map((v, i) => (
+              {a.values.items.map((v, i) => (
                 <Reveal key={v.title} variant="up" delay={i * 80}>
                   <div
                     className="p-8 md:p-10"
                     style={{
-                      borderRight: i < VALUES.length - 1 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
+                      borderRight: i < a.values.items.length - 1 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
                     }}
                   >
                     <p
@@ -194,14 +179,49 @@ export default function HaqimzdaPage() {
           </div>
         </div>
 
+        {/* ===== Gallery ===== */}
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20">
+          <Reveal variant="up" className="mb-14">
+            <span className="section-label">{a.gallery.label}</span>
+          </Reveal>
+
+          <Reveal variant="up" delay={80}>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3" style={{ height: "clamp(400px, 55vw, 680px)" }}>
+
+              <div className="lg:col-span-2 grid grid-rows-2 gap-3">
+                <div className="relative overflow-hidden">
+                  <Image src="/j2.jpg" alt="Ummed ish jarayoni" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
+                </div>
+                <div className="relative overflow-hidden">
+                  <Image src="/j3.jpg" alt="Ummed jo'natish" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden lg:col-span-2">
+                <Image src="/j1.jpg" alt="Ummed ombor" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
+              </div>
+
+              <div className="relative overflow-hidden lg:col-span-1">
+                <Image src="/j0.jpg" alt="Ummed ishxona" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
+              </div>
+            </div>
+
+            <p
+              className="text-base md:text-lg font-light mt-8 leading-relaxed"
+              style={{ color: "var(--text-muted, #888)", maxWidth: 680 }}
+            >
+              {a.gallery.caption}
+            </p>
+          </Reveal>
+        </div>
+
         {/* ===== Hamkorlarimiz ===== */}
         <div>
           <div className="py-20">
             <Reveal variant="up" className="mb-12 px-6 lg:px-10 max-w-[1400px] mx-auto">
-              <span className="section-label">Hamkorlarimiz</span>
+              <span className="section-label">{a.partners.label}</span>
             </Reveal>
 
-            {/* Marquee */}
             <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
               <div className="overflow-hidden">
                 <div className="partner-track flex gap-5">
@@ -209,18 +229,15 @@ export default function HaqimzdaPage() {
                     <div
                       key={i}
                       className="flex-shrink-0 flex items-center justify-center"
-                      style={{
-                        width: 200,
-                        height: 110,
-                        backgroundColor: "var(--card-bg, #f7f7f7)",
-                      }}
+                      style={{ padding: "16px 28px" }}
                     >
-                      <span
-                        className="text-sm font-semibold tracking-wide"
-                        style={{ color: "var(--text)" }}
-                      >
-                        {p.name}
-                      </span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.logo}
+                        alt={p.name}
+                        className="partner-logo"
+                        style={{ height: 48, maxWidth: 140, objectFit: "contain", display: "block" }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -248,13 +265,13 @@ export default function HaqimzdaPage() {
                 className="text-2xl md:text-3xl font-medium max-w-xl"
                 style={{ color: "var(--text)" }}
               >
-                Hamkorlik qilishga tayyormisiz?
+                {a.cta.title}
               </h2>
               <a
                 href="/aloqa"
-                className="hero-cta inline-flex items-center px-8 py-4 text-sm font-medium transition-all hover:scale-[1.03]"
+                className="hero-cta inline-flex items-center px-8 py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03]"
               >
-                Biz bilan bog'laning
+                {a.cta.btn}
               </a>
             </div>
           </Reveal>

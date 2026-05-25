@@ -4,8 +4,12 @@ import { useState } from "react";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { useLang } from "@/lib/i18n";
 
 export default function AloqaPage() {
+  const { t } = useLang();
+  const c = t.contact;
+
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -13,9 +17,9 @@ export default function AloqaPage() {
 
   function validate() {
     const e = {};
-    if (!form.name.trim()) e.name = "Ism kiritilmadi";
-    if (!form.phone.trim()) e.phone = "Telefon kiritilmadi";
-    if (!form.message.trim()) e.message = "Xabar kiritilmadi";
+    if (!form.name.trim()) e.name = c.form.errors.name;
+    if (!form.phone.trim()) e.phone = c.form.errors.phone;
+    if (!form.message.trim()) e.message = c.form.errors.message;
     return e;
   }
 
@@ -42,18 +46,18 @@ export default function AloqaPage() {
 
           {/* Sarlavha */}
           <Reveal variant="up" className="mb-16">
-            <span className="section-label">Aloqa</span>
+            <span className="section-label">{c.label}</span>
             <h1
               className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6"
               style={{ color: "var(--text)" }}
             >
-              Biz bilan bog'laning
+              {c.title}
             </h1>
             <p
               className="mt-4 text-base font-light max-w-xl"
               style={{ color: "var(--text-muted, #888)" }}
             >
-              Savol, taklif yoki ulgurji buyurtma uchun murojaat qiling — menejerimiz tez orada javob beradi.
+              {c.desc}
             </p>
           </Reveal>
 
@@ -68,7 +72,7 @@ export default function AloqaPage() {
                 className="text-xs font-medium uppercase tracking-widest mb-8"
                 style={{ color: "var(--text-muted, #888)" }}
               >
-                Xabar yuborish
+                {c.form.label}
               </p>
 
               {sent ? (
@@ -85,13 +89,13 @@ export default function AloqaPage() {
                     className="text-xl font-medium mb-3"
                     style={{ color: "var(--text)" }}
                   >
-                    Xabaringiz yuborildi
+                    {c.form.success.title}
                   </h3>
                   <p
                     className="text-sm font-light leading-relaxed mb-8"
                     style={{ color: "var(--text-muted, #888)" }}
                   >
-                    Menejerimiz ish vaqti ichida siz bilan bog'lanadi.
+                    {c.form.success.desc}
                   </p>
                   <button
                     onClick={() => { setSent(false); setForm({ name: "", phone: "", message: "" }); }}
@@ -101,7 +105,7 @@ export default function AloqaPage() {
                       color: "var(--text)",
                     }}
                   >
-                    Yana xabar yuborish
+                    {c.form.success.again}
                   </button>
                 </div>
               ) : (
@@ -111,13 +115,13 @@ export default function AloqaPage() {
                       className="block text-xs font-medium uppercase tracking-widest mb-3"
                       style={{ color: "var(--text-muted, #888)" }}
                     >
-                      Ism Familiya
+                      {c.form.name}
                     </label>
                     <input
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      placeholder="Masalan: Abdullayev Jasur"
+                      placeholder={c.form.namePlaceholder}
                       className="w-full px-4 py-3 text-sm font-light focus:outline-none"
                       style={{
                         backgroundColor: "var(--bg)",
@@ -134,7 +138,7 @@ export default function AloqaPage() {
                       className="block text-xs font-medium uppercase tracking-widest mb-3"
                       style={{ color: "var(--text-muted, #888)" }}
                     >
-                      Telefon raqam
+                      {c.form.phone}
                     </label>
                     <input
                       name="phone"
@@ -158,14 +162,14 @@ export default function AloqaPage() {
                       className="block text-xs font-medium uppercase tracking-widest mb-3"
                       style={{ color: "var(--text-muted, #888)" }}
                     >
-                      Xabar
+                      {c.form.message}
                     </label>
                     <textarea
                       name="message"
                       value={form.message}
                       onChange={handleChange}
                       rows={5}
-                      placeholder="Savol, taklif yoki buyurtma haqida yozing..."
+                      placeholder={c.form.messagePlaceholder}
                       className="w-full px-4 py-3 text-sm font-light focus:outline-none resize-none"
                       style={{
                         backgroundColor: "var(--bg)",
@@ -188,9 +192,9 @@ export default function AloqaPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                         </svg>
-                        Yuborilmoqda...
+                        {c.form.sending}
                       </>
-                    ) : "Xabar yuborish"}
+                    ) : c.form.submit}
                   </button>
                 </form>
               )}
@@ -205,35 +209,35 @@ export default function AloqaPage() {
             >
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
-                  Telefon
+                  {c.info.phone}
                 </p>
-                <a href="tel:+998901234567" className="text-lg font-medium transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
-                  +998 90 123-45-67
+                <a href="tel:+998775504040" className="text-lg font-medium transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
+                  +998 77 550-40-40
                 </a>
-                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>Du–Sha, 09:00–18:00</p>
+                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>{c.info.hours}</p>
               </div>
 
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
-                  Elektron pochta
+                  {c.info.email}
                 </p>
                 <a href="mailto:info@ummed.uz" className="text-lg font-medium transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
                   info@ummed.uz
                 </a>
-                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>24 soat ichida javob</p>
+                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>{c.info.emailDesc}</p>
               </div>
 
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
-                  Manzil
+                  {c.info.address}
                 </p>
-                <p className="text-lg font-medium" style={{ color: "var(--text)" }}>Toshkent, Chilonzor</p>
-                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>Bunyodkor ko'chasi, 12</p>
+                <p className="text-lg font-medium" style={{ color: "var(--text)" }}>{c.info.city}</p>
+                <p className="text-sm font-light mt-1" style={{ color: "var(--text-muted, #888)" }}>{c.info.street}</p>
               </div>
 
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: "var(--text-muted, #888)" }}>
-                  Ijtimoiy tarmoqlar
+                  {c.info.social}
                 </p>
                 <div className="flex flex-col gap-3">
                   {[

@@ -1,41 +1,34 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useLang } from "@/lib/i18n";
 
 const PARTNERS = [
-  { name: "Omron", icon: "❤" },
-  { name: "Philips", icon: "✦" },
-  { name: "Siemens", icon: "◈" },
-  { name: "GE Health", icon: "◆" },
-  { name: "Medtronic", icon: "✚" },
-  { name: "B.Braun", icon: "▲" },
-  { name: "Roche", icon: "◉" },
-  { name: "Bayer", icon: "◐" },
-  { name: "Abbott", icon: "★" },
-  { name: "Nipro", icon: "❖" },
+  { name: "Elta",        logo: "/partners/elta.png" },
+  { name: "Grand",       logo: "/partners/grand.png" },
+  { name: "IHMA",        logo: "/partners/ihma.png" },
+  { name: "LDH",         logo: "/partners/ldh.png" },
+  { name: "Makon Mirzo", logo: "/partners/makonmirzo.png" },
+  { name: "Palma",       logo: "/partners/palma.png" },
+  { name: "Sandstone",   logo: "/partners/sandstone.png" },
+  { name: "Sterilance",  logo: "/partners/sterilance.png" },
+  { name: "Vaksina",     logo: "/partners/vaksina.png" },
 ];
 
-function PartnerItem({ name, icon }) {
+function PartnerItem({ name, logo }) {
   return (
-    <div className="flex items-center gap-2.5 px-8 flex-shrink-0" data-marquee-item>
-      <span className="text-2xl leading-none select-none" style={{ color: "#0a0a0a" }}>
-        {icon}
-      </span>
-      <span
-        className="text-xl font-bold tracking-tight whitespace-nowrap select-none"
-        style={{ color: "#0a0a0a" }}
-      >
-        {name}.
-      </span>
+    <div className="flex items-center justify-center px-14 flex-shrink-0" data-marquee-item>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={logo}
+        alt={name}
+        className="partner-logo"
+        style={{ height: 52, maxWidth: 160, objectFit: "contain" }}
+      />
     </div>
   );
 }
 
 export default function PartnersMarquee() {
-  const { lang } = useLang();
-  const label = lang === "ru" ? "Наши партнёры" : "Hamkorlarimiz";
-
   const trackRef = useRef(null);
 
   useEffect(() => {
@@ -44,9 +37,8 @@ export default function PartnersMarquee() {
 
     const cycleWidth = () => track.scrollWidth / 2;
 
-    // Vaqt asosida: bitta to'liq aylanish necha ms da o'tadi
-    const NORMAL_MS = 150_000;   // 150 sekund
-    const HOVERED_MS = 900_000;  // 6x sekinroq (~15 daqiqa)
+    const NORMAL_MS = 150_000;
+    const HOVERED_MS = 900_000;
 
     let x = 0;
     let durationMs = NORMAL_MS;
@@ -57,10 +49,7 @@ export default function PartnersMarquee() {
     const tick = (now) => {
       const dt = now - lastTime;
       lastTime = now;
-
-      // Davomiylikni smooth o'zgartiramiz (lerp)
       durationMs += (targetDurationMs - durationMs) * 0.05;
-
       const w = cycleWidth();
       if (w > 0 && durationMs > 0) {
         const pxPerMs = w / durationMs;
@@ -90,19 +79,17 @@ export default function PartnersMarquee() {
       <div
         className="relative overflow-hidden"
         style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+          maskImage: "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
         }}
       >
         <div
           ref={trackRef}
-          className="flex"
-          style={{ width: "max-content", willChange: "transform" }}
+          className="flex items-center"
+          style={{ width: "max-content", willChange: "transform", height: 80 }}
         >
           {[...PARTNERS, ...PARTNERS].map((p, i) => (
-            <PartnerItem key={i} name={p.name} icon={p.icon} />
+            <PartnerItem key={i} name={p.name} logo={p.logo} />
           ))}
         </div>
       </div>

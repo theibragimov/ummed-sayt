@@ -7,6 +7,15 @@ html {
   scroll-margin-top: 80px;
 }
 
+/* ============ Partner logolar ============ */
+.partner-logo {
+  opacity: 0.8;
+}
+html[data-theme="dark"] .partner-logo {
+  opacity: 0.9;
+  filter: brightness(0) invert(1);
+}
+
 /* ============ Pixend uslubidagi Header ============ */
 .site-header {
   background-color: #ffffff;

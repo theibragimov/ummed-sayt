@@ -251,68 +251,71 @@ export default function HomePage() {
             <div className="services-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
+                  // Tajriba asosida yondashuv — medal/yulduz
                   ...t.advantages.experience,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
+                      <circle cx="12" cy="8" r="6" />
+                      <path d="M8.21 13.89 7 23l5-3 5 3-1.21-9.12" />
                     </svg>
                   ),
                 },
                 {
+                  // Xususiy ombor — ombor binosi
                   ...t.advantages.warehouse,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 9 L12 3 L21 9 V21 H3 Z" />
-                      <path d="M9 21 V12 H15 V21" />
+                      <path d="M2 20h20M4 20V10l8-7 8 7v10" />
+                      <path d="M9 20v-5h6v5" />
+                      <rect x="10" y="11" width="4" height="4" />
                     </svg>
                   ),
                 },
                 {
+                  // Ishonchli ta'minot — zanjirlangan halqalar (supply chain)
                   ...t.advantages.distribution,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="3" />
-                      <circle cx="4" cy="4" r="2" />
-                      <circle cx="20" cy="4" r="2" />
-                      <circle cx="4" cy="20" r="2" />
-                      <circle cx="20" cy="20" r="2" />
-                      <path d="m6 6 4 4M18 6l-4 4M6 18l4-4M18 18l-4-4" />
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                     </svg>
                   ),
                 },
                 {
+                  // Rasmiy kafolat — sertifikat/hujjat
                   ...t.advantages.certificate,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 7v6c0 5-3.5 7.5-8.5 9-5-1.5-8.5-4-8.5-9V7l8.5-4z" />
-                      <path d="m9 12 2 2 4-4" />
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="9" y1="13" x2="15" y2="13" />
+                      <line x1="9" y1="17" x2="12" y2="17" />
+                      <polyline points="9 9 10 9 11 9" />
                     </svg>
                   ),
                 },
                 {
+                  // Rasmiy distribyutorlik — tasdiqlangan belgi
                   ...t.advantages.guarantee,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z" />
-                      <path d="m9 12 2 2 4-4" />
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <polyline points="9 12 11 14 15 10" />
                     </svg>
                   ),
                 },
                 {
+                  // Barqaror hamkorlik — qo'l siqish
                   ...t.advantages.delivery,
                   accent: "#3DB851",
                   icon: (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="1" y="6" width="13" height="11" rx="1" />
-                      <path d="M14 9h4l3 4v4h-7Z" />
-                      <circle cx="5.5" cy="18.5" r="2" />
-                      <circle cx="17.5" cy="18.5" r="2" />
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   ),
                 },
@@ -428,7 +431,13 @@ export default function HomePage() {
         <section className="py-20" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
             <Reveal variant="up" className="mb-12">
-              <span className="section-label">{t.products.title}</span>
+              <span className="section-label">{L("Distribyutsiya", "Дистрибуция")}</span>
+              <h2
+                className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
+                style={{ color: "var(--text)" }}
+              >
+                {L("Biz taqdim etadigan distribyutor mahsulotlar", "Дистрибьюторские продукты")}
+              </h2>
             </Reveal>
             <ProductGrid items={distribItems} />
           </div>
@@ -438,14 +447,20 @@ export default function HomePage() {
         <section className="py-20" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
             <Reveal variant="up" className="mb-12">
-              <span className="section-label">{t.ownBrand.title}</span>
+              <span className="section-label">{L("Brend Ummed", "Бренд Ummed")}</span>
+              <h2
+                className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
+                style={{ color: "var(--text)" }}
+              >
+                {L("Ummed brendi ostidagi mahsulotlar", "Продукты под брендом Ummed")}
+              </h2>
             </Reveal>
             <ProductGrid items={ownItems} />
           </div>
         </section>
 
         {/* UZUM MARKET — pricing card uslubi */}
-        <section className="py-16" style={{ backgroundColor: "var(--bg)" }}>
+        <section className="pt-16 pb-4" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
             <Reveal variant="up">
               <div
@@ -506,6 +521,158 @@ export default function HomePage() {
               </div>
             </Reveal>
           </div>
+        </section>
+
+        {/* SO'NGI YANGILIKLAR */}
+        <section className="pt-8 pb-20" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+            <Reveal variant="up" className="mb-12 flex items-end justify-between">
+              <div>
+                <span className="section-label">{L("Yangiliklar", "Новости")}</span>
+                <h2
+                  className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
+                  style={{ color: "var(--text)" }}
+                >
+                  {L("So'nggi yangiliklar", "Последние новости")}
+                </h2>
+              </div>
+              <Link
+                href="/yangiliklar"
+                className="hidden md:flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-60"
+                style={{ color: "var(--text)" }}
+              >
+                {L("Barchasi", "Все новости")}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M9 7h8v8"/>
+                </svg>
+              </Link>
+            </Reveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
+              style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
+              {[
+                {
+                  id: 1,
+                  date: L("15 May, 2025", "15 мая, 2025"),
+                  category: L("Yangilik", "Новость"),
+                  title: L("Ummed kompaniyasi yangi tibbiy jihozlar lineyasini taqdim etdi", "Ummed представила новую линейку медицинского оборудования"),
+                  color: "#f0f4f8",
+                  icon: "🏥",
+                },
+                {
+                  id: 2,
+                  date: L("2 May, 2025", "2 мая, 2025"),
+                  category: L("Tahlil", "Аналитика"),
+                  title: L("O'zbekistonda tibbiy jihozlar bozori: 2025 yil tendensiyalari", "Рынок медицинского оборудования Узбекистана: тенденции 2025"),
+                  color: "#f5f0f8",
+                  icon: "📊",
+                },
+                {
+                  id: 3,
+                  date: L("18 Aprel, 2025", "18 апреля, 2025"),
+                  category: L("Hamkorlik", "Партнёрство"),
+                  title: L("550 dan ortiq dorixona bilan hamkorlik: muvaffaqiyat sirlari", "Партнёрство с 550+ аптеками: секреты успеха"),
+                  color: "#f0f8f2",
+                  icon: "🤝",
+                },
+              ].map((item, idx) => (
+                <Reveal key={item.id} variant="up" delay={idx * 70}>
+                  <Link
+                    href={`/yangiliklar/${item.id}`}
+                    className="group flex flex-col"
+                    style={{
+                      backgroundColor: "var(--bg)",
+                      borderRight: idx < 2 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
+                    }}
+                  >
+                    {/* Rasm placeholder */}
+                    <div
+                      className="w-full flex items-center justify-center text-6xl"
+                      style={{ height: 220, backgroundColor: item.color }}
+                    >
+                      {item.icon}
+                    </div>
+                    {/* Ma'lumot */}
+                    <div className="p-6 flex flex-col flex-1">
+                      <p className="text-xs font-light mb-3" style={{ color: "var(--text-muted, #888)" }}>
+                        {item.date} · {item.category}
+                      </p>
+                      <h3
+                        className="text-base font-medium leading-snug group-hover:opacity-60 transition-opacity"
+                        style={{ color: "var(--text)" }}
+                      >
+                        {item.title}
+                      </h3>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Mobil uchun barcha yangiliklar tugmasi */}
+            <div className="mt-8 md:hidden text-center">
+              <Link
+                href="/yangiliklar"
+                className="inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-60"
+                style={{ color: "var(--text)" }}
+              >
+                {L("Barcha yangiliklar", "Все новости")}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M9 7h8v8"/>
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA — Hamkorlik */}
+        <section style={{ backgroundColor: "var(--bg)" }}>
+          <Reveal variant="up">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+              <div
+                className="py-20 flex flex-col md:flex-row md:items-center justify-between gap-10"
+                style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}
+              >
+                <div>
+                  <span className="section-label">{L("Hamkorlik", "Партнёрство")}</span>
+                  <h2
+                    className="text-2xl md:text-3xl font-medium leading-[1.15] tracking-tight mt-6"
+                    style={{ color: "var(--text)", maxWidth: 560 }}
+                  >
+                    <span className="block">{L("Apteka yoki klinikangiz uchun kerakli", "Всё необходимое для вашей аптеки")}</span>
+                    <span className="block">{L("tibbiyot buyumlarini bir joydan toping!", "или клиники — в одном месте!")}</span>
+                  </h2>
+                  <p
+                    className="mt-5 text-base font-light max-w-xl leading-relaxed"
+                    style={{ color: "var(--text-muted, #888)" }}
+                  >
+                    {L(
+                      "550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.",
+                      "Работаем на основе доверия 550+ клиентов и партнёров."
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 flex-shrink-0">
+                  <Link
+                    href="/aloqa"
+                    className="hero-cta inline-flex items-center justify-center px-9 py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03]"
+                  >
+                    {L("Biz bilan hamkorlikni boshlang", "Начать сотрудничество")}
+                  </Link>
+                  <Link
+                    href="/katalog"
+                    className="inline-flex items-center justify-center px-9 py-4 rounded-full text-sm font-medium transition-all hover:opacity-70"
+                    style={{
+                      border: "1px solid var(--border-strong, #e5e5e5)",
+                      color: "var(--text)",
+                    }}
+                  >
+                    {L("Katalogni ko'rish", "Смотреть каталог")}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </section>
 
       </main>

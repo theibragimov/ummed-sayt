@@ -4,12 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use } from "react";
-import { getProduct, getSimilar, formatPrice, PRODUCTS } from "@/lib/products";
+import { getProduct, getSimilar, formatPrice } from "@/lib/products";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { useLang } from "@/lib/i18n";
 
-function ContactForm({ productName }) {
+function ContactForm({ productName, pt }) {
   const [form, setForm] = useState({ name: "", phone: "", comment: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,28 +22,21 @@ function ContactForm({ productName }) {
   function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-    }, 1200);
+    setTimeout(() => { setLoading(false); setSent(true); }, 1200);
   }
 
   if (sent) {
     return (
       <div className="text-center py-10">
         <div className="text-5xl mb-4">✅</div>
-        <h3 className="text-lg font-bold text-gray-800 mb-2">
-          Arizangiz qabul qilindi!
-        </h3>
-        <p className="text-sm text-gray-500">
-          Menejerimiz tez orada siz bilan bog'lanadi.
-        </p>
+        <h3 className="text-lg font-bold text-gray-800 mb-2">{pt.successTitle}</h3>
+        <p className="text-sm text-gray-500">{pt.successDesc}</p>
         <button
           onClick={() => { setSent(false); setForm({ name: "", phone: "", comment: "" }); }}
           className="mt-5 text-sm font-medium hover:underline"
           style={{ color: "#E8491D" }}
         >
-          Yana so'rash
+          {pt.successAgain}
         </button>
       </div>
     );
@@ -52,21 +46,21 @@ function ContactForm({ productName }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Ismingiz <span style={{ color: "#E8491D" }}>*</span>
+          {pt.formName} <span style={{ color: "#E8491D" }}>*</span>
         </label>
         <input
           name="name"
           value={form.name}
           onChange={handleChange}
           required
-          placeholder="Ism Familiya"
+          placeholder={pt.formName}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition"
           style={{ "--tw-ring-color": "#E8491D" }}
         />
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Telefon <span style={{ color: "#E8491D" }}>*</span>
+          {pt.formPhone} <span style={{ color: "#E8491D" }}>*</span>
         </label>
         <input
           name="phone"
@@ -81,14 +75,14 @@ function ContactForm({ productName }) {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Izoh
+          {pt.formComment}
         </label>
         <textarea
           name="comment"
           value={form.comment}
           onChange={handleChange}
           rows={3}
-          placeholder={`"${productName}" haqida savol yoki miqdor...`}
+          placeholder={`"${productName}" ${pt.formCommentPlaceholder}`}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition resize-none"
           style={{ "--tw-ring-color": "#E8491D" }}
         />
@@ -99,11 +93,9 @@ function ContactForm({ productName }) {
         className="w-full py-3 rounded-xl text-white font-bold text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
         style={{ backgroundColor: "#E8491D" }}
       >
-        {loading ? "Yuborilmoqda..." : "Narx so'rash →"}
+        {loading ? pt.formSending : pt.formSubmit}
       </button>
-      <p className="text-xs text-gray-400 text-center">
-        Ma'lumotlaringiz faqat aloqa uchun ishlatiladi
-      </p>
+      <p className="text-xs text-gray-400 text-center">{pt.formPrivacy}</p>
     </form>
   );
 }
@@ -111,11 +103,24 @@ function ContactForm({ productName }) {
 export default function ProductPage({ params }) {
   const { id } = use(params);
   const product = getProduct(id);
+  const { t, lang } = useLang();
+  const pt = t.product;
 
   if (!product) notFound();
 
   const similar = getSimilar(product);
   const [activeTab, setActiveTab] = useState("tavsif");
+
+  const name = lang === "ru" ? (product.nameRu || product.name) : product.name;
+  const desc = lang === "ru" ? (product.descRu || product.desc) : product.desc;
+  const fullDesc = lang === "ru" ? (product.fullDescRu || product.fullDesc) : product.fullDesc;
+  const specs = lang === "ru" ? (product.specsRu || product.specs) : product.specs;
+  const badge = product.badge
+    ? (lang === "ru" ? (product.badgeRu || product.badge) : product.badge)
+    : null;
+  const categoryLabel = lang === "ru"
+    ? (product.categoryLabelRu || product.categoryLabel)
+    : product.categoryLabel;
 
   return (
     <>
@@ -125,11 +130,11 @@ export default function ProductPage({ params }) {
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-4 py-4">
           <nav className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
-            <Link href="/" className="hover:text-gray-600 transition-colors">Bosh sahifa</Link>
+            <Link href="/" className="hover:text-gray-600 transition-colors">{pt.breadcrumbHome}</Link>
             <span>/</span>
-            <Link href="/katalog" className="hover:text-gray-600 transition-colors">Katalog</Link>
+            <Link href="/katalog" className="hover:text-gray-600 transition-colors">{pt.breadcrumbCatalog}</Link>
             <span>/</span>
-            <span className="font-medium text-gray-700 truncate max-w-[200px]">{product.name}</span>
+            <span className="font-medium text-gray-700 truncate max-w-[200px]">{name}</span>
           </nav>
         </div>
 
@@ -146,7 +151,7 @@ export default function ProductPage({ params }) {
                   className="relative flex items-center justify-center py-16 text-[140px] leading-none"
                   style={{ backgroundColor: "#FFF5F3" }}
                 >
-                  {product.badge && (
+                  {badge && (
                     <span
                       className="absolute top-5 left-5 text-xs font-bold px-3 py-1.5 rounded-full text-white"
                       style={{
@@ -155,12 +160,12 @@ export default function ProductPage({ params }) {
                           product.badge === "Ommabop" ? "#E8491D" : "#6366f1",
                       }}
                     >
-                      {product.badge}
+                      {badge}
                     </span>
                   )}
                   {!product.inStock && (
                     <span className="absolute top-5 right-5 text-xs font-bold px-3 py-1.5 rounded-full bg-gray-400 text-white">
-                      Sotib bo'lindi
+                      {pt.outOfStock}
                     </span>
                   )}
                   <span className="select-none">{product.img}</span>
@@ -170,8 +175,8 @@ export default function ProductPage({ params }) {
                 <div className="border-t border-gray-100">
                   <div className="flex">
                     {[
-                      { key: "tavsif", label: "Tavsif" },
-                      { key: "specs", label: "Texnik ma'lumot" },
+                      { key: "tavsif", label: pt.tabDesc },
+                      { key: "specs", label: pt.tabSpecs },
                     ].map((tab) => (
                       <button
                         key={tab.key}
@@ -191,22 +196,15 @@ export default function ProductPage({ params }) {
                   <div className="p-6">
                     {activeTab === "tavsif" ? (
                       <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                        {product.fullDesc}
+                        {fullDesc}
                       </div>
                     ) : (
                       <table className="w-full text-sm">
                         <tbody>
-                          {product.specs.map((s, i) => (
-                            <tr
-                              key={s.label}
-                              className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                            >
-                              <td className="py-2.5 px-3 font-medium text-gray-500 w-1/2 rounded-l-lg">
-                                {s.label}
-                              </td>
-                              <td className="py-2.5 px-3 text-gray-800 font-semibold rounded-r-lg">
-                                {s.value}
-                              </td>
+                          {specs.map((s, i) => (
+                            <tr key={s.label} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                              <td className="py-2.5 px-3 font-medium text-gray-500 w-1/2 rounded-l-lg">{s.label}</td>
+                              <td className="py-2.5 px-3 text-gray-800 font-semibold rounded-r-lg">{s.value}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -223,17 +221,14 @@ export default function ProductPage({ params }) {
               {/* Narx kartasi */}
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
                 <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                  {product.categoryLabel}
+                  {categoryLabel}
                 </span>
                 <h1 className="text-2xl font-extrabold text-gray-800 mt-2 mb-4 leading-snug">
-                  {product.name}
+                  {name}
                 </h1>
 
                 <div className="flex items-end gap-3 mb-5">
-                  <span
-                    className="text-3xl font-extrabold"
-                    style={{ color: "#E8491D" }}
-                  >
+                  <span className="text-3xl font-extrabold" style={{ color: "#E8491D" }}>
                     {formatPrice(product.price)}
                   </span>
                   {product.oldPrice && (
@@ -248,39 +243,31 @@ export default function ProductPage({ params }) {
                     className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full text-white mb-5"
                     style={{ backgroundColor: "#3DB851" }}
                   >
-                    💰 {Math.round((1 - product.price / product.oldPrice) * 100)}% chegirma
+                    💰 {Math.round((1 - product.price / product.oldPrice) * 100)}% {pt.discount}
                   </div>
                 )}
 
-                <p className="text-sm text-gray-500 leading-relaxed mb-5">
-                  {product.desc}
-                </p>
+                <p className="text-sm text-gray-500 leading-relaxed mb-5">{desc}</p>
 
                 <div className="flex items-center gap-2 mb-5">
-                  <span
-                    className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500" : "bg-gray-400"}`}
-                  />
+                  <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500" : "bg-gray-400"}`} />
                   <span className={`text-sm font-medium ${product.inStock ? "text-green-600" : "text-gray-400"}`}>
-                    {product.inStock ? "Mavjud" : "Sotib bo'lindi"}
+                    {product.inStock ? pt.inStock : pt.outOfStock}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3 text-xs text-gray-400 border-t border-gray-100 pt-4">
-                  <span>🚚 Tezkor yetkazib berish</span>
+                  <span>🚚 {pt.delivery}</span>
                   <span>·</span>
-                  <span>🛡️ Kafolat bor</span>
+                  <span>🛡️ {pt.warranty}</span>
                 </div>
               </div>
 
               {/* Narx so'rash formasi */}
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-                <h2 className="text-base font-extrabold text-gray-800 mb-1">
-                  Narx so'rash
-                </h2>
-                <p className="text-xs text-gray-400 mb-5">
-                  Ulgurji narx yoki qo'shimcha ma'lumot uchun
-                </p>
-                <ContactForm productName={product.name} />
+                <h2 className="text-base font-extrabold text-gray-800 mb-1">{pt.requestTitle}</h2>
+                <p className="text-xs text-gray-400 mb-5">{pt.requestDesc}</p>
+                <ContactForm productName={name} pt={pt} />
               </div>
             </div>
           </div>
@@ -290,46 +277,41 @@ export default function ProductPage({ params }) {
         {similar.length > 0 && (
           <section className="max-w-7xl mx-auto px-4 pb-16">
             <Reveal variant="up" as="h2" className="text-xl font-extrabold text-gray-800 mb-6">
-              O'xshash mahsulotlar
+              {pt.similar}
             </Reveal>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {similar.map((p, idx) => (
-                <Link
-                  key={p.id}
-                  href={`/katalog/${p.id}`}
-                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col anim-fade-up"
-                  style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "both" }}
-                >
-                  <div
-                    className="flex items-center justify-center h-36 text-6xl"
-                    style={{ backgroundColor: "#FFF5F3" }}
+              {similar.map((p, idx) => {
+                const simName = lang === "ru" ? (p.nameRu || p.name) : p.name;
+                const simDesc = lang === "ru" ? (p.descRu || p.desc) : p.desc;
+                const simCatLabel = lang === "ru" ? (p.categoryLabelRu || p.categoryLabel) : p.categoryLabel;
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/katalog/${p.id}`}
+                    className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col anim-fade-up"
+                    style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "both" }}
                   >
-                    {p.img}
-                  </div>
-                  <div className="p-4 flex flex-col flex-1">
-                    <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">
-                      {p.categoryLabel}
-                    </span>
-                    <h3 className="text-sm font-bold text-gray-800 mb-1 leading-snug group-hover:text-[#E8491D] transition-colors">
-                      {p.name}
-                    </h3>
-                    <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">
-                      {p.desc}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base font-extrabold" style={{ color: "#E8491D" }}>
-                        {formatPrice(p.price)}
-                      </span>
-                      <span
-                        className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white"
-                        style={{ backgroundColor: "#3DB851" }}
-                      >
-                        Batafsil →
-                      </span>
+                    <div className="flex items-center justify-center h-36 text-6xl" style={{ backgroundColor: "#FFF5F3" }}>
+                      {p.img}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="p-4 flex flex-col flex-1">
+                      <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">{simCatLabel}</span>
+                      <h3 className="text-sm font-bold text-gray-800 mb-1 leading-snug group-hover:text-[#E8491D] transition-colors">
+                        {simName}
+                      </h3>
+                      <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">{simDesc}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-base font-extrabold" style={{ color: "#E8491D" }}>
+                          {formatPrice(p.price)}
+                        </span>
+                        <span className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white" style={{ backgroundColor: "#3DB851" }}>
+                          {pt.detailBtn}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

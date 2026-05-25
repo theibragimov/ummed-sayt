@@ -19,30 +19,30 @@ export default function SiteFooter() {
           <div className="flex-1">
             {/* Kichik label */}
             <p className="text-sm font-light mb-5" style={{ color: "#555" }}>
-              {L("Bog'laning", "Связаться")}
+              {L("Elektron pochta", "Электронная почта")}
             </p>
 
-            {/* Katta telefon raqam */}
+            {/* Katta email */}
             <a
-              href="tel:+998901234567"
+              href="mailto:info@ummed.uz"
               className="block text-[40px] lg:text-[56px] font-light leading-none tracking-tight mb-14 transition-opacity hover:opacity-60"
               style={{ color: "#e5e5e5" }}
             >
-              +998 90 123-45-67
+              info@ummed.uz
             </a>
 
-            {/* 3 ustun: email | manzil | ish vaqti */}
+            {/* 3 ustun: aloqa uchun | manzil | ish vaqti */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div>
                 <p className="text-xs font-light mb-3" style={{ color: "#444" }}>
-                  {L("Elektron pochta", "Электронная почта")}
+                  {L("Aloqa uchun", "Для связи")}
                 </p>
                 <a
-                  href="mailto:info@ummed.uz"
+                  href="tel:+998775504040"
                   className="text-sm font-light transition-opacity hover:opacity-60"
                   style={{ color: "#999" }}
                 >
-                  info@ummed.uz
+                  +998 77 550-40-40
                 </a>
               </div>
               <div>
