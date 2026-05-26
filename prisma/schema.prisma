@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Kategoriya {
+  id           Int          @id @default(autoincrement())
+  nom          String
+  slug         String       @unique
+  rasmUrl      String?      @map("rasm_url")
+  tavsif       String?
+  tartibRaqami Int          @default(100) @map("tartib_raqami")
+  parentId     Int?         @map("parent_id")
+  parent       Kategoriya?  @relation("SubKategoriya", fields: [parentId], references: [id])
+  bolalar      Kategoriya[] @relation("SubKategoriya")
+  mahsulotlar  Mahsulot[]
+  yaratilgan   DateTime     @default(now()) @map("yaratilgan")
+
+  @@map("kategoriyalar")
+}
+
+model Mahsulot {
+  id            Int            @id @default(autoincrement())
+  nom           String
+  slug          String         @unique
+  kategoriyaId  Int?           @map("kategoriya_id")
+  kategoriya    Kategoriya?    @relation(fields: [kategoriyaId], references: [id])
+  asosiyRasmUrl String?        @map("asosiy_rasm_url")
+  narx          Float?
+  narxBirligi   String         @default("so'm") @map("narx_birligi")
+  mavjudligi    Boolean        @default(true)
+  qisqaTavsif   String?        @map("qisqa_tavsif")
+  toliqTavsif   String?        @map("toliq_tavsif")
+  brend         String?
+  modelRaqami   String?        @map("model_raqami")
+  featured      Boolean        @default(false)
+  rasmlar       MahsulotRasm[]
+  yaratilgan    DateTime       @default(now()) @map("yaratilgan")
+
+  @@map("mahsulotlar")
+}
+
+model MahsulotRasm {
+  id         Int      @id @default(autoincrement())
+  mahsulotId Int      @map("mahsulot_id")
+  mahsulot   Mahsulot @relation(fields: [mahsulotId], references: [id], onDelete: Cascade)
+  rasmUrl    String   @map("rasm_url")
+  tartib     Int      @default(0)
+
+  @@map("mahsulot_rasmlar")
+}
+
+model PostKategoriya {
+  id      Int    @id @default(autoincrement())
+  nom     String
+  slug    String @unique
+  rang    String @default("#E8491D")
+  postlar Post[]
+
+  @@map("post_kategoriyalar")
+}
+
+model Post {
+  id            Int             @id @default(autoincrement())
+  sarlavha      String
+  slug          String          @unique
+  muqovaRasmUrl String?         @map("muqova_rasm_url")
+  qisqaTavsif   String?         @map("qisqa_tavsif")
+  toliqMatn     String?         @map("toliq_matn")
+  kategoriyaId  Int?            @map("kategoriya_id")
+  kategoriya    PostKategoriya? @relation(fields: [kategoriyaId], references: [id])
+  muallif       String?
+  sana          DateTime        @default(now())
+  holat         String          @default("draft")
+  yaratilgan    DateTime        @default(now()) @map("yaratilgan")
+
+  @@map("postlar")
+}
+
+model Zayavka {
+  id       Int      @id @default(autoincrement())
+  ism      String?
+  telefon  String?
+  email    String?
+  xabar    String?
+  mahsulot String?
+  holat    String   @default("new")
+  sana     DateTime @default(now())
+  izoh     String?
+
+  @@map("zayavkalar")
+}
+
+model Tugma {
+  id         Int     @id @default(autoincrement())
+  nom        String
+  matn       String
+  havola     String
+  yangiTabda Boolean @default(false) @map("yangi_tabda")
+  faol       Boolean @default(true)
+
+  @@map("tugmalar")
+}

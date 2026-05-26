@@ -1,13 +1,5 @@
-import { createClient } from 'next-sanity'
 import { NextResponse } from 'next/server'
-
-const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-01-01',
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN,
-})
+import { createZayavka } from '@/lib/db'
 
 export async function POST(request) {
   try {
@@ -21,34 +13,11 @@ export async function POST(request) {
       )
     }
 
-    await writeClient.create({
-      _type: 'application',
-      ism,
-      telefon,
-      email: email || '',
-      xabar: xabar || '',
-      mahsulot: mahsulot || '',
-      holat: 'new',
-      sana: new Date().toISOString(),
-    })
+    await createZayavka({ ism, telefon, email: email || '', xabar: xabar || '', mahsulot: mahsulot || '' })
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('Zayavka saqlashda xato:', err)
-    return NextResponse.json(
-      { success: false, xato: 'Server xatosi' },
-      { status: 500 }
-    )
+    console.error('Zayavka xatosi:', err)
+    return NextResponse.json({ success: false, xato: 'Server xatosi' }, { status: 500 })
   }
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  })
 }
