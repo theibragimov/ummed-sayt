@@ -1,18 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-
-const HOLAT_STIL = {
-  new: 'bg-blue-100 text-blue-700',
-  inProgress: 'bg-yellow-100 text-yellow-700',
-  done: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-600',
-}
-const HOLAT_NOMI = {
-  new: '🆕 Yangi',
-  inProgress: '⏳ Jarayonda',
-  done: '✅ Bajarildi',
-  rejected: '❌ Rad etildi',
-}
+import { A } from '@/components/admin/AdminStyles'
 
 export default function ZayavkalarPage() {
   const [zayavkalar, setZayavkalar] = useState([])
@@ -29,8 +17,7 @@ export default function ZayavkalarPage() {
 
   async function holatOzgartir(id, holat) {
     await fetch(`/api/zayavkalar/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ holat }),
     })
     yuklash()
@@ -38,8 +25,7 @@ export default function ZayavkalarPage() {
 
   async function izohSaqla(id) {
     await fetch(`/api/zayavkalar/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ izoh }),
     })
     setTanlangan(null)
@@ -47,110 +33,135 @@ export default function ZayavkalarPage() {
   }
 
   async function ochir(id) {
-    if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return
+    if (!confirm('O\'chirmoqchimisiz?')) return
     await fetch(`/api/zayavkalar/${id}`, { method: 'DELETE' })
     yuklash()
   }
 
-  const korsatilgan = filtr === 'all' ? zayavkalar : zayavkalar.filter((z) => z.holat === filtr)
+  const filtrlar = [
+    { val: 'all', label: 'Barchasi' },
+    { val: 'new', label: '🆕 Yangi' },
+    { val: 'inProgress', label: '⏳ Jarayonda' },
+    { val: 'done', label: '✅ Bajarildi' },
+    { val: 'rejected', label: '❌ Rad etildi' },
+  ]
+  const korsatilgan = filtr === 'all' ? zayavkalar : zayavkalar.filter(z => z.holat === filtr)
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Zayavkalar</h1>
-          <p className="text-gray-500 text-sm mt-1">Jami: {zayavkalar.length} ta</p>
+          <h1 style={A.h1}>Zayavkalar</h1>
+          <p style={{ ...A.sub, marginTop: '4px' }}>Jami {zayavkalar.length} ta buyurtma</p>
         </div>
       </div>
 
       {/* Filtrlar */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {[['all', 'Barchasi'], ['new', '🆕 Yangi'], ['inProgress', '⏳ Jarayonda'], ['done', '✅ Bajarildi'], ['rejected', '❌ Rad etildi']].map(([val, label]) => (
-          <button
-            key={val}
-            onClick={() => setFiltr(val)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-              filtr === val ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            {label}
-            <span className="ml-2 bg-gray-200 text-gray-700 rounded-full px-2 py-0.5 text-xs">
-              {val === 'all' ? zayavkalar.length : zayavkalar.filter((z) => z.holat === val).length}
-            </span>
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {filtrlar.map(f => {
+          const count = f.val === 'all' ? zayavkalar.length : zayavkalar.filter(z => z.holat === f.val).length
+          const active = filtr === f.val
+          return (
+            <button key={f.val} onClick={() => setFiltr(f.val)} style={{
+              padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 500,
+              border: active ? '1px solid #E8491D' : '1px solid rgba(0,0,0,0.08)',
+              background: active ? 'rgba(232,73,29,0.07)' : '#fff',
+              color: active ? '#E8491D' : '#6b7280',
+              cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+            }}>
+              {f.label}
+              <span style={{ marginLeft: '6px', fontSize: '11px', fontWeight: 700, opacity: 0.8 }}>{count}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* Jadval */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      {/* Ro'yxat */}
+      <div style={A.card}>
         {korsatilgan.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">Zayavkalar yo'q</div>
-        ) : (
-          <div className="divide-y divide-gray-100">
-            {korsatilgan.map((z) => (
-              <div key={z.id} className="p-5 hover:bg-gray-50 transition-colors">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="font-semibold text-gray-900">{z.ism || 'Noma\'lum'}</span>
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${HOLAT_STIL[z.holat]}`}>
-                        {HOLAT_NOMI[z.holat]}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600">📞 {z.telefon}</div>
-                    {z.email && <div className="text-sm text-gray-500">✉️ {z.email}</div>}
-                    {z.mahsulot && <div className="text-sm text-gray-500 mt-1">📦 {z.mahsulot}</div>}
-                    {z.xabar && <div className="text-sm text-gray-600 mt-2 bg-gray-50 p-3 rounded-lg">{z.xabar}</div>}
-                    {z.izoh && <div className="text-sm text-blue-600 mt-1 italic">💬 {z.izoh}</div>}
-                    <div className="text-xs text-gray-400 mt-2">{new Date(z.sana).toLocaleString('uz-UZ')}</div>
-                  </div>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: '#d1d5db', fontSize: '14px' }}>
+            Zayavkalar yo'q
+          </div>
+        ) : korsatilgan.map((z, i) => {
+          const h = A.holat[z.holat] || A.holat.new
+          return (
+            <div key={z.id} style={{
+              padding: '16px 20px',
+              borderBottom: i < korsatilgan.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+              display: 'flex', gap: '16px', alignItems: 'flex-start',
+            }}>
+              {/* Avatar */}
+              <div style={{
+                width: '38px', height: '38px', borderRadius: '10px',
+                background: 'rgba(232,73,29,0.08)', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                fontSize: '16px', flexShrink: 0,
+                color: '#E8491D', fontWeight: 700,
+              }}>
+                {(z.ism || 'N')[0].toUpperCase()}
+              </div>
 
-                  <div className="flex flex-col gap-2 min-w-fit">
-                    <select
-                      value={z.holat}
-                      onChange={(e) => holatOzgartir(z.id, e.target.value)}
-                      className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    >
-                      <option value="new">🆕 Yangi</option>
-                      <option value="inProgress">⏳ Jarayonda</option>
-                      <option value="done">✅ Bajarildi</option>
-                      <option value="rejected">❌ Rad etildi</option>
-                    </select>
-                    <button
-                      onClick={() => { setTanlangan(z.id); setIzoh(z.izoh || '') }}
-                      className="text-xs text-blue-600 hover:underline text-center"
-                    >
-                      💬 Izoh qo'sh
-                    </button>
-                    <button
-                      onClick={() => ochir(z.id)}
-                      className="text-xs text-red-500 hover:underline text-center"
-                    >
-                      🗑 O'chirish
-                    </button>
+              {/* Info */}
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '14px', color: '#0a0a0a' }}>{z.ism || 'Noma\'lum'}</span>
+                  <span style={A.badge(h.bg, h.color)}>{h.label}</span>
+                </div>
+                <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '2px' }}>📞 {z.telefon}</div>
+                {z.email && <div style={{ fontSize: '13px', color: '#9ca3af' }}>✉ {z.email}</div>}
+                {z.mahsulot && <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>📦 {z.mahsulot}</div>}
+                {z.xabar && (
+                  <div style={{ fontSize: '13px', color: '#374151', marginTop: '8px', background: '#f9faf8', padding: '8px 12px', borderRadius: '8px', borderLeft: '3px solid rgba(232,73,29,0.3)' }}>
+                    {z.xabar}
                   </div>
+                )}
+                {z.izoh && (
+                  <div style={{ fontSize: '12px', color: '#6366f1', marginTop: '6px', fontStyle: 'italic' }}>
+                    💬 {z.izoh}
+                  </div>
+                )}
+                <div style={{ fontSize: '11px', color: '#d1d5db', marginTop: '6px' }}>
+                  {new Date(z.sana).toLocaleString('uz-UZ')}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+
+              {/* Amallar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
+                <select
+                  value={z.holat}
+                  onChange={e => holatOzgartir(z.id, e.target.value)}
+                  style={{ ...A.select, width: 'auto', fontSize: '12px', padding: '6px 10px' }}
+                >
+                  <option value="new">🆕 Yangi</option>
+                  <option value="inProgress">⏳ Jarayonda</option>
+                  <option value="done">✅ Bajarildi</option>
+                  <option value="rejected">❌ Rad etildi</option>
+                </select>
+                <button onClick={() => { setTanlangan(z.id); setIzoh(z.izoh || '') }}
+                  style={{ fontSize: '12px', color: '#6366f1', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+                  💬 Izoh
+                </button>
+                <button onClick={() => ochir(z.id)}
+                  style={{ fontSize: '12px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+                  🗑 O'chirish
+                </button>
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {/* Izoh modal */}
       {tanlangan && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-lg font-semibold mb-4">Admin izohi</h3>
-            <textarea
-              value={izoh}
-              onChange={(e) => setIzoh(e.target.value)}
-              rows={4}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Izoh yozing..."
-            />
-            <div className="flex gap-3 mt-4">
-              <button onClick={() => izohSaqla(tanlangan)} className="flex-1 bg-blue-500 text-white py-2.5 rounded-xl font-medium hover:bg-blue-600">Saqlash</button>
-              <button onClick={() => setTanlangan(null)} className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200">Bekor</button>
+        <div style={A.overlay}>
+          <div style={A.modal}>
+            <h3 style={{ ...A.h2, marginBottom: '16px' }}>Admin izohi</h3>
+            <textarea value={izoh} onChange={e => setIzoh(e.target.value)} rows={4}
+              style={A.textarea} placeholder="Izoh yozing..." />
+            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+              <button onClick={() => izohSaqla(tanlangan)} style={{ ...A.btnPrimary, flex: 1 }}>Saqlash</button>
+              <button onClick={() => setTanlangan(null)} style={{ ...A.btnGhost, flex: 1 }}>Bekor</button>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import RasmYuklash from './RasmYuklash'
+import { A } from './AdminStyles'
 
 export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
   const router = useRouter()
@@ -16,126 +17,104 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
   const [xato, setXato] = useState('')
 
   useEffect(() => {
-    fetch('/api/kategoriyalar').then((r) => r.json()).then(setKategoriyalar)
+    fetch('/api/kategoriyalar').then(r => r.json()).then(setKategoriyalar)
   }, [])
 
-  function ozgartir(key, val) {
-    setForm((f) => ({ ...f, [key]: val }))
+  function oz(key, val) {
+    setForm(f => ({ ...f, [key]: val }))
     if (key === 'nom' && !mahsulotId) {
-      setForm((f) => ({ ...f, nom: val, slug: val.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') }))
+      setForm(f => ({ ...f, nom: val, slug: val.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') }))
     }
   }
 
   async function yuborish(e) {
-    e.preventDefault()
-    setSaqlash(true)
-    setXato('')
-    const payload = {
-      ...form,
-      narx: form.narx ? parseFloat(form.narx) : null,
-      kategoriyaId: form.kategoriyaId ? parseInt(form.kategoriyaId) : null,
-    }
-    const url = mahsulotId ? `/api/mahsulotlar/${mahsulotId}` : '/api/mahsulotlar'
-    const method = mahsulotId ? 'PUT' : 'POST'
-    const res = await fetch(url, {
-      method,
+    e.preventDefault(); setSaqlash(true); setXato('')
+    const payload = { ...form, narx: form.narx ? parseFloat(form.narx) : null, kategoriyaId: form.kategoriyaId ? parseInt(form.kategoriyaId) : null }
+    const res = await fetch(mahsulotId ? `/api/mahsulotlar/${mahsulotId}` : '/api/mahsulotlar', {
+      method: mahsulotId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    if (res.ok) {
-      router.push('/admin/mahsulotlar')
-      router.refresh()
-    } else {
-      setXato('Saqlashda xatolik yuz berdi')
-    }
+    if (res.ok) { router.push('/admin/mahsulotlar'); router.refresh() }
+    else setXato('Saqlashda xatolik')
     setSaqlash(false)
   }
 
+  const F = ({ label, children }) => (
+    <div style={{ marginBottom: '16px' }}>
+      <label style={A.label}>{label}</label>
+      {children}
+    </div>
+  )
+
   return (
-    <form onSubmit={yuborish} className="space-y-6 max-w-2xl">
-      {xato && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm">{xato}</div>}
+    <form onSubmit={yuborish} style={{ maxWidth: '680px' }}>
+      {xato && (
+        <div style={{ background: 'rgba(232,73,29,0.08)', border: '1px solid rgba(232,73,29,0.2)', color: '#E8491D', borderRadius: '10px', padding: '12px 16px', fontSize: '13px', marginBottom: '20px' }}>
+          {xato}
+        </div>
+      )}
 
-      <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-        <h3 className="font-semibold text-gray-700 border-b pb-3">Asosiy ma'lumotlar</h3>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mahsulot nomi *</label>
-            <input required value={form.nom} onChange={(e) => ozgartir('nom', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Brend</label>
-            <input value={form.brend} onChange={(e) => ozgartir('brend', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Model raqami</label>
-            <input value={form.modelRaqami} onChange={(e) => ozgartir('modelRaqami', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Narx</label>
-            <input type="number" value={form.narx} onChange={(e) => ozgartir('narx', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Narx birligi</label>
-            <input value={form.narxBirligi} onChange={(e) => ozgartir('narxBirligi', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Kategoriya</label>
-            <select value={form.kategoriyaId} onChange={(e) => ozgartir('kategoriyaId', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+      {/* Asosiy */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Asosiy ma'lumotlar
+        </div>
+        <F label="Mahsulot nomi *">
+          <input required value={form.nom} onChange={e => oz('nom', e.target.value)} style={A.input} />
+        </F>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <F label="Brend"><input value={form.brend} onChange={e => oz('brend', e.target.value)} style={A.input} /></F>
+          <F label="Model raqami"><input value={form.modelRaqami} onChange={e => oz('modelRaqami', e.target.value)} style={A.input} /></F>
+          <F label="Narx"><input type="number" value={form.narx} onChange={e => oz('narx', e.target.value)} style={A.input} /></F>
+          <F label="Narx birligi"><input value={form.narxBirligi} onChange={e => oz('narxBirligi', e.target.value)} style={A.input} /></F>
+          <F label="Kategoriya">
+            <select value={form.kategoriyaId} onChange={e => oz('kategoriyaId', e.target.value)} style={A.select}>
               <option value="">— Tanlang —</option>
-              {kategoriyalar.map((k) => (
-                <option key={k.id} value={k.id}>{k.nom}</option>
-              ))}
+              {kategoriyalar.map(k => <option key={k.id} value={k.id}>{k.nom}</option>)}
             </select>
+          </F>
+          <div style={{ paddingTop: '20px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginTop: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
+                <input type="checkbox" checked={form.mavjudligi} onChange={e => oz('mavjudligi', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#3DB851' }} />
+                Mavjud
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
+                <input type="checkbox" checked={form.featured} onChange={e => oz('featured', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#f59e0b' }} />
+                ★ Featured
+              </label>
+            </div>
           </div>
-          <div className="flex items-center gap-6 pt-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={form.mavjudligi} onChange={(e) => ozgartir('mavjudligi', e.target.checked)}
-                className="w-4 h-4 accent-green-500" />
-              <span className="text-sm text-gray-700">Mavjud</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={form.featured} onChange={(e) => ozgartir('featured', e.target.checked)}
-                className="w-4 h-4 accent-yellow-500" />
-              <span className="text-sm text-gray-700">⭐ Featured</span>
-            </label>
-          </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-        <h3 className="font-semibold text-gray-700 border-b pb-3">Rasm</h3>
-        <RasmYuklash label="Asosiy rasm" qiymat={form.asosiyRasmUrl} onChange={(v) => ozgartir('asosiyRasmUrl', v)} />
+      {/* Rasm */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Asosiy rasm
+        </div>
+        <RasmYuklash label="" qiymat={form.asosiyRasmUrl} onChange={v => oz('asosiyRasmUrl', v)} />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-        <h3 className="font-semibold text-gray-700 border-b pb-3">Tavsiflar</h3>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Qisqa tavsif</label>
-          <textarea value={form.qisqaTavsif} onChange={(e) => ozgartir('qisqaTavsif', e.target.value)} rows={2}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
+      {/* Tavsif */}
+      <div style={{ ...A.cardPad, marginBottom: '24px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Tavsiflar
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">To'liq tavsif</label>
-          <textarea value={form.toliqTavsif} onChange={(e) => ozgartir('toliqTavsif', e.target.value)} rows={6}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
-            placeholder="HTML yoki oddiy matn kiriting..." />
-        </div>
+        <F label="Qisqa tavsif">
+          <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={2} style={A.textarea} />
+        </F>
+        <F label="To'liq tavsif (HTML qabul qilinadi)">
+          <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
+        </F>
       </div>
 
-      <div className="flex gap-3">
-        <button type="submit" disabled={saqlash}
-          className="bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white px-8 py-3 rounded-xl font-medium transition-colors">
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button type="submit" disabled={saqlash} style={{ ...A.btnPrimary, padding: '11px 28px', opacity: saqlash ? 0.6 : 1 }}>
           {saqlash ? 'Saqlanmoqda...' : '💾 Saqlash'}
         </button>
-        <button type="button" onClick={() => router.back()}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium transition-colors">
+        <button type="button" onClick={() => router.back()} style={{ ...A.btnGhost, padding: '11px 20px' }}>
           Bekor
         </button>
       </div>

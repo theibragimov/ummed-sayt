@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { A } from '@/components/admin/AdminStyles'
 
 export default function MahsulotlarPage() {
   const [mahsulotlar, setMahsulotlar] = useState([])
@@ -22,116 +23,88 @@ export default function MahsulotlarPage() {
 
   async function mavjudlikToggle(id, hozirgi) {
     await fetch(`/api/mahsulotlar/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mavjudligi: !hozirgi }),
     })
     yuklash()
   }
 
-  const filtrlangan = mahsulotlar.filter(
-    (m) =>
-      m.nom.toLowerCase().includes(qidiruv.toLowerCase()) ||
-      (m.brend || '').toLowerCase().includes(qidiruv.toLowerCase())
+  const filtrlangan = mahsulotlar.filter(m =>
+    m.nom.toLowerCase().includes(qidiruv.toLowerCase()) ||
+    (m.brend || '').toLowerCase().includes(qidiruv.toLowerCase())
   )
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mahsulotlar</h1>
-          <p className="text-gray-500 text-sm mt-1">Jami: {mahsulotlar.length} ta</p>
+          <h1 style={A.h1}>Mahsulotlar</h1>
+          <p style={{ ...A.sub, marginTop: '4px' }}>Jami {mahsulotlar.length} ta mahsulot</p>
         </div>
-        <Link
-          href="/admin/mahsulotlar/yangi"
-          className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-colors"
-        >
+        <Link href="/admin/mahsulotlar/yangi" style={{ ...A.btnPrimary, textDecoration: 'none', display: 'inline-block' }}>
           + Yangi mahsulot
         </Link>
       </div>
 
-      <div className="mb-5">
+      {/* Qidiruv */}
+      <div style={{ marginBottom: '16px' }}>
         <input
-          type="text"
-          placeholder="🔍 Qidirish (nom yoki brend)..."
-          value={qidiruv}
-          onChange={(e) => setQidiruv(e.target.value)}
-          className="w-full max-w-sm border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+          type="text" value={qidiruv} onChange={e => setQidiruv(e.target.value)}
+          placeholder="🔍  Qidirish — nom yoki brend..."
+          style={{ ...A.input, maxWidth: '320px' }}
         />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-100">
-            <tr>
-              <th className="text-left px-5 py-3 text-gray-500 font-medium">Mahsulot</th>
-              <th className="text-left px-4 py-3 text-gray-500 font-medium">Kategoriya</th>
-              <th className="text-left px-4 py-3 text-gray-500 font-medium">Narx</th>
-              <th className="text-center px-4 py-3 text-gray-500 font-medium">Mavjud</th>
-              <th className="text-center px-4 py-3 text-gray-500 font-medium">Featured</th>
-              <th className="text-right px-5 py-3 text-gray-500 font-medium">Amallar</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {filtrlangan.map((m) => (
-              <tr key={m.id} className="hover:bg-gray-50">
-                <td className="px-5 py-3">
-                  <div className="flex items-center gap-3">
-                    {m.asosiyRasmUrl ? (
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
-                        <Image src={m.asosiyRasmUrl} alt={m.nom} fill className="object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 flex-shrink-0">📷</div>
-                    )}
-                    <div>
-                      <div className="font-medium text-gray-900">{m.nom}</div>
-                      {m.brend && <div className="text-xs text-gray-400">{m.brend}</div>}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-gray-600">{m.kategoriya?.nom || '—'}</td>
-                <td className="px-4 py-3 text-gray-900 font-medium">
-                  {m.narx ? `${m.narx.toLocaleString()} ${m.narxBirligi}` : '—'}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => mavjudlikToggle(m.id, m.mavjudligi)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      m.mavjudligi ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
-                    }`}
-                  >
-                    {m.mavjudligi ? '✅ Bor' : '❌ Yo\'q'}
-                  </button>
-                </td>
-                <td className="px-4 py-3 text-center">
-                  {m.featured ? <span className="text-yellow-500">⭐</span> : <span className="text-gray-300">—</span>}
-                </td>
-                <td className="px-5 py-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Link
-                      href={`/admin/mahsulotlar/${m.id}`}
-                      className="text-blue-500 hover:underline text-xs"
-                    >
-                      ✏️ Tahrirlash
-                    </Link>
-                    <button
-                      onClick={() => ochir(m.id, m.nom)}
-                      className="text-red-500 hover:underline text-xs"
-                    >
-                      🗑
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filtrlangan.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
-            {qidiruv ? 'Natija topilmadi' : 'Hozircha mahsulotlar yo\'q'}
+      {/* Jadval */}
+      <div style={A.card}>
+        {/* Header */}
+        <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr 1fr 80px 80px 100px', gap: '12px', padding: '10px 20px', background: '#f9faf8', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+          {['Mahsulot', 'Kategoriya', 'Narx', 'Mavjud', 'Featured', 'Amallar'].map(h => (
+            <span key={h} style={A.th}>{h}</span>
+          ))}
+        </div>
+
+        {filtrlangan.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 0', color: '#d1d5db', fontSize: '14px' }}>
+            {qidiruv ? 'Natija topilmadi' : 'Mahsulotlar yo\'q'}
           </div>
-        )}
+        ) : filtrlangan.map((m, i) => (
+          <div key={m.id} style={{
+            display: 'grid', gridTemplateColumns: '2.5fr 1fr 1fr 80px 80px 100px', gap: '12px',
+            padding: '12px 20px', borderBottom: i < filtrlangan.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+            alignItems: 'center',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', overflow: 'hidden', background: '#f5f5f0', flexShrink: 0, position: 'relative' }}>
+                {m.asosiyRasmUrl
+                  ? <Image src={m.asosiyRasmUrl} alt={m.nom} fill style={{ objectFit: 'cover' }} />
+                  : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>📷</div>
+                }
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: '13px', color: '#0a0a0a' }}>{m.nom}</div>
+                {m.brend && <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{m.brend}</div>}
+              </div>
+            </div>
+            <span style={{ fontSize: '13px', color: '#6b7280' }}>{m.kategoriya?.nom || '—'}</span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#0a0a0a' }}>
+              {m.narx ? `${Number(m.narx).toLocaleString()} ${m.narxBirligi}` : '—'}
+            </span>
+            <div>
+              <button onClick={() => mavjudlikToggle(m.id, m.mavjudligi)}
+                style={A.badge(m.mavjudligi ? 'rgba(61,184,81,0.1)' : 'rgba(239,68,68,0.08)', m.mavjudligi ? '#16a34a' : '#dc2626')}>
+                {m.mavjudligi ? '✓ Bor' : '✗ Yo\'q'}
+              </button>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              {m.featured ? <span style={{ color: '#f59e0b', fontSize: '16px' }}>★</span> : <span style={{ color: '#e5e7eb' }}>★</span>}
+            </div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <Link href={`/admin/mahsulotlar/${m.id}`} style={{ fontSize: '12px', color: '#6366f1', textDecoration: 'none', fontWeight: 500 }}>Tahrirlash</Link>
+              <button onClick={() => ochir(m.id, m.nom)} style={{ fontSize: '12px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>O'chirish</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

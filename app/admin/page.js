@@ -3,6 +3,14 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
+const S = {
+  card: { background: '#fff', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.06)', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' },
+  h1: { fontSize: '24px', fontWeight: 700, color: '#0a0a0a', margin: '0 0 4px', letterSpacing: '-0.03em' },
+  sub: { fontSize: '14px', color: '#9ca3af', margin: 0 },
+  label: { fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em' },
+  val: { fontSize: '36px', fontWeight: 800, color: '#0a0a0a', letterSpacing: '-0.04em', lineHeight: 1.1 },
+}
+
 async function getStats() {
   const [mahsulotlar, kategoriyalar, postlar, yangiZayavkalar, jamiZayavkalar, oxirgiZayavkalar] =
     await Promise.all([
@@ -11,92 +19,102 @@ async function getStats() {
       prisma.post.count({ where: { holat: 'published' } }),
       prisma.zayavka.count({ where: { holat: 'new' } }),
       prisma.zayavka.count(),
-      prisma.zayavka.findMany({
-        orderBy: { sana: 'desc' },
-        take: 5,
-      }),
+      prisma.zayavka.findMany({ orderBy: { sana: 'desc' }, take: 6 }),
     ])
   return { mahsulotlar, kategoriyalar, postlar, yangiZayavkalar, jamiZayavkalar, oxirgiZayavkalar }
 }
 
 const HOLAT_STIL = {
-  new: 'bg-blue-100 text-blue-700',
-  inProgress: 'bg-yellow-100 text-yellow-700',
-  done: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-600',
-}
-const HOLAT_NOMI = {
-  new: '🆕 Yangi',
-  inProgress: '⏳ Jarayonda',
-  done: '✅ Bajarildi',
-  rejected: '❌ Rad etildi',
+  new: { bg: 'rgba(232,73,29,0.08)', color: '#E8491D', label: 'Yangi' },
+  inProgress: { bg: 'rgba(234,179,8,0.1)', color: '#b45309', label: 'Jarayonda' },
+  done: { bg: 'rgba(61,184,81,0.1)', color: '#16a34a', label: 'Bajarildi' },
+  rejected: { bg: 'rgba(239,68,68,0.08)', color: '#dc2626', label: 'Rad etildi' },
 }
 
 export default async function AdminDashboard() {
-  const { mahsulotlar, kategoriyalar, postlar, yangiZayavkalar, jamiZayavkalar, oxirgiZayavkalar } =
-    await getStats()
+  const { mahsulotlar, kategoriyalar, postlar, yangiZayavkalar, oxirgiZayavkalar } = await getStats()
 
   const cards = [
-    { label: 'Yangi zayavkalar', value: yangiZayavkalar, icon: '🆕', color: 'bg-red-500', href: '/admin/zayavkalar' },
-    { label: 'Jami mahsulotlar', value: mahsulotlar, icon: '🛒', color: 'bg-blue-500', href: '/admin/mahsulotlar' },
-    { label: 'Kategoriyalar', value: kategoriyalar, icon: '📁', color: 'bg-green-500', href: '/admin/kategoriyalar' },
-    { label: 'Nashr yangiliklar', value: postlar, icon: '📰', color: 'bg-purple-500', href: '/admin/yangiliklar' },
+    { label: 'Yangi zayavkalar', value: yangiZayavkalar, accent: '#E8491D', href: '/admin/zayavkalar', desc: 'Ko\'rib chiqilmagan' },
+    { label: 'Mahsulotlar', value: mahsulotlar, accent: '#0a0a0a', href: '/admin/mahsulotlar', desc: 'Jami katalogda' },
+    { label: 'Kategoriyalar', value: kategoriyalar, accent: '#3DB851', href: '/admin/kategoriyalar', desc: 'Faol kategoriyalar' },
+    { label: 'Yangiliklar', value: postlar, accent: '#6366f1', href: '/admin/yangiliklar', desc: 'Nashr etilgan' },
   ]
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">Ummed tibbiy jihozlar boshqaruv paneli</p>
+      {/* Header */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={S.h1}>Dashboard</h1>
+        <p style={S.sub}>Ummed tibbiy jihozlar boshqaruv paneli</p>
       </div>
 
-      {/* Statistika kartalar */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      {/* Stat kartalar */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
         {cards.map((c) => (
-          <Link key={c.label} href={c.href}>
-            <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center text-2xl mb-4`}>
-                {c.icon}
+          <Link key={c.label} href={c.href} style={{ textDecoration: 'none' }}>
+            <div style={{
+              ...S.card, cursor: 'pointer',
+              transition: 'box-shadow 0.2s, transform 0.2s',
+              ':hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.1)' },
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <span style={S.label}>{c.label}</span>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.accent }} />
               </div>
-              <div className="text-3xl font-bold text-gray-900">{c.value}</div>
-              <div className="text-gray-500 text-sm mt-1">{c.label}</div>
+              <div style={S.val}>{c.value}</div>
+              <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '6px' }}>{c.desc}</div>
             </div>
           </Link>
         ))}
       </div>
 
       {/* Oxirgi zayavkalar */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-gray-900">Oxirgi zayavkalar</h2>
-          <Link href="/admin/zayavkalar" className="text-red-500 text-sm hover:underline">
-            Hammasini ko'rish →
+      <div style={S.card}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#0a0a0a', margin: '0 0 2px', letterSpacing: '-0.02em' }}>
+              Oxirgi zayavkalar
+            </h2>
+            <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0 }}>Eng so'nggi buyurtmalar</p>
+          </div>
+          <Link href="/admin/zayavkalar" style={{ fontSize: '13px', fontWeight: 600, color: '#E8491D', textDecoration: 'none' }}>
+            Barchasi →
           </Link>
         </div>
 
         {oxirgiZayavkalar.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">Hozircha zayavkalar yo'q</p>
+          <div style={{ textAlign: 'center', padding: '48px 0', color: '#d1d5db', fontSize: '14px' }}>
+            Hozircha zayavkalar yo'q
+          </div>
         ) : (
-          <div className="space-y-3">
-            {oxirgiZayavkalar.map((z) => (
-              <div key={z.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <div className="font-medium text-gray-900">{z.ism || 'Noma\'lum'}</div>
-                  <div className="text-sm text-gray-500">{z.telefon}</div>
-                  {z.mahsulot && (
-                    <div className="text-xs text-gray-400 mt-0.5">📦 {z.mahsulot}</div>
-                  )}
-                </div>
-                <div className="text-right">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${HOLAT_STIL[z.holat]}`}>
-                    {HOLAT_NOMI[z.holat]}
-                  </span>
-                  <div className="text-xs text-gray-400 mt-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+            {/* Table header */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr auto auto', gap: '12px', padding: '8px 12px', background: '#f9faf8', borderRadius: '8px', marginBottom: '4px' }}>
+              {['Ism', 'Telefon', 'Mahsulot', 'Sana', 'Holat'].map(h => (
+                <span key={h} style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</span>
+              ))}
+            </div>
+            {oxirgiZayavkalar.map((z) => {
+              const h = HOLAT_STIL[z.holat] || HOLAT_STIL.new
+              return (
+                <div key={z.id} style={{
+                  display: 'grid', gridTemplateColumns: '1fr 1fr 2fr auto auto', gap: '12px',
+                  padding: '12px', borderRadius: '8px', alignItems: 'center',
+                  transition: 'background 0.15s',
+                }}>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#0a0a0a' }}>{z.ism || '—'}</span>
+                  <span style={{ fontSize: '13px', color: '#6b7280' }}>{z.telefon || '—'}</span>
+                  <span style={{ fontSize: '13px', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{z.mahsulot || '—'}</span>
+                  <span style={{ fontSize: '12px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
                     {new Date(z.sana).toLocaleDateString('uz-UZ')}
-                  </div>
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '20px', background: h.bg, color: h.color, whiteSpace: 'nowrap' }}>
+                    {h.label}
+                  </span>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

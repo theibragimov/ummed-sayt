@@ -1,117 +1,95 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { A } from '@/components/admin/AdminStyles'
 
-const BOSHLANGICH = { nom: '', matn: '', havola: '', yangiTabda: false, faol: true }
+const INIT = { nom: '', matn: '', havola: '', yangiTabda: false, faol: true }
 
 export default function TugmalarPage() {
   const [tugmalar, setTugmalar] = useState([])
-  const [form, setForm] = useState(BOSHLANGICH)
+  const [form, setForm] = useState(INIT)
   const [tahrirlash, setTahrirlash] = useState(null)
   const [modal, setModal] = useState(false)
 
   useEffect(() => { yuklash() }, [])
+  async function yuklash() { const r = await fetch('/api/tugmalar'); setTugmalar(await r.json()) }
 
-  async function yuklash() {
-    const res = await fetch('/api/tugmalar')
-    setTugmalar(await res.json())
-  }
-
-  function ochModal(tugma = null) {
-    setTahrirlash(tugma)
-    setForm(tugma ? { nom: tugma.nom, matn: tugma.matn, havola: tugma.havola, yangiTabda: tugma.yangiTabda, faol: tugma.faol } : BOSHLANGICH)
+  function ochModal(t = null) {
+    setTahrirlash(t)
+    setForm(t ? { nom: t.nom, matn: t.matn, havola: t.havola, yangiTabda: t.yangiTabda, faol: t.faol } : INIT)
     setModal(true)
   }
 
   async function saqlash() {
-    if (tahrirlash) {
-      await fetch(`/api/tugmalar/${tahrirlash.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
-    } else {
-      await fetch('/api/tugmalar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
-    }
-    setModal(false)
-    yuklash()
+    if (tahrirlash) await fetch(`/api/tugmalar/${tahrirlash.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    else await fetch('/api/tugmalar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+    setModal(false); yuklash()
   }
 
   async function ochir(id, nom) {
     if (!confirm(`"${nom}" ni o'chirmoqchimisiz?`)) return
-    await fetch(`/api/tugmalar/${id}`, { method: 'DELETE' })
-    yuklash()
+    await fetch(`/api/tugmalar/${id}`, { method: 'DELETE' }); yuklash()
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tugmalar va Havolalar</h1>
-          <p className="text-gray-500 text-sm mt-1">Saytdagi CTA tugmalarini boshqarish</p>
+          <h1 style={A.h1}>Tugmalar va Havolalar</h1>
+          <p style={{ ...A.sub, marginTop: '4px' }}>Saytdagi CTA tugmalarini boshqarish</p>
         </div>
-        <button onClick={() => ochModal()} className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm">
-          + Yangi tugma
-        </button>
+        <button onClick={() => ochModal()} style={A.btnPrimary}>+ Yangi tugma</button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="divide-y divide-gray-50">
-          {tugmalar.map((t) => (
-            <div key={t.id} className="p-5 hover:bg-gray-50 flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-900">{t.matn}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${t.faol ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {t.faol ? '✅ Faol' : '⛔ Nofaol'}
-                  </span>
-                  {t.yangiTabda && <span className="text-xs text-gray-400">↗ Yangi tab</span>}
-                </div>
-                <div className="text-xs text-gray-400 mt-0.5">📌 {t.nom}</div>
-                <div className="text-xs text-blue-500 mt-0.5">🔗 {t.havola}</div>
+      <div style={A.card}>
+        {tugmalar.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 0', color: '#d1d5db', fontSize: '14px' }}>Tugmalar yo'q</div>
+        ) : tugmalar.map((t, i) => (
+          <div key={t.id} style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 20px', borderBottom: i < tugmalar.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#0a0a0a' }}>{t.matn}</span>
+                <span style={A.badge(t.faol ? 'rgba(61,184,81,0.1)' : '#f5f5f0', t.faol ? '#16a34a' : '#9ca3af')}>
+                  {t.faol ? 'Faol' : 'Nofaol'}
+                </span>
+                {t.yangiTabda && <span style={{ fontSize: '11px', color: '#9ca3af' }}>↗ Yangi tab</span>}
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => ochModal(t)} className="text-blue-500 hover:underline text-xs">✏️ Tahrirlash</button>
-                <button onClick={() => ochir(t.id, t.nom)} className="text-red-500 hover:underline text-xs">🗑</button>
-              </div>
+              <div style={{ fontSize: '12px', color: '#9ca3af' }}>📌 {t.nom}</div>
+              <div style={{ fontSize: '12px', color: '#6366f1', marginTop: '2px' }}>🔗 {t.havola}</div>
             </div>
-          ))}
-        </div>
-        {tugmalar.length === 0 && <div className="text-center py-16 text-gray-400">Tugmalar yo'q</div>}
+            <div style={{ display: 'flex', gap: '14px' }}>
+              <button onClick={() => ochModal(t)} style={{ fontSize: '12px', color: '#6366f1', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 500 }}>Tahrirlash</button>
+              <button onClick={() => ochir(t.id, t.nom)} style={{ fontSize: '12px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>O'chirish</button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {modal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-lg font-semibold mb-5">{tahrirlash ? 'Tugmani tahrirlash' : 'Yangi tugma'}</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ichki nom *</label>
-                <input value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })}
-                  placeholder="Masalan: Bosh sahifa hero tugmasi"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
+        <div style={A.overlay}>
+          <div style={A.modal}>
+            <h3 style={{ ...A.h2, marginBottom: '20px' }}>{tahrirlash ? 'Tahrirlash' : 'Yangi tugma'}</h3>
+            {[['nom', 'Ichki nom *', 'Masalan: Hero tugmasi'], ['matn', 'Tugma matni *', 'Masalan: Buyurtma bering'], ['havola', 'Havola (URL)', '/boglanish yoki https://...']].map(([key, label, ph]) => (
+              <div key={key} style={{ marginBottom: '14px' }}>
+                <label style={A.label}>{label}</label>
+                <input value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} placeholder={ph} style={A.input} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tugma matni *</label>
-                <input value={form.matn} onChange={(e) => setForm({ ...form, matn: e.target.value })}
-                  placeholder="Masalan: Buyurtma bering"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Havola (URL)</label>
-                <input value={form.havola} onChange={(e) => setForm({ ...form, havola: e.target.value })}
-                  placeholder="/boglanish yoki https://..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
-              </div>
-              <div className="flex gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={form.yangiTabda} onChange={(e) => setForm({ ...form, yangiTabda: e.target.checked })} className="w-4 h-4 accent-blue-500" />
-                  <span className="text-sm text-gray-700">Yangi tabda ochish</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={form.faol} onChange={(e) => setForm({ ...form, faol: e.target.checked })} className="w-4 h-4 accent-green-500" />
-                  <span className="text-sm text-gray-700">Faol</span>
-                </label>
-              </div>
+            ))}
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
+                <input type="checkbox" checked={form.yangiTabda} onChange={e => setForm({ ...form, yangiTabda: e.target.checked })} style={{ width: '16px', height: '16px', accentColor: '#6366f1' }} />
+                Yangi tabda ochish
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
+                <input type="checkbox" checked={form.faol} onChange={e => setForm({ ...form, faol: e.target.checked })} style={{ width: '16px', height: '16px', accentColor: '#3DB851' }} />
+                Faol
+              </label>
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={saqlash} className="flex-1 bg-red-500 text-white py-2.5 rounded-xl font-medium hover:bg-red-600">Saqlash</button>
-              <button onClick={() => setModal(false)} className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200">Bekor</button>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={saqlash} style={{ ...A.btnPrimary, flex: 1 }}>Saqlash</button>
+              <button onClick={() => setModal(false)} style={{ ...A.btnGhost, flex: 1 }}>Bekor</button>
             </div>
           </div>
         </div>
