@@ -6,12 +6,18 @@ export async function GET(request) {
   const kategoriya = searchParams.get('kategoriya')
   const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : undefined
   const featured = searchParams.get('featured') === 'true'
+  const turi = searchParams.get('turi')
+  const hammasi = searchParams.get('hammasi') === 'true'
 
   let mahsulotlar
-  if (kategoriya || limit || featured) {
+  if (hammasi) {
+    mahsulotlar = await getAllMahsulotlar()
+  } else if (turi) {
+    mahsulotlar = await getAllMahsulotlar({ turi })
+  } else if (kategoriya || limit || featured) {
     mahsulotlar = await getMahsulotlar({ kategoriyaSlug: kategoriya || undefined, limit, featured: featured || undefined })
   } else {
-    mahsulotlar = await getAllMahsulotlar()
+    mahsulotlar = await getMahsulotlar()
   }
   return NextResponse.json(mahsulotlar)
 }

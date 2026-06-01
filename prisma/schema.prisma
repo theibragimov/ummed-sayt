@@ -37,6 +37,7 @@ model Mahsulot {
   brend         String?
   modelRaqami   String?        @map("model_raqami")
   featured      Boolean        @default(false)
+  turi          String         @default("katalog")
   rasmlar       MahsulotRasm[]
   yaratilgan    DateTime       @default(now()) @map("yaratilgan")
 

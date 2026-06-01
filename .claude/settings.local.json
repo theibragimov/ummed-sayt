@@ -59,7 +59,15 @@
       "Bash(npx next *)",
       "Bash(mkdir -p /Users/test/ummed-sayt/app/api/admin/login \\\\ *)",
       "Bash(git -C /Users/test/ummed-sayt add -A)",
-      "Bash(git -C /Users/test/ummed-sayt commit -m ' *)"
+      "Bash(git -C /Users/test/ummed-sayt commit -m ' *)",
+      "Bash(npx skills *)",
+      "Bash(curl -sI https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)",
+      "Bash(curl -sI https://raw.githubusercontent.com/nextlevelbuilder/ui-ux-pro-max-skill/main/package.json)",
+      "Bash(curl -sI https://raw.githubusercontent.com/nextlevelbuilder/ui-ux-pro-max-skill/master/package.json)",
+      "Bash(curl -s https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill/contents/)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npx prisma *)"
     ]
   }
 }

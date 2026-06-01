@@ -10,7 +10,7 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     nom: '', slug: '', narx: '', narxBirligi: "so'm",
     brend: '', modelRaqami: '', qisqaTavsif: '', toliqTavsif: '',
     mavjudligi: true, featured: false, kategoriyaId: '',
-    asosiyRasmUrl: '', ...boshlangich,
+    asosiyRasmUrl: '', turi: 'katalog', ...boshlangich,
   })
   const [kategoriyalar, setKategoriyalar] = useState([])
   const [saqlash, setSaqlash] = useState(false)
@@ -68,7 +68,14 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
               {kategoriyalar.map(k => <option key={k.id} value={k.id}>{k.nom}</option>)}
             </select>
           </div>
-          <div style={{ paddingTop: '20px' }}>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Turi (bo'lim)</label>
+            <select value={form.turi} onChange={e => oz('turi', e.target.value)} style={A.select}>
+              <option value="katalog">🗂 Katalog (asosiy)</option>
+              <option value="distribyutor">🤝 Distribyutor mahsulot</option>
+              <option value="ummed-brend">⭐ Ummed brendi</option>
+            </select>
+          </div>
+          <div style={{ paddingTop: '8px' }}>
             <div style={{ display: 'flex', gap: '20px', marginTop: '6px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
                 <input type="checkbox" checked={form.mavjudligi} onChange={e => oz('mavjudligi', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#3DB851' }} />

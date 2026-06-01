@@ -6,6 +6,7 @@ const MENU = [
   { href: '/admin', label: 'Dashboard', icon: '▦', exact: true },
   { href: '/admin/zayavkalar', label: 'Zayavkalar', icon: '◫' },
   { href: '/admin/mahsulotlar', label: 'Mahsulotlar', icon: '◈' },
+  { href: '/admin/mahsulotlar/import', label: 'CSV Import', icon: '⬆', sub: true },
   { href: '/admin/kategoriyalar', label: 'Kategoriyalar', icon: '◉' },
   { href: '/admin/yangiliklar', label: 'Yangiliklar', icon: '◎' },
   { href: '/admin/tugmalar', label: 'Tugmalar', icon: '◯' },
@@ -61,17 +62,17 @@ export default function AdminSidebar() {
           return (
             <Link key={item.href} href={item.href} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
-              padding: '9px 12px',
+              padding: item.sub ? '7px 12px 7px 36px' : '9px 12px',
               borderRadius: '8px',
-              fontSize: '14px',
+              fontSize: item.sub ? '13px' : '14px',
               fontWeight: active ? 600 : 500,
-              color: active ? '#E8491D' : '#374151',
+              color: active ? '#E8491D' : item.sub ? '#6b7280' : '#374151',
               background: active ? 'rgba(232,73,29,0.07)' : 'transparent',
               textDecoration: 'none',
               transition: 'all 0.15s ease',
               borderLeft: active ? '2px solid #E8491D' : '2px solid transparent',
             }}>
-              <span style={{ fontSize: '16px', opacity: active ? 1 : 0.5 }}>{item.icon}</span>
+              <span style={{ fontSize: item.sub ? '13px' : '16px', opacity: active ? 1 : 0.5 }}>{item.icon}</span>
               {item.label}
               {item.href === '/admin/zayavkalar' && (
                 <span style={{

@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -183,21 +185,15 @@ export default function HomePage() {
   const { t, lang } = useLang();
   const L = (uz, ru) => (lang === "ru" ? ru : uz);
 
-  // Distribyutor mahsulotlar
-  const distribItems = [
-    { ...t.products.items.satellite, ...DISTRIB_VISUALS.satellite, tag: "Diagnostika" },
-    { ...t.products.items.palma, ...DISTRIB_VISUALS.palma, tag: "Laboratoriya" },
-    { ...t.products.items.easydrip, ...DISTRIB_VISUALS.easydrip, tag: "Infuziya" },
-    { ...t.products.items.makon, ...DISTRIB_VISUALS.makon, tag: "Farmatsevtika" },
-  ];
+  const [distribItems, setDistribItems] = useState([]);
+  const [ownItems, setOwnItems] = useState([]);
 
-  // Ummed brendi mahsulotlari
-  const ownItems = [
-    { ...t.ownBrand.items.tonometr, ...OWN_VISUALS.tonometr, tag: "Tonometr" },
-    { ...t.ownBrand.items.glukometr, ...OWN_VISUALS.glukometr, tag: "Glukometr" },
-    { ...t.ownBrand.items.termometr, ...OWN_VISUALS.termometr, tag: "Termometr" },
-    { ...t.ownBrand.items.oksimetr, ...OWN_VISUALS.oksimetr, tag: "Oksimetr" },
-  ];
+  useEffect(() => {
+    fetch("/api/mahsulotlar?turi=distribyutor")
+      .then(r => r.json()).then(d => setDistribItems(Array.isArray(d) ? d : []));
+    fetch("/api/mahsulotlar?turi=ummed-brend")
+      .then(r => r.json()).then(d => setOwnItems(Array.isArray(d) ? d : []));
+  }, []);
 
   return (
     <>
