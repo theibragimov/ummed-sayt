@@ -21,17 +21,19 @@ export default function ProductGrid({ items }) {
     </div>
   );
 
-  const tripled = [...items, ...items, ...items];
-  const trackRef = useRef(null);
-  const lockRef = useRef(false);
-  const [active, setActive] = useState(N);
-
   const VISIBLE = 4;
   const GAP = 20;
   const IMG_H = 340;
 
+  // N VISIBLE dan kam bo'lsa — oddiy grid, carousel yo'q
+  const useCarousel = N > VISIBLE;
+  const tripled = useCarousel ? [...items, ...items, ...items] : items;
+  const trackRef = useRef(null);
+  const lockRef = useRef(false);
+  const [active, setActive] = useState(N);
+
   const slide = (dir) => {
-    if (lockRef.current) return;
+    if (!useCarousel || lockRef.current) return;
     lockRef.current = true;
     const t = trackRef.current;
     t.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
@@ -45,6 +47,16 @@ export default function ProductGrid({ items }) {
   };
 
   const arrowTop = IMG_H / 2 - 22;
+
+  // Grid mode: N <= VISIBLE
+  if (!useCarousel) {
+    return (
+      <div className="grid gap-5"
+        style={{ gridTemplateColumns: `repeat(${Math.min(N, VISIBLE)}, 1fr)` }}>
+        {items.map((item, idx) => <ProductCard key={idx} item={item} idx={idx} GAP={GAP} VISIBLE={VISIBLE} />)}
+      </div>
+    );
+  }
 
   return (
     <div className="relative px-14">
@@ -138,4 +150,53 @@ export default function ProductGrid({ items }) {
 function getCategoryEmoji(slug) {
   const map = { diagnostika: "🩺", "nafas-jihozlari": "💨", "yurak-jihozlari": "❤️", "tibbiy-mebel": "🛏️", sterilizatsiya: "🧪" };
   return map[slug] || "🏥";
+}
+
+const IMG_H = 340;
+const BG_COLORS_GRID = [
+  "linear-gradient(160deg, #dbeafe 0%, #bfdbfe 100%)",
+  "linear-gradient(160deg, #d1fae5 0%, #a7f3d0 100%)",
+  "linear-gradient(160deg, #fef3c7 0%, #fde68a 100%)",
+  "linear-gradient(160deg, #ede9fe 0%, #ddd6fe 100%)",
+];
+
+function ProductCard({ item, idx }) {
+  const isDbItem = !!item.slug;
+  const name = item.nom || item.name || "";
+  const desc = item.qisqaTavsif || item.desc || "";
+  const bg = item.gradient || BG_COLORS_GRID[idx % BG_COLORS_GRID.length];
+  const href = isDbItem ? `/mahsulot/${item.slug}` : null;
+
+  const inner = (
+    <>
+      <div className="relative w-full overflow-hidden flex items-center justify-center"
+        style={{ background: bg, height: `${IMG_H}px` }}>
+        {item.asosiyRasmUrl ? (
+          <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover" }} />
+        ) : item.visual ? (
+          <div>{item.visual}</div>
+        ) : (
+          <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
+        )}
+      </div>
+      <div className="mt-5">
+        {item.kategoriya?.nom && (
+          <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#E8491D" }}>
+            {item.kategoriya.nom}
+          </span>
+        )}
+        <h3 className="text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
+        <p className="mt-2 text-[15px] font-light leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
+        {isDbItem && item.narx && (
+          <p className="mt-2 text-base font-semibold" style={{ color: "#E8491D" }}>{item.narx.toLocaleString("uz-UZ")} so'm</p>
+        )}
+      </div>
+    </>
+  );
+
+  return href ? (
+    <Link href={href} className="group block no-underline cursor-pointer">{inner}</Link>
+  ) : (
+    <div className="group">{inner}</div>
+  );
 }

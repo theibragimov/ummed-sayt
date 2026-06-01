@@ -11,7 +11,7 @@ export default function MahsulotlarPage() {
   useEffect(() => { yuklash() }, [])
 
   async function yuklash() {
-    const res = await fetch('/api/mahsulotlar')
+    const res = await fetch('/api/mahsulotlar?hammasi=true')
     setMahsulotlar(await res.json())
   }
 
@@ -82,7 +82,18 @@ export default function MahsulotlarPage() {
                 }
               </div>
               <div>
-                <div style={{ fontWeight: 600, fontSize: '13px', color: '#0a0a0a' }}>{m.nom}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '13px', color: '#0a0a0a' }}>{m.nom}</span>
+                  {m.turi && m.turi !== 'katalog' && (
+                    <span style={{
+                      fontSize: '10px', fontWeight: 600, padding: '1px 6px', borderRadius: '4px',
+                      background: m.turi === 'ummed-brend' ? 'rgba(245,158,11,0.12)' : 'rgba(99,102,241,0.1)',
+                      color: m.turi === 'ummed-brend' ? '#b45309' : '#6366f1',
+                    }}>
+                      {m.turi === 'ummed-brend' ? '⭐ Brend' : '🤝 Dist.'}
+                    </span>
+                  )}
+                </div>
                 {m.brend && <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{m.brend}</div>}
               </div>
             </div>

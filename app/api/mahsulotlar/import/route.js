@@ -34,32 +34,23 @@ export async function POST(request) {
 
         const slug = slugYarat(m.nom)
 
+        const baseData = {
+          nom: m.nom,
+          narx: m.narx ?? null,
+          narxBirligi: m.narxBirligi || "so'm",
+          qisqaTavsif: m.qisqaTavsif || null,
+          mavjudligi: m.mavjudligi ?? true,
+          featured: m.featured ?? false,
+          kategoriyaId,
+          brend: m.brend || null,
+          modelRaqami: m.modelRaqami || null,
+          ...(m.asosiyRasmUrl ? { asosiyRasmUrl: m.asosiyRasmUrl } : {}),
+        }
+
         await prisma.mahsulot.upsert({
           where: { slug },
-          update: {
-            nom: m.nom,
-            narx: m.narx,
-            narxBirligi: m.narxBirligi || "so'm",
-            qisqaTavsif: m.qisqaTavsif || null,
-            mavjudligi: m.mavjudligi ?? true,
-            featured: m.featured ?? false,
-            kategoriyaId,
-            brend: m.brend || null,
-            modelRaqami: m.modelRaqami || null,
-          },
-          create: {
-            nom: m.nom,
-            slug,
-            narx: m.narx,
-            narxBirligi: m.narxBirligi || "so'm",
-            qisqaTavsif: m.qisqaTavsif || null,
-            mavjudligi: m.mavjudligi ?? true,
-            featured: m.featured ?? false,
-            kategoriyaId,
-            brend: m.brend || null,
-            modelRaqami: m.modelRaqami || null,
-            asosiyRasmUrl: null,
-          },
+          update: baseData,
+          create: { ...baseData, slug, asosiyRasmUrl: m.asosiyRasmUrl || null },
         })
 
         // Upsert natijasini aniqlash uchun oddiy hisob
