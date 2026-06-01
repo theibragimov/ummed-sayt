@@ -1,8 +1,18 @@
 import { NextResponse } from 'next/server'
-import { getAllMahsulotlar, createMahsulot } from '@/lib/db'
+import { getAllMahsulotlar, getMahsulotlar, createMahsulot } from '@/lib/db'
 
-export async function GET() {
-  const mahsulotlar = await getAllMahsulotlar()
+export async function GET(request) {
+  const { searchParams } = new URL(request.url)
+  const kategoriya = searchParams.get('kategoriya')
+  const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : undefined
+  const featured = searchParams.get('featured') === 'true'
+
+  let mahsulotlar
+  if (kategoriya || limit || featured) {
+    mahsulotlar = await getMahsulotlar({ kategoriyaSlug: kategoriya || undefined, limit, featured: featured || undefined })
+  } else {
+    mahsulotlar = await getAllMahsulotlar()
+  }
   return NextResponse.json(mahsulotlar)
 }
 

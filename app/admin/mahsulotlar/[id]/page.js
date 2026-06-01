@@ -5,7 +5,8 @@ import { getMahsulotById } from '@/lib/db'
 import { notFound } from 'next/navigation'
 
 export default async function MahsulotTahrirlash({ params }) {
-  const mahsulot = await getMahsulotById(params.id)
+  const { id } = await params
+  const mahsulot = await getMahsulotById(id)
   if (!mahsulot) notFound()
 
   const boshlangich = {
@@ -29,7 +30,7 @@ export default async function MahsulotTahrirlash({ params }) {
         <Link href="/admin/mahsulotlar" className="text-gray-400 hover:text-gray-600">← Orqaga</Link>
         <h1 className="text-2xl font-bold text-gray-900">Mahsulotni tahrirlash</h1>
       </div>
-      <MahsulotForm boshlangich={boshlangich} mahsulotId={params.id} />
+      <MahsulotForm boshlangich={boshlangich} mahsulotId={id} />
     </div>
   )
 }

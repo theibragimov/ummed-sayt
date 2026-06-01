@@ -5,7 +5,8 @@ import { getPostById } from '@/lib/db'
 import { notFound } from 'next/navigation'
 
 export default async function PostTahrirlash({ params }) {
-  const post = await getPostById(params.id)
+  const { id } = await params
+  const post = await getPostById(id)
   if (!post) notFound()
 
   const boshlangich = {
@@ -26,7 +27,7 @@ export default async function PostTahrirlash({ params }) {
         <Link href="/admin/yangiliklar" className="text-gray-400 hover:text-gray-600">← Orqaga</Link>
         <h1 className="text-2xl font-bold text-gray-900">Maqolani tahrirlash</h1>
       </div>
-      <PostForm boshlangich={boshlangich} postId={params.id} />
+      <PostForm boshlangich={boshlangich} postId={id} />
     </div>
   )
 }

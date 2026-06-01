@@ -40,13 +40,6 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     setSaqlash(false)
   }
 
-  const F = ({ label, children }) => (
-    <div style={{ marginBottom: '16px' }}>
-      <label style={A.label}>{label}</label>
-      {children}
-    </div>
-  )
-
   return (
     <form onSubmit={yuborish} style={{ maxWidth: '680px' }}>
       {xato && (
@@ -60,20 +53,21 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Asosiy ma'lumotlar
         </div>
-        <F label="Mahsulot nomi *">
+        <div style={{ marginBottom: '16px' }}>
+          <label style={A.label}>Mahsulot nomi *</label>
           <input required value={form.nom} onChange={e => oz('nom', e.target.value)} style={A.input} />
-        </F>
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <F label="Brend"><input value={form.brend} onChange={e => oz('brend', e.target.value)} style={A.input} /></F>
-          <F label="Model raqami"><input value={form.modelRaqami} onChange={e => oz('modelRaqami', e.target.value)} style={A.input} /></F>
-          <F label="Narx"><input type="number" value={form.narx} onChange={e => oz('narx', e.target.value)} style={A.input} /></F>
-          <F label="Narx birligi"><input value={form.narxBirligi} onChange={e => oz('narxBirligi', e.target.value)} style={A.input} /></F>
-          <F label="Kategoriya">
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Brend</label><input value={form.brend} onChange={e => oz('brend', e.target.value)} style={A.input} /></div>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Model raqami</label><input value={form.modelRaqami} onChange={e => oz('modelRaqami', e.target.value)} style={A.input} /></div>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Narx</label><input type="number" value={form.narx} onChange={e => oz('narx', e.target.value)} style={A.input} /></div>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Narx birligi</label><input value={form.narxBirligi} onChange={e => oz('narxBirligi', e.target.value)} style={A.input} /></div>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Kategoriya</label>
             <select value={form.kategoriyaId} onChange={e => oz('kategoriyaId', e.target.value)} style={A.select}>
               <option value="">— Tanlang —</option>
               {kategoriyalar.map(k => <option key={k.id} value={k.id}>{k.nom}</option>)}
             </select>
-          </F>
+          </div>
           <div style={{ paddingTop: '20px' }}>
             <div style={{ display: 'flex', gap: '20px', marginTop: '6px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
@@ -102,12 +96,14 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Tavsiflar
         </div>
-        <F label="Qisqa tavsif">
+        <div style={{ marginBottom: '16px' }}>
+          <label style={A.label}>Qisqa tavsif</label>
           <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={2} style={A.textarea} />
-        </F>
-        <F label="To'liq tavsif (HTML qabul qilinadi)">
+        </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={A.label}>To'liq tavsif (HTML qabul qilinadi)</label>
           <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
-        </F>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '12px' }}>

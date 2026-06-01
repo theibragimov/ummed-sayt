@@ -1,28 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { use } from "react";
-import { getProduct, getSimilar, formatPrice } from "@/lib/products";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
+
+function formatPrice(narx) {
+  if (!narx) return "Narxni so'rang";
+  return narx.toLocaleString("uz-UZ") + " so'm";
+}
 
 function ContactForm({ productName, pt }) {
   const [form, setForm] = useState({ name: "", phone: "", comment: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1200);
+    try {
+      await fetch("/api/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, mahsulot: productName }),
+      });
+    } catch (_) {}
+    setLoading(false);
+    setSent(true);
   }
 
   if (sent) {
@@ -49,13 +57,10 @@ function ContactForm({ productName, pt }) {
           {pt.formName} <span style={{ color: "#E8491D" }}>*</span>
         </label>
         <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          placeholder={pt.formName}
+          name="name" value={form.name}
+          onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+          required placeholder={pt.formName}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition"
-          style={{ "--tw-ring-color": "#E8491D" }}
         />
       </div>
       <div>
@@ -63,33 +68,23 @@ function ContactForm({ productName, pt }) {
           {pt.formPhone} <span style={{ color: "#E8491D" }}>*</span>
         </label>
         <input
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          required
-          placeholder="+998 90 000-00-00"
-          type="tel"
+          name="phone" value={form.phone} type="tel"
+          onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+          required placeholder="+998 90 000-00-00"
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition"
-          style={{ "--tw-ring-color": "#E8491D" }}
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {pt.formComment}
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{pt.formComment}</label>
         <textarea
-          name="comment"
-          value={form.comment}
-          onChange={handleChange}
-          rows={3}
+          name="comment" value={form.comment} rows={3}
+          onChange={(e) => setForm((p) => ({ ...p, comment: e.target.value }))}
           placeholder={`"${productName}" ${pt.formCommentPlaceholder}`}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition resize-none"
-          style={{ "--tw-ring-color": "#E8491D" }}
         />
       </div>
       <button
-        type="submit"
-        disabled={loading}
+        type="submit" disabled={loading}
         className="w-full py-3 rounded-xl text-white font-bold text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
         style={{ backgroundColor: "#E8491D" }}
       >
@@ -101,26 +96,49 @@ function ContactForm({ productName, pt }) {
 }
 
 export default function ProductPage({ params }) {
-  const { id } = use(params);
-  const product = getProduct(id);
-  const { t, lang } = useLang();
+  const { id: slug } = use(params);
+  const { t } = useLang();
   const pt = t.product;
 
-  if (!product) notFound();
-
-  const similar = getSimilar(product);
+  const [product, setProduct] = useState(null);
+  const [similar, setSimilar] = useState([]);
+  const [notFoundState, setNotFoundState] = useState(false);
   const [activeTab, setActiveTab] = useState("tavsif");
 
-  const name = lang === "ru" ? (product.nameRu || product.name) : product.name;
-  const desc = lang === "ru" ? (product.descRu || product.desc) : product.desc;
-  const fullDesc = lang === "ru" ? (product.fullDescRu || product.fullDesc) : product.fullDesc;
-  const specs = lang === "ru" ? (product.specsRu || product.specs) : product.specs;
-  const badge = product.badge
-    ? (lang === "ru" ? (product.badgeRu || product.badge) : product.badge)
-    : null;
-  const categoryLabel = lang === "ru"
-    ? (product.categoryLabelRu || product.categoryLabel)
-    : product.categoryLabel;
+  useEffect(() => {
+    fetch(`/api/mahsulotlar/${slug}`)
+      .then(async (r) => {
+        if (!r.ok) { setNotFoundState(true); return; }
+        const data = await r.json();
+        setProduct(data);
+        // O'xshash mahsulotlarni yuklash
+        if (data.kategoriya?.slug) {
+          fetch(`/api/mahsulotlar?kategoriya=${data.kategoriya.slug}&limit=3`)
+            .then((r2) => r2.json())
+            .then((list) => {
+              setSimilar((Array.isArray(list) ? list : []).filter((p) => p.id !== data.id).slice(0, 3));
+            });
+        }
+      })
+      .catch(() => setNotFoundState(true));
+  }, [slug]);
+
+  if (notFoundState) notFound();
+  if (!product) {
+    return (
+      <>
+        <SiteHeader />
+        <main className="flex items-center justify-center min-h-[60vh]" style={{ backgroundColor: "var(--bg)" }}>
+          <p className="text-sm text-gray-400">Yuklanmoqda...</p>
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
+
+  const specsRaw = product.texnikXususiyatlar;
+  const specs = Array.isArray(specsRaw) ? specsRaw : [];
+  const fullDesc = product.toliqTavsif || product.qisqaTavsif || "";
 
   return (
     <>
@@ -134,7 +152,7 @@ export default function ProductPage({ params }) {
             <span>/</span>
             <Link href="/katalog" className="hover:text-gray-600 transition-colors">{pt.breadcrumbCatalog}</Link>
             <span>/</span>
-            <span className="font-medium text-gray-700 truncate max-w-[200px]">{name}</span>
+            <span className="font-medium text-gray-700 truncate max-w-[200px]">{product.nom}</span>
           </nav>
         </div>
 
@@ -143,32 +161,42 @@ export default function ProductPage({ params }) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             {/* Chap: Rasm + Tabs */}
-            <div className="lg:col-span-2 space-y-6 anim-fade-left" style={{ animationDelay: "100ms" }}>
-
-              {/* Rasm */}
+            <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
                 <div
-                  className="relative flex items-center justify-center py-16 text-[140px] leading-none"
-                  style={{ backgroundColor: "#FFF5F3" }}
+                  className="relative flex items-center justify-center py-16 leading-none overflow-hidden"
+                  style={{ backgroundColor: "#FFF5F3", minHeight: 280 }}
                 >
-                  {badge && (
+                  {product.badge && (
                     <span
-                      className="absolute top-5 left-5 text-xs font-bold px-3 py-1.5 rounded-full text-white"
+                      className="absolute top-5 left-5 text-xs font-bold px-3 py-1.5 rounded-full text-white z-10"
                       style={{
                         backgroundColor:
                           product.badge === "Yangi" ? "#3DB851" :
                           product.badge === "Ommabop" ? "#E8491D" : "#6366f1",
                       }}
                     >
-                      {badge}
+                      {product.badge}
                     </span>
                   )}
-                  {!product.inStock && (
-                    <span className="absolute top-5 right-5 text-xs font-bold px-3 py-1.5 rounded-full bg-gray-400 text-white">
+                  {!product.mavjudligi && (
+                    <span className="absolute top-5 right-5 text-xs font-bold px-3 py-1.5 rounded-full bg-gray-400 text-white z-10">
                       {pt.outOfStock}
                     </span>
                   )}
-                  <span className="select-none">{product.img}</span>
+                  {product.asosiyRasmUrl ? (
+                    <Image
+                      src={product.asosiyRasmUrl}
+                      alt={product.nom}
+                      width={400}
+                      height={300}
+                      style={{ objectFit: "contain", maxHeight: 300 }}
+                    />
+                  ) : (
+                    <span className="text-[140px] select-none">
+                      {getCategoryEmoji(product.kategoriya?.slug)}
+                    </span>
+                  )}
                 </div>
 
                 {/* Tabs */}
@@ -176,17 +204,17 @@ export default function ProductPage({ params }) {
                   <div className="flex">
                     {[
                       { key: "tavsif", label: pt.tabDesc },
-                      { key: "specs", label: pt.tabSpecs },
+                      ...(specs.length > 0 ? [{ key: "specs", label: pt.tabSpecs }] : []),
                     ].map((tab) => (
                       <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={`flex-1 py-3.5 text-sm font-semibold border-b-2 transition-colors ${
+                        className={`flex-1 py-3.5 text-sm font-semibold border-b-2 transition-colors`}
+                        style={
                           activeTab === tab.key
-                            ? "border-[#E8491D] text-[#E8491D]"
-                            : "border-transparent text-gray-500 hover:text-gray-700"
-                        }`}
-                        style={activeTab === tab.key ? { borderColor: "#E8491D", color: "#E8491D" } : {}}
+                            ? { borderColor: "#E8491D", color: "#E8491D" }
+                            : { borderColor: "transparent", color: "#6b7280" }
+                        }
                       >
                         {tab.label}
                       </button>
@@ -196,13 +224,13 @@ export default function ProductPage({ params }) {
                   <div className="p-6">
                     {activeTab === "tavsif" ? (
                       <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                        {fullDesc}
+                        {fullDesc || <span className="text-gray-400 italic">Tavsif mavjud emas</span>}
                       </div>
                     ) : (
                       <table className="w-full text-sm">
                         <tbody>
                           {specs.map((s, i) => (
-                            <tr key={s.label} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                            <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                               <td className="py-2.5 px-3 font-medium text-gray-500 w-1/2 rounded-l-lg">{s.label}</td>
                               <td className="py-2.5 px-3 text-gray-800 font-semibold rounded-r-lg">{s.value}</td>
                             </tr>
@@ -216,43 +244,27 @@ export default function ProductPage({ params }) {
             </div>
 
             {/* O'ng: Narx + Form */}
-            <div className="space-y-5 anim-fade-right" style={{ animationDelay: "250ms" }}>
-
-              {/* Narx kartasi */}
+            <div className="space-y-5">
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
                 <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                  {categoryLabel}
+                  {product.kategoriya?.nom || ""}
                 </span>
                 <h1 className="text-2xl font-extrabold text-gray-800 mt-2 mb-4 leading-snug">
-                  {name}
+                  {product.nom}
                 </h1>
 
                 <div className="flex items-end gap-3 mb-5">
                   <span className="text-3xl font-extrabold" style={{ color: "#E8491D" }}>
-                    {formatPrice(product.price)}
+                    {formatPrice(product.narx)}
                   </span>
-                  {product.oldPrice && (
-                    <span className="text-base text-gray-400 line-through mb-1">
-                      {formatPrice(product.oldPrice)}
-                    </span>
-                  )}
                 </div>
 
-                {product.oldPrice && (
-                  <div
-                    className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full text-white mb-5"
-                    style={{ backgroundColor: "#3DB851" }}
-                  >
-                    💰 {Math.round((1 - product.price / product.oldPrice) * 100)}% {pt.discount}
-                  </div>
-                )}
-
-                <p className="text-sm text-gray-500 leading-relaxed mb-5">{desc}</p>
+                <p className="text-sm text-gray-500 leading-relaxed mb-5">{product.qisqaTavsif}</p>
 
                 <div className="flex items-center gap-2 mb-5">
-                  <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? "bg-green-500" : "bg-gray-400"}`} />
-                  <span className={`text-sm font-medium ${product.inStock ? "text-green-600" : "text-gray-400"}`}>
-                    {product.inStock ? pt.inStock : pt.outOfStock}
+                  <span className={`w-2.5 h-2.5 rounded-full ${product.mavjudligi ? "bg-green-500" : "bg-gray-400"}`} />
+                  <span className={`text-sm font-medium ${product.mavjudligi ? "text-green-600" : "text-gray-400"}`}>
+                    {product.mavjudligi ? pt.inStock : pt.outOfStock}
                   </span>
                 </div>
 
@@ -267,7 +279,7 @@ export default function ProductPage({ params }) {
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
                 <h2 className="text-base font-extrabold text-gray-800 mb-1">{pt.requestTitle}</h2>
                 <p className="text-xs text-gray-400 mb-5">{pt.requestDesc}</p>
-                <ContactForm productName={name} pt={pt} />
+                <ContactForm productName={product.nom} pt={pt} />
               </div>
             </div>
           </div>
@@ -280,38 +292,39 @@ export default function ProductPage({ params }) {
               {pt.similar}
             </Reveal>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {similar.map((p, idx) => {
-                const simName = lang === "ru" ? (p.nameRu || p.name) : p.name;
-                const simDesc = lang === "ru" ? (p.descRu || p.desc) : p.desc;
-                const simCatLabel = lang === "ru" ? (p.categoryLabelRu || p.categoryLabel) : p.categoryLabel;
-                return (
-                  <Link
-                    key={p.id}
-                    href={`/katalog/${p.id}`}
-                    className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col anim-fade-up"
-                    style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "both" }}
+              {similar.map((p, idx) => (
+                <Link
+                  key={p.id}
+                  href={`/katalog/${p.slug}`}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col"
+                >
+                  <div
+                    className="flex items-center justify-center h-36 overflow-hidden"
+                    style={{ backgroundColor: "#FFF5F3" }}
                   >
-                    <div className="flex items-center justify-center h-36 text-6xl" style={{ backgroundColor: "#FFF5F3" }}>
-                      {p.img}
+                    {p.asosiyRasmUrl ? (
+                      <Image src={p.asosiyRasmUrl} alt={p.nom} width={150} height={120} style={{ objectFit: "cover" }} />
+                    ) : (
+                      <span className="text-6xl">{getCategoryEmoji(p.kategoriya?.slug)}</span>
+                    )}
+                  </div>
+                  <div className="p-4 flex flex-col flex-1">
+                    <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">{p.kategoriya?.nom}</span>
+                    <h3 className="text-sm font-bold text-gray-800 mb-1 leading-snug group-hover:text-[#E8491D] transition-colors">
+                      {p.nom}
+                    </h3>
+                    <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">{p.qisqaTavsif}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base font-extrabold" style={{ color: "#E8491D" }}>
+                        {formatPrice(p.narx)}
+                      </span>
+                      <span className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white" style={{ backgroundColor: "#3DB851" }}>
+                        {pt.detailBtn}
+                      </span>
                     </div>
-                    <div className="p-4 flex flex-col flex-1">
-                      <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">{simCatLabel}</span>
-                      <h3 className="text-sm font-bold text-gray-800 mb-1 leading-snug group-hover:text-[#E8491D] transition-colors">
-                        {simName}
-                      </h3>
-                      <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">{simDesc}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base font-extrabold" style={{ color: "#E8491D" }}>
-                          {formatPrice(p.price)}
-                        </span>
-                        <span className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white" style={{ backgroundColor: "#3DB851" }}>
-                          {pt.detailBtn}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+                  </div>
+                </Link>
+              ))}
             </div>
           </section>
         )}
@@ -320,4 +333,15 @@ export default function ProductPage({ params }) {
       <SiteFooter />
     </>
   );
+}
+
+function getCategoryEmoji(slug) {
+  const map = {
+    diagnostika: "🩺",
+    "nafas-jihozlari": "💨",
+    "yurak-jihozlari": "❤️",
+    "tibbiy-mebel": "🛏️",
+    sterilizatsiya: "🧪",
+  };
+  return map[slug] || "🏥";
 }

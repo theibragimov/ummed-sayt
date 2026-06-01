@@ -1,47 +1,55 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { PRODUCTS } from "@/lib/products";
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
-const ALL_PRODUCTS = PRODUCTS;
-
-const CATEGORY_KEYS = ["hammasi", "diagnostika", "nafas", "yurak", "mebel", "sterilizatsiya"];
+function formatPrice(narx) {
+  if (!narx) return "Narxni so'rang";
+  return narx.toLocaleString("uz-UZ") + " so'm";
+}
 
 export default function KatalogPage() {
   const { t, lang } = useLang();
   const cat = t.catalog;
 
-  const CATEGORIES = CATEGORY_KEYS.map((value) => ({
-    value,
-    label: cat.categories[value],
-  }));
-
+  const [mahsulotlar, setMahsulotlar] = useState([]);
+  const [kategoriyalar, setKategoriyalar] = useState([]);
+  const [yuklanmoqda, setYuklanmoqda] = useState(true);
   const [category, setCategory] = useState("hammasi");
   const [search, setSearch] = useState("");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const filtered = useMemo(() => {
-    let list = [...ALL_PRODUCTS];
+  useEffect(() => {
+    async function yuklash() {
+      setYuklanmoqda(true);
+      const [mRes, kRes] = await Promise.all([
+        fetch("/api/mahsulotlar"),
+        fetch("/api/kategoriyalar"),
+      ]);
+      const [m, k] = await Promise.all([mRes.json(), kRes.json()]);
+      setMahsulotlar(Array.isArray(m) ? m : []);
+      setKategoriyalar(Array.isArray(k) ? k : []);
+      setYuklanmoqda(false);
+    }
+    yuklash();
+  }, []);
 
+  const filtered = useMemo(() => {
+    let list = [...mahsulotlar];
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter((p) => {
-        const name = lang === "ru" ? (p.nameRu || p.name) : p.name;
-        return name.toLowerCase().includes(q);
-      });
+      list = list.filter((p) => (p.nom || "").toLowerCase().includes(q));
     }
-
     if (category !== "hammasi") {
-      list = list.filter((p) => p.category === category);
+      list = list.filter((p) => p.kategoriya?.slug === category);
     }
-
     return list;
-  }, [category, search, lang]);
+  }, [mahsulotlar, category, search]);
 
   const FilterPanel = () => (
     <div className="space-y-8">
@@ -76,24 +84,29 @@ export default function KatalogPage() {
           {cat.category}
         </p>
         <ul className="space-y-1">
-          {CATEGORIES.map((c) => (
-            <li key={c.value}>
+          <li>
+            <button
+              onClick={() => setCategory("hammasi")}
+              className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
+              style={category === "hammasi" ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}
+            >
+              {category === "hammasi" && (
+                <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />
+              )}
+              {cat.categories?.hammasi || "Hammasi"}
+            </button>
+          </li>
+          {kategoriyalar.map((k) => (
+            <li key={k.id}>
               <button
-                onClick={() => setCategory(c.value)}
+                onClick={() => setCategory(k.slug)}
                 className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
-                style={
-                  category === c.value
-                    ? { color: "#E8491D", fontWeight: 500 }
-                    : { color: "var(--text)" }
-                }
+                style={category === k.slug ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}
               >
-                {category === c.value && (
-                  <span
-                    className="inline-block w-1.5 h-1.5 mr-2 align-middle"
-                    style={{ backgroundColor: "#E8491D" }}
-                  />
+                {category === k.slug && (
+                  <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />
                 )}
-                {c.label}
+                {k.nom}
               </button>
             </li>
           ))}
@@ -132,10 +145,7 @@ export default function KatalogPage() {
             >
               {cat.title}
             </h1>
-            <p
-              className="mt-4 text-base font-light"
-              style={{ color: "var(--text-muted, #888)" }}
-            >
+            <p className="mt-4 text-base font-light" style={{ color: "var(--text-muted, #888)" }}>
               {filtered.length} {cat.countSuffix}
             </p>
           </Reveal>
@@ -145,20 +155,14 @@ export default function KatalogPage() {
             <button
               onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
               className="text-sm font-medium px-5 py-2.5 transition-colors"
-              style={{
-                border: "1px solid var(--border-strong, #e5e5e5)",
-                color: "var(--text)",
-              }}
+              style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}
             >
               {mobileFilterOpen ? cat.filterClose : cat.filterOpen}
             </button>
           </div>
 
           {mobileFilterOpen && (
-            <div
-              className="md:hidden p-6 mb-8"
-              style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
-            >
+            <div className="md:hidden p-6 mb-8" style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
               <FilterPanel />
             </div>
           )}
@@ -173,95 +177,103 @@ export default function KatalogPage() {
 
             {/* Products Grid */}
             <div className="flex-1 min-w-0">
-              {filtered.length === 0 ? (
-                <div
-                  className="flex flex-col items-center justify-center py-24"
-                  style={{ color: "var(--text-muted, #888)" }}
-                >
+              {yuklanmoqda ? (
+                <div className="flex items-center justify-center py-24" style={{ color: "var(--text-muted, #888)" }}>
+                  <p className="text-sm font-light">Yuklanmoqda...</p>
+                </div>
+              ) : filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-24" style={{ color: "var(--text-muted, #888)" }}>
                   <p className="text-lg font-medium">{cat.notFound}</p>
                   <p className="text-sm font-light mt-2">{cat.notFoundHint}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
-                  style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-                  {filtered.map((product) => {
-                    const name = lang === "ru" ? (product.nameRu || product.name) : product.name;
-                    const desc = lang === "ru" ? (product.descRu || product.desc) : product.desc;
-                    const badge = product.badge
-                      ? (lang === "ru" ? (product.badgeRu || product.badge) : product.badge)
-                      : null;
-                    const catLabel = lang === "ru"
-                      ? (product.categoryLabelRu || product.categoryLabel)
-                      : product.categoryLabel;
-
-                    return (
-                      <Link
-                        key={product.id}
-                        href={`/katalog/${product.id}`}
-                        className="group flex flex-col overflow-hidden transition-colors"
-                        style={{
-                          backgroundColor: "var(--bg)",
-                          borderRight: "1px solid var(--border-strong, #e5e5e5)",
-                          borderBottom: "1px solid var(--border-strong, #e5e5e5)",
-                        }}
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
+                  style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
+                >
+                  {filtered.map((product) => (
+                    <Link
+                      key={product.id}
+                      href={`/katalog/${product.slug}`}
+                      className="group flex flex-col overflow-hidden transition-colors"
+                      style={{
+                        backgroundColor: "var(--bg)",
+                        borderRight: "1px solid var(--border-strong, #e5e5e5)",
+                        borderBottom: "1px solid var(--border-strong, #e5e5e5)",
+                      }}
+                    >
+                      {/* Rasm */}
+                      <div
+                        className="relative flex items-center justify-center transition-colors overflow-hidden"
+                        style={{ height: 220, backgroundColor: "var(--card-bg, #f8f8f8)" }}
                       >
-                        {/* Rasm */}
-                        <div
-                          className="relative flex items-center justify-center text-7xl transition-colors"
-                          style={{ height: 220, backgroundColor: "var(--card-bg, #f8f8f8)" }}
+                        {product.badge && (
+                          <span
+                            className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white z-10"
+                            style={{
+                              backgroundColor:
+                                product.badge === "Yangi" ? "#3DB851"
+                                : product.badge === "Ommabop" ? "#E8491D"
+                                : "#6366f1",
+                            }}
+                          >
+                            {product.badge}
+                          </span>
+                        )}
+                        {product.asosiyRasmUrl ? (
+                          <Image
+                            src={product.asosiyRasmUrl}
+                            alt={product.nom}
+                            fill
+                            style={{ objectFit: "cover" }}
+                          />
+                        ) : (
+                          <span className="text-7xl select-none">
+                            {getCategoryEmoji(product.kategoriya?.slug)}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Ma'lumot */}
+                      <div className="p-6 flex flex-col flex-1">
+                        <span
+                          className="text-xs font-medium uppercase tracking-widest mb-2"
+                          style={{ color: "#E8491D" }}
                         >
-                          {badge && (
-                            <span
-                              className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white"
-                              style={{
-                                backgroundColor:
-                                  product.badge === "Yangi" ? "#3DB851"
-                                  : product.badge === "Ommabop" ? "#E8491D"
-                                  : "#6366f1",
-                              }}
-                            >
-                              {badge}
-                            </span>
-                          )}
-                          {product.img}
-                        </div>
-
-                        {/* Ma'lumot */}
-                        <div className="p-6 flex flex-col flex-1">
-                          <span
-                            className="text-xs font-medium uppercase tracking-widest mb-2"
-                            style={{ color: "#E8491D" }}
-                          >
-                            {catLabel}
-                          </span>
-                          <h3
-                            className="text-base font-medium leading-snug mb-2"
-                            style={{ color: "var(--text)" }}
-                          >
-                            {name}
-                          </h3>
-                          <p
-                            className="text-sm font-light leading-relaxed flex-1 mb-6"
-                            style={{ color: "var(--text-muted, #888)" }}
-                          >
-                            {desc}
+                          {product.kategoriya?.nom || ""}
+                        </span>
+                        <h3
+                          className="text-base font-medium leading-snug mb-2"
+                          style={{ color: "var(--text)" }}
+                        >
+                          {product.nom}
+                        </h3>
+                        <p
+                          className="text-sm font-light leading-relaxed flex-1 mb-4"
+                          style={{ color: "var(--text-muted, #888)" }}
+                        >
+                          {product.qisqaTavsif}
+                        </p>
+                        {product.narx && (
+                          <p className="text-sm font-semibold mb-4" style={{ color: "#E8491D" }}>
+                            {formatPrice(product.narx)}
                           </p>
+                        )}
 
-                          <span
-                            className="text-sm font-medium tracking-wide flex items-center gap-1 transition-colors group-hover:gap-2"
-                            style={{ color: "var(--text)" }}
-                          >
-                            {cat.detail}
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                              stroke="currentColor" strokeWidth="2"
-                              strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M7 17L17 7M9 7h8v8" />
-                            </svg>
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
+                        <span
+                          className="text-sm font-medium tracking-wide flex items-center gap-1 transition-colors group-hover:gap-2"
+                          style={{ color: "var(--text)" }}
+                        >
+                          {cat.detail}
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2"
+                            strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M7 17L17 7M9 7h8v8" />
+                          </svg>
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
@@ -272,4 +284,15 @@ export default function KatalogPage() {
       <SiteFooter />
     </>
   );
+}
+
+function getCategoryEmoji(slug) {
+  const map = {
+    diagnostika: "🩺",
+    "nafas-jihozlari": "💨",
+    "yurak-jihozlari": "❤️",
+    "tibbiy-mebel": "🛏️",
+    sterilizatsiya: "🧪",
+  };
+  return map[slug] || "🏥";
 }
