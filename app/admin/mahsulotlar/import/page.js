@@ -155,34 +155,74 @@ export default function ImportPage() {
               </div>
             </div>
 
-            {/* Ustunlar */}
-            <div style={{ marginBottom: 28, padding: 16, background: '#f8f8f6', borderRadius: 8 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 10 }}>Excel ustunlari (birinchi qator — sarlavha):</div>
-              <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f0f0ec' }}>
-                    {['Ustun', 'Majburiy', 'Misol'].map(h => (
-                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: '#6b7280' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    ['nom', '✓ Ha', 'Tonometr avtomatik'],
-                    ['kategoriya', '✓ Ha', 'Diagnostika'],
-                    ['narx', '—', '320000'],
-                    ['tavsif', '—', 'Qisqa tavsif matni'],
-                    ['brend', '—', 'Beurer'],
-                    ['mavjud', '—', 'ha / yoq'],
-                  ].map(([u, m, ex]) => (
-                    <tr key={u} style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                      <td style={{ padding: '7px 10px' }}><code style={{ background: '#e8e8e4', padding: '1px 6px', borderRadius: 3, fontSize: 11, fontWeight: 600, color: '#374151' }}>{u}</code></td>
-                      <td style={{ padding: '7px 10px', color: m.includes('Ha') ? '#16a34a' : '#9ca3af', fontWeight: m.includes('Ha') ? 600 : 400 }}>{m}</td>
-                      <td style={{ padding: '7px 10px', color: '#6b7280', fontStyle: 'italic' }}>{ex}</td>
+            {/* Excel preview */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0a0a0a', marginBottom: 10 }}>
+                Excel faylda quyidagicha bo'lishi kerak:
+              </div>
+              <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #d1d5db' }}>
+                <table style={{ borderCollapse: 'collapse', fontSize: 12, minWidth: '100%' }}>
+                  {/* Ustun harflari (A, B, C...) */}
+                  <thead>
+                    <tr style={{ background: '#e8e8e8' }}>
+                      <td style={{ width: 32, padding: '5px 8px', borderRight: '1px solid #d1d5db', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}></td>
+                      {['A', 'B', 'C', 'D', 'E', 'F'].map(h => (
+                        <td key={h} style={{ padding: '5px 20px', borderRight: '1px solid #d1d5db', fontWeight: 700, color: '#374151', textAlign: 'center', fontSize: 11 }}>{h}</td>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {/* 1-qator — sarlavha */}
+                    <tr style={{ background: '#217346', }}>
+                      <td style={{ padding: '6px 8px', borderRight: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', fontSize: 11, textAlign: 'center', fontWeight: 600 }}>1</td>
+                      {[
+                        ['nom', true],
+                        ['kategoriya', true],
+                        ['narx', false],
+                        ['tavsif', false],
+                        ['brend', false],
+                        ['mavjud', false],
+                      ].map(([h, req]) => (
+                        <td key={h} style={{ padding: '6px 16px', borderRight: '1px solid rgba(255,255,255,0.15)', color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          {h}
+                          {req && <span style={{ marginLeft: 4, fontSize: 9, background: 'rgba(255,255,255,0.25)', padding: '1px 4px', borderRadius: 3 }}>*</span>}
+                        </td>
+                      ))}
+                    </tr>
+                    {/* 2-qator — misol 1 */}
+                    <tr style={{ background: '#fff' }}>
+                      <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>2</td>
+                      {['Tonometr avtomatik', 'Diagnostika', '320000', 'Bilak tipidagi...', 'Beurer', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
+                      ))}
+                    </tr>
+                    {/* 3-qator — misol 2 */}
+                    <tr style={{ background: '#f9fafb' }}>
+                      <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>3</td>
+                      {['Glukometr to\'plami', 'Diagnostika', '180000', 'Qand o\'lchagich', 'Accu-Chek', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
+                      ))}
+                    </tr>
+                    {/* 4-qator — misol 3 */}
+                    <tr style={{ background: '#fff' }}>
+                      <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>4</td>
+                      {['UV sterilizator', 'Sterilizatsiya', '180000', '', '', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: v ? '#374151' : '#d1d5db', whiteSpace: 'nowrap' }}>{v || '—'}</td>
+                      ))}
+                    </tr>
+                    <tr style={{ background: '#f9fafb' }}>
+                      <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#d1d5db', fontSize: 11, textAlign: 'center' }}>5</td>
+                      {['...', '...', '...', '', '', ''].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: '#d1d5db' }}>{v}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 11, color: '#6b7280' }}>
+                <span style={{ background: 'rgba(33,115,70,0.1)', color: '#217346', fontWeight: 600, padding: '1px 6px', borderRadius: 3, marginRight: 6 }}>* majburiy</span>
+                Qolgan ustunlar ixtiyoriy — bo'sh qoldirsa ham bo'ladi
+              </div>
             </div>
 
             {/* Kategoriya nomlari */}
