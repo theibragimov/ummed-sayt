@@ -96,14 +96,14 @@ export default function ProductGrid({ items }) {
             const CardInner = (
               <>
                 {/* Rasm */}
-                <div className="relative w-full overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-500"
-                  style={{ background: bg, height: `${IMG_H}px` }}>
+                <div className="relative w-full overflow-hidden flex items-center justify-center"
+                  style={{ background: bg, height: `${IMG_H}px`, border: '0.5px solid #000' }}>
                   {item.asosiyRasmUrl ? (
-                    <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover" }} />
+                    <Image src={item.asosiyRasmUrl} alt={name} fill className="transition-transform duration-500 group-hover:scale-105" style={{ objectFit: "cover" }} />
                   ) : item.visual ? (
-                    <div className="transition-transform duration-500">{item.visual}</div>
+                    <div className="transition-transform duration-500 group-hover:scale-105">{item.visual}</div>
                   ) : (
-                    <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
+                    <span className="text-8xl select-none transition-transform duration-500 group-hover:scale-105">{getCategoryEmoji(item.kategoriya?.slug)}</span>
                   )}
                 </div>
                 {/* Matn */}
@@ -170,13 +170,13 @@ function ProductCard({ item, idx }) {
   const inner = (
     <>
       <div className="relative w-full overflow-hidden flex items-center justify-center"
-        style={{ background: bg, height: `${IMG_H}px` }}>
+        style={{ background: bg, height: `${IMG_H}px`, border: '0.5px solid #000' }}>
         {item.asosiyRasmUrl ? (
-          <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover" }} />
+          <Image src={item.asosiyRasmUrl} alt={name} fill className="transition-transform duration-500 group-hover:scale-105" style={{ objectFit: "cover" }} />
         ) : item.visual ? (
-          <div>{item.visual}</div>
+          <div className="transition-transform duration-500 group-hover:scale-105">{item.visual}</div>
         ) : (
-          <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
+          <span className="text-8xl select-none transition-transform duration-500 group-hover:scale-105">{getCategoryEmoji(item.kategoriya?.slug)}</span>
         )}
       </div>
       <div className="mt-5">

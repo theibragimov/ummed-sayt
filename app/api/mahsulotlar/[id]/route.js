@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getMahsulotById, getMahsulotBySlug, updateMahsulot, deleteMahsulot } from '@/lib/db'
+import { tarjimaQil } from '@/lib/tarjima'
 
 export async function GET(_, { params }) {
   const { id } = await params
@@ -14,6 +15,17 @@ export async function GET(_, { params }) {
 export async function PUT(request, { params }) {
   const { id } = await params
   const data = await request.json()
+
+  // Nom o'zgargan bo'lsa yoki rus tarjima yo'q bo'lsa — qayta tarjima
+  if (data.nom && !data.nomRu) {
+    try {
+      const t = await tarjimaQil({ nom: data.nom, qisqaTavsif: data.qisqaTavsif, toliqTavsif: data.toliqTavsif })
+      data.nomRu = t.nom || null
+      data.qisqaTavsifRu = t.qisqaTavsif || null
+      data.toliqTavsifRu = t.toliqTavsif || null
+    } catch (_) {}
+  }
+
   const mahsulot = await updateMahsulot(id, data)
   return NextResponse.json(mahsulot)
 }

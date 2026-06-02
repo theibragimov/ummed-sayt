@@ -8,6 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
+
 const PLACEHOLDER_ICONS = ["🏥", "📊", "🤝", "✅", "🎪", "🚚"];
 const COLORS = ["#f0f4f8", "#f5f0f8", "#f0f8f2", "#fff8f0", "#f0f4f8", "#f5f0f8"];
 
@@ -17,7 +18,7 @@ function formatDate(sana) {
 }
 
 export default function YangiliklarPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const n = t.news;
 
   const [postlar, setPostlar] = useState([]);
@@ -91,14 +92,14 @@ export default function YangiliklarPage() {
                           className="text-2xl md:text-3xl font-medium leading-[1.2] group-hover:opacity-70 transition-opacity"
                           style={{ color: "var(--text)" }}
                         >
-                          {featured.sarlavha}
+                          {lang === 'ru' ? (featured.sarlavhaRu || featured.sarlavha) : featured.sarlavha}
                         </h2>
                       </div>
                       <p
                         className="md:max-w-sm text-sm font-light leading-relaxed md:pt-9"
                         style={{ color: "var(--text-muted, #888)" }}
                       >
-                        {featured.qisqaTavsif}
+                        {lang === 'ru' ? (featured.qisqaTavsifRu || featured.qisqaTavsif) : featured.qisqaTavsif}
                       </p>
                     </div>
                   </Link>
@@ -137,7 +138,7 @@ export default function YangiliklarPage() {
                         className="text-lg font-medium leading-snug group-hover:opacity-70 transition-opacity"
                         style={{ color: "var(--text)" }}
                       >
-                        {item.sarlavha}
+                        {lang === 'ru' ? (item.sarlavhaRu || item.sarlavha) : item.sarlavha}
                       </h3>
                     </Link>
                   </Reveal>
