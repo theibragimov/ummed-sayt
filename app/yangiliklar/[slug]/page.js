@@ -6,7 +6,6 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { useLang } from "@/lib/i18n";
 
 function formatDate(sana) {
   if (!sana) return "";
@@ -15,7 +14,6 @@ function formatDate(sana) {
 
 export default function YangilikDetailPage({ params }) {
   const { slug } = use(params);
-  const { lang } = useLang();
   const [post, setPost] = useState(null);
   const [notFoundState, setNotFoundState] = useState(false);
 
@@ -86,7 +84,7 @@ export default function YangilikDetailPage({ params }) {
             className="text-3xl md:text-4xl font-medium leading-[1.15] tracking-tight mb-8"
             style={{ color: "var(--text)" }}
           >
-            {lang === 'ru' ? (post.sarlavhaRu || post.sarlavha) : post.sarlavha}
+            {post.sarlavha}
           </h1>
 
           {/* Muqova rasm */}
@@ -97,7 +95,7 @@ export default function YangilikDetailPage({ params }) {
           )}
 
           {/* Qisqa tavsif */}
-          {(post.qisqaTavsif || post.qisqaTavsifRu) && (
+          {post.qisqaTavsif && (
             <p
               className="text-lg font-light leading-relaxed mb-8 pb-8"
               style={{
@@ -105,16 +103,16 @@ export default function YangilikDetailPage({ params }) {
                 borderBottom: "1px solid var(--border-strong, #e5e5e5)",
               }}
             >
-              {lang === 'ru' ? (post.qisqaTavsifRu || post.qisqaTavsif) : post.qisqaTavsif}
+              {post.qisqaTavsif}
             </p>
           )}
 
           {/* To'liq matn */}
-          {(post.toliqMatn || post.toliqMatnRu) ? (
+          {post.toliqMatn ? (
             <div
               className="prose prose-lg max-w-none"
               style={{ color: "var(--text)" }}
-              dangerouslySetInnerHTML={{ __html: lang === 'ru' ? (post.toliqMatnRu || post.toliqMatn) : post.toliqMatn }}
+              dangerouslySetInnerHTML={{ __html: post.toliqMatn }}
             />
           ) : (
             <p className="text-sm italic" style={{ color: "var(--text-muted, #888)" }}>

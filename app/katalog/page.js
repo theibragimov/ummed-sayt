@@ -183,11 +183,11 @@ export default function KatalogPage() {
                           {product.kategoriya?.nom || ""}
                         </span>
                         <h3 className="text-base font-medium leading-snug mb-2" style={{ color: "var(--text)" }}>
-                          {lang === 'ru' ? (product.nomRu || product.nom) : product.nom}
+                          {product.nom}
                         </h3>
-                        {(product.qisqaTavsif || product.qisqaTavsifRu) && (
+                        {product.qisqaTavsif && (
                           <p className="text-sm font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
-                            {lang === 'ru' ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif}
+                            {product.qisqaTavsif}
                           </p>
                         )}
                         <div className="mt-auto flex items-center justify-between gap-3">

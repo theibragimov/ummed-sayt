@@ -38,9 +38,6 @@ model Mahsulot {
   modelRaqami   String?        @map("model_raqami")
   featured      Boolean        @default(false)
   turi          String         @default("katalog")
-  nomRu         String?        @map("nom_ru")
-  qisqaTavsifRu String?        @map("qisqa_tavsif_ru")
-  toliqTavsifRu String?        @map("toliq_tavsif_ru")
   rasmlar       MahsulotRasm[]
   yaratilgan    DateTime       @default(now()) @map("yaratilgan")
 
@@ -79,9 +76,6 @@ model Post {
   muallif       String?
   sana          DateTime        @default(now())
   holat         String          @default("draft")
-  sarlavhaRu    String?         @map("sarlavha_ru")
-  qisqaTavsifRu String?         @map("qisqa_tavsif_ru")
-  toliqMatnRu   String?         @map("toliq_matn_ru")
   yaratilgan    DateTime        @default(now()) @map("yaratilgan")
 
   @@map("postlar")
