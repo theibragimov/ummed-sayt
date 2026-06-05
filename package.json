@@ -11,8 +11,8 @@
     "import": "node import-products.js"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^5.22.0",
+    "@prisma/client": "^5.22.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.26.0",
     "@supabase/supabase-js": "^2.106.2",
@@ -21,7 +21,7 @@
     "next": "16.2.6",
     "next-sanity": "^13.0.3",
     "pg": "^8.21.0",
-    "prisma": "^7.8.0",
+    "prisma": "^5.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanity": "^5.26.0",
