@@ -11,7 +11,6 @@
     "import": "node import-products.js"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.26.0",
