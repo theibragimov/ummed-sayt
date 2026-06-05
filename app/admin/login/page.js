@@ -36,15 +36,10 @@ export default function AdminLogin() {
         <div style={{ width: '100%', maxWidth: '400px', padding: '0 16px' }}>
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{
-              width: '52px', height: '52px', background: '#E8491D',
-              borderRadius: '14px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', margin: '0 auto 16px',
-              fontSize: '24px', fontWeight: 800, color: '#fff',
-            }}>U</div>
-            <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#0a0a0a', margin: '0 0 4px', letterSpacing: '-0.03em' }}>
-              Ummed Admin
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '12px' }}>
+              <img src="/logo.png" alt="Ummed" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
+              <span style={{ fontSize: '22px', fontWeight: 600, color: '#0a0a0a', letterSpacing: '-0.03em' }}>Ummed</span>
+            </div>
             <p style={{ fontSize: '14px', color: '#9ca3af', margin: 0 }}>Boshqaruv paneliga kirish</p>
           </div>
 
