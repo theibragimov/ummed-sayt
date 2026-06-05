@@ -7,9 +7,69 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
-function formatPrice(narx) {
-  if (!narx) return "Narxni so'rang";
+function formatPrice(narx, lang) {
+  if (!narx) return lang === 'ru' ? "Узнать цену" : "Narxlar bilan tanishish";
   return narx.toLocaleString("uz-UZ") + " so'm";
+}
+
+function FilterPanel({
+  cat,
+  category,
+  kategoriyalar,
+  lang,
+  search,
+  setCategory,
+  setSearch,
+}) {
+  return (
+    <div className="space-y-8">
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
+          {cat.search}
+        </label>
+        <input
+          type="text"
+          placeholder={cat.searchPlaceholder}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-3 text-sm font-light focus:outline-none transition-colors"
+          style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}
+        />
+      </div>
+
+      <div>
+        <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: "var(--text-muted, #888)" }}>
+          {cat.category}
+        </p>
+        <ul className="space-y-1">
+          <li>
+            <button onClick={() => setCategory("hammasi")} className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
+              style={category === "hammasi" ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}>
+              {category === "hammasi" && <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />}
+              {cat.categories?.hammasi || "Hammasi"}
+            </button>
+          </li>
+          {kategoriyalar.map((k) => (
+            <li key={k.id}>
+              <button onClick={() => setCategory(k.slug)} className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
+                style={category === k.slug ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}>
+                {category === k.slug && <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />}
+                {lang === 'ru' ? (k.nomRu || k.nom) : k.nom}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {(category !== "hammasi" || search) && (
+        <button onClick={() => { setCategory("hammasi"); setSearch(""); }}
+          className="w-full text-xs py-2.5 font-light tracking-wide transition-colors"
+          style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text-muted, #888)" }}>
+          {cat.reset}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export default function KatalogPage() {
@@ -50,68 +110,18 @@ export default function KatalogPage() {
     return list;
   }, [mahsulotlar, category, search]);
 
-  const FilterPanel = () => (
-    <div className="space-y-8">
-      <div>
-        <label className="block text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
-          {cat.search}
-        </label>
-        <input
-          type="text"
-          placeholder={cat.searchPlaceholder}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-3 text-sm font-light focus:outline-none transition-colors"
-          style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}
-        />
-      </div>
-
-      <div>
-        <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: "var(--text-muted, #888)" }}>
-          {cat.category}
-        </p>
-        <ul className="space-y-1">
-          <li>
-            <button onClick={() => setCategory("hammasi")} className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
-              style={category === "hammasi" ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}>
-              {category === "hammasi" && <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />}
-              {cat.categories?.hammasi || "Hammasi"}
-            </button>
-          </li>
-          {kategoriyalar.map((k) => (
-            <li key={k.id}>
-              <button onClick={() => setCategory(k.slug)} className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
-                style={category === k.slug ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}>
-                {category === k.slug && <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />}
-                {k.nom}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {(category !== "hammasi" || search) && (
-        <button onClick={() => { setCategory("hammasi"); setSearch(""); }}
-          className="w-full text-xs py-2.5 font-light tracking-wide transition-colors"
-          style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text-muted, #888)" }}>
-          {cat.reset}
-        </button>
-      )}
-    </div>
-  );
-
   return (
     <>
       <SiteHeader />
       <main className="flex-1" style={{ backgroundColor: "var(--bg)" }}>
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-24">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-8 sm:pt-10 pb-16 sm:pb-24">
 
-          <Reveal variant="up" className="mb-14">
+          <Reveal variant="up" className="mb-8 sm:mb-14">
             <span className="section-label">{cat.label}</span>
-            <h1 className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6" style={{ color: "var(--text)" }}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6" style={{ color: "var(--text)" }}>
               {cat.title}
             </h1>
-            <p className="mt-4 text-base font-light" style={{ color: "var(--text-muted, #888)" }}>
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base font-light" style={{ color: "var(--text-muted, #888)" }}>
               {filtered.length} {cat.countSuffix}
             </p>
           </Reveal>
@@ -126,13 +136,31 @@ export default function KatalogPage() {
 
           {mobileFilterOpen && (
             <div className="md:hidden p-6 mb-8" style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-              <FilterPanel />
+              <FilterPanel
+                cat={cat}
+                category={category}
+                kategoriyalar={kategoriyalar}
+                lang={lang}
+                search={search}
+                setCategory={setCategory}
+                setSearch={setSearch}
+              />
             </div>
           )}
 
           <div className="flex gap-12">
             <aside className="hidden md:block w-56 flex-shrink-0">
-              <div className="sticky top-28"><FilterPanel /></div>
+              <div className="sticky top-28">
+                <FilterPanel
+                  cat={cat}
+                  category={category}
+                  kategoriyalar={kategoriyalar}
+                  lang={lang}
+                  search={search}
+                  setCategory={setCategory}
+                  setSearch={setSearch}
+                />
+              </div>
             </aside>
 
             <div className="flex-1 min-w-0">
@@ -146,7 +174,7 @@ export default function KatalogPage() {
                   <p className="text-sm font-light mt-2">{cat.notFoundHint}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-px"
                   style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
                   {filtered.map((product) => (
                     <div key={product.id} className="flex flex-col overflow-hidden"
@@ -156,8 +184,8 @@ export default function KatalogPage() {
                         borderBottom: "1px solid var(--border-strong, #e5e5e5)",
                       }}>
                       {/* Rasm */}
-                      <div className="relative flex items-center justify-center overflow-hidden"
-                        style={{ height: 220, backgroundColor: "var(--card-bg, #f8f8f8)" }}>
+                      <div className="relative flex items-center justify-center overflow-hidden w-full"
+                        style={{ aspectRatio: "1 / 1" }}>
                         {product.badge && (
                           <span className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white z-10"
                             style={{ backgroundColor: product.badge === "Yangi" ? "#3DB851" : product.badge === "Ommabop" ? "#E8491D" : "#6366f1" }}>
@@ -178,26 +206,24 @@ export default function KatalogPage() {
                       </div>
 
                       {/* Ma'lumot */}
-                      <div className="p-6 flex flex-col flex-1">
-                        <span className="text-xs font-medium uppercase tracking-widest mb-2" style={{ color: "#E8491D" }}>
-                          {product.kategoriya?.nom || ""}
-                        </span>
-                        <h3 className="text-base font-medium leading-snug mb-2" style={{ color: "var(--text)" }}>
-                          {product.nom}
+                      <div className="p-3 sm:p-6 flex flex-col flex-1">
+                        <h3 className="text-xs sm:text-base font-medium leading-snug mb-1 sm:mb-2 line-clamp-2" style={{ color: "var(--text)" }}>
+                          {lang === 'ru' ? (product.nomRu || product.nom) : product.nom}
                         </h3>
-                        {product.qisqaTavsif && (
-                          <p className="text-sm font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
-                            {product.qisqaTavsif}
+                        {(product.qisqaTavsif || product.qisqaTavsifRu) && (
+                          <p className="hidden sm:block text-sm font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
+                            {lang === 'ru' ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif}
                           </p>
                         )}
-                        <div className="mt-auto flex items-center justify-between gap-3">
-                          <span className="text-base font-semibold" style={{ color: "#E8491D" }}>
-                            {formatPrice(product.narx)}
+                        <div className="mt-auto flex items-center justify-between gap-1.5 sm:gap-3">
+                          <span className="text-[11px] sm:text-sm font-semibold leading-tight" style={{ color: "#E8491D" }}>
+                            {formatPrice(product.narx, lang)}
                           </span>
-                          <a href="tel:+998000000000"
-                            className="text-xs font-medium px-4 py-2 transition-colors"
-                            style={{ background: "#E8491D", color: "#fff" }}>
-                            Buyurtma
+                          <a href="https://t.me/ummeduzbot"
+                            target="_blank" rel="noopener noreferrer"
+                            className="flex-shrink-0 text-[10px] sm:text-xs font-medium px-2.5 py-1.5 sm:px-4 sm:py-2 transition-colors"
+                            style={{ background: "#E8491D", color: "#fff", borderRadius: "50px" }}>
+                            Telegram
                           </a>
                         </div>
                       </div>

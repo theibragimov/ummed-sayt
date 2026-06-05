@@ -17,8 +17,9 @@ function formatDate(sana) {
 }
 
 export default function YangiliklarPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const n = t.news;
+  const ru = lang === 'ru';
 
   const [postlar, setPostlar] = useState([]);
   const [yuklanmoqda, setYuklanmoqda] = useState(true);
@@ -91,14 +92,14 @@ export default function YangiliklarPage() {
                           className="text-2xl md:text-3xl font-medium leading-[1.2] group-hover:opacity-70 transition-opacity"
                           style={{ color: "var(--text)" }}
                         >
-                          {featured.sarlavha}
+                          {(ru && featured.sarlavhaRu) ? featured.sarlavhaRu : featured.sarlavha}
                         </h2>
                       </div>
                       <p
                         className="md:max-w-sm text-sm font-light leading-relaxed md:pt-9"
                         style={{ color: "var(--text-muted, #888)" }}
                       >
-                        {featured.qisqaTavsif}
+                        {(ru && featured.qisqaTavsifRu) ? featured.qisqaTavsifRu : featured.qisqaTavsif}
                       </p>
                     </div>
                   </Link>
@@ -137,7 +138,7 @@ export default function YangiliklarPage() {
                         className="text-lg font-medium leading-snug group-hover:opacity-70 transition-opacity"
                         style={{ color: "var(--text)" }}
                       >
-                        {item.sarlavha}
+                        {(ru && item.sarlavhaRu) ? item.sarlavhaRu : item.sarlavha}
                       </h3>
                     </Link>
                   </Reveal>

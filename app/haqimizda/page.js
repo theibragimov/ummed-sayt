@@ -1,11 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CountUp from "@/components/CountUp";
 import { useLang } from "@/lib/i18n";
+
+function FounderImage({ alt }) {
+  // /public/farhod.jpg faylini qo'ysangiz rasm chiqadi, yo'q bo'lsa initials ko'rinadi
+  const [error, setError] = useState(false);
+  if (!error) {
+    return (
+      <Image
+        src="/Farhod.png"
+        alt={alt}
+        fill
+        className="object-cover object-top"
+        onError={() => setError(true)}
+      />
+    );
+  }
+  return (
+    <div className="flex flex-col items-center justify-center w-full h-full gap-4" style={{ color: "#a0967e" }}>
+      <div
+        className="w-28 h-28 rounded-full flex items-center justify-center text-4xl font-bold text-white"
+        style={{ backgroundColor: "#E8491D" }}
+      >
+        FA
+      </div>
+      <p className="text-xs font-light" style={{ color: "#b0a090" }}>Farhod Abdullayev</p>
+    </div>
+  );
+}
 
 const PARTNERS = [
   { name: "Elta",         logo: "/partners/elta.png" },
@@ -135,9 +163,108 @@ export default function HaqimzdaPage() {
           </div>
         </div>
 
+        {/* ===== Asoschimiz ===== */}
+        <div style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}>
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-28">
+            <Reveal variant="up" className="mb-8 lg:mb-14">
+              <span className="section-label">{a.founder.label}</span>
+            </Reveal>
+
+            <Reveal variant="up" delay={80}>
+              <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-start">
+
+                {/* Rasm */}
+                <div className="flex-shrink-0 w-full lg:w-[380px] flex justify-center lg:justify-start">
+                  <div
+                    className="relative overflow-hidden flex items-center justify-center"
+                    style={{ aspectRatio: "4/5", width: "min(300px, 80vw)", backgroundColor: "#f0ece6" }}
+                  >
+                    <FounderImage alt={a.founder.name} />
+                  </div>
+                </div>
+
+                {/* Ma'lumotlar */}
+                <div className="flex-1 flex flex-col justify-center">
+                  <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#E8491D" }}>
+                    {a.founder.role}
+                  </p>
+                  <h2
+                    className="text-3xl md:text-4xl lg:text-[48px] font-medium leading-[1.1] tracking-tight mb-8"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {a.founder.name}
+                  </h2>
+                  <p className="text-base md:text-lg font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
+                    {a.founder.bio1}
+                  </p>
+                  <p className="text-base md:text-lg font-light leading-relaxed mb-10" style={{ color: "var(--text-muted, #888)" }}>
+                    {a.founder.bio2}
+                  </p>
+
+                  {/* Pochta */}
+                  <a
+                    href={`mailto:${a.founder.email}`}
+                    className="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-opacity hover:opacity-60"
+                    style={{ color: "var(--text)" }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    {a.founder.email}
+                  </a>
+
+                  {/* Tugmalar — ikonkasiz, gradientsiz, hover animatsiya */}
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href={a.founder.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="founder-btn"
+                    >
+                      {a.founder.instagramLabel}
+                    </a>
+                    <a
+                      href={a.founder.telegramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="founder-btn"
+                    >
+                      {a.founder.telegramLabel}
+                    </a>
+                  </div>
+
+                  <style>{`
+                    .founder-btn {
+                      display: inline-flex;
+                      align-items: center;
+                      padding: 12px 28px;
+                      border-radius: 9999px;
+                      font-size: 13px;
+                      font-weight: 500;
+                      letter-spacing: 0.02em;
+                      border: 1px solid var(--border-strong, #e5e5e5);
+                      color: var(--text);
+                      background: transparent;
+                      cursor: pointer;
+                      text-decoration: none;
+                      transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease, transform 0.18s ease;
+                    }
+                    .founder-btn:hover {
+                      background: #E8491D;
+                      color: #ffffff;
+                      border-color: #E8491D;
+                      transform: translateY(-2px);
+                    }
+                  `}</style>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+
         {/* ===== Qadriyatlar ===== */}
         <div>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20">
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 lg:py-20">
             <Reveal variant="up" className="mb-14">
               <span className="section-label">{a.values.label}</span>
             </Reveal>
@@ -186,8 +313,8 @@ export default function HaqimzdaPage() {
           </Reveal>
 
           <Reveal variant="up" delay={80}>
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3" style={{ height: "clamp(400px, 55vw, 680px)" }}>
-
+            {/* Mobil: 2x2 grid, Desktop: 5 ustunli */}
+            <div className="hidden lg:grid lg:grid-cols-5 gap-3" style={{ height: "clamp(400px, 55vw, 680px)" }}>
               <div className="lg:col-span-2 grid grid-rows-2 gap-3">
                 <div className="relative overflow-hidden">
                   <Image src="/j2.jpg" alt="Ummed ish jarayoni" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
@@ -196,14 +323,21 @@ export default function HaqimzdaPage() {
                   <Image src="/j3.jpg" alt="Ummed jo'natish" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
                 </div>
               </div>
-
               <div className="relative overflow-hidden lg:col-span-2">
                 <Image src="/j1.jpg" alt="Ummed ombor" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
               </div>
-
               <div className="relative overflow-hidden lg:col-span-1">
                 <Image src="/j0.jpg" alt="Ummed ishxona" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
               </div>
+            </div>
+
+            {/* Mobil versiya: 2x2 grid, to'g'ri o'lcham */}
+            <div className="grid lg:hidden grid-cols-2 gap-2">
+              {["/j1.jpg", "/j2.jpg", "/j3.jpg", "/j0.jpg"].map((src, i) => (
+                <div key={i} className="relative overflow-hidden rounded-sm" style={{ aspectRatio: "1/1" }}>
+                  <Image src={src} alt="Ummed" fill className="object-cover" />
+                </div>
+              ))}
             </div>
 
             <p
@@ -217,7 +351,7 @@ export default function HaqimzdaPage() {
 
         {/* ===== Hamkorlarimiz ===== */}
         <div>
-          <div className="py-20">
+          <div className="py-8 sm:py-20">
             <Reveal variant="up" className="mb-12 px-6 lg:px-10 max-w-[1400px] mx-auto">
               <span className="section-label">{a.partners.label}</span>
             </Reveal>
@@ -229,14 +363,14 @@ export default function HaqimzdaPage() {
                     <div
                       key={i}
                       className="flex-shrink-0 flex items-center justify-center"
-                      style={{ padding: "16px 28px" }}
+                      style={{ padding: "12px 16px" }}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={p.logo}
                         alt={p.name}
                         className="partner-logo"
-                        style={{ height: 48, maxWidth: 140, objectFit: "contain", display: "block" }}
+                        style={{ height: 36, maxWidth: 110, objectFit: "contain", display: "block" }}
                       />
                     </div>
                   ))}
@@ -260,16 +394,16 @@ export default function HaqimzdaPage() {
         {/* ===== CTA ===== */}
         <div>
           <Reveal variant="up">
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20 flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 sm:py-20 flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-8">
               <h2
-                className="text-2xl md:text-3xl font-medium max-w-xl"
+                className="text-xl sm:text-2xl md:text-3xl font-medium max-w-xl"
                 style={{ color: "var(--text)" }}
               >
                 {a.cta.title}
               </h2>
               <a
                 href="/aloqa"
-                className="hero-cta inline-flex items-center px-8 py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03]"
+                className="hero-cta inline-flex items-center self-start px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03]"
               >
                 {a.cta.btn}
               </a>

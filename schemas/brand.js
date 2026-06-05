@@ -1,4 +1,4 @@
-export default {
+const brand = {
   name: 'brand',
   title: 'Brend',
   type: 'document',
@@ -28,3 +28,5 @@ export default {
     },
   },
 }
+
+export default brand

@@ -36,9 +36,11 @@ export async function POST(request) {
 
         const baseData = {
           nom: m.nom,
+          nomRu: m.nomRu || null,
           narx: m.narx ?? null,
           narxBirligi: m.narxBirligi || "so'm",
           qisqaTavsif: m.qisqaTavsif || null,
+          qisqaTavsifRu: m.qisqaTavsifRu || null,
           mavjudligi: m.mavjudligi ?? true,
           featured: m.featured ?? false,
           kategoriyaId,

@@ -187,12 +187,15 @@ export default function HomePage() {
 
   const [distribItems, setDistribItems] = useState([]);
   const [ownItems, setOwnItems] = useState([]);
+  const [yangiliklar, setYangiliklar] = useState([]);
 
   useEffect(() => {
     fetch("/api/mahsulotlar?turi=distribyutor")
       .then(r => r.json()).then(d => setDistribItems(Array.isArray(d) ? d : []));
     fetch("/api/mahsulotlar?turi=ummed-brend")
       .then(r => r.json()).then(d => setOwnItems(Array.isArray(d) ? d : []));
+    fetch("/api/yangiliklar?holat=published")
+      .then(r => r.json()).then(d => setYangiliklar(Array.isArray(d) ? d.slice(0, 3) : []));
   }, []);
 
   return (
@@ -203,9 +206,9 @@ export default function HomePage() {
         <InteractiveHero />
 
         {/* STATISTIKA — orange katta sonlar */}
-        <section className="bg-white py-16">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-            <div className="grid grid-cols-3 gap-6 md:gap-10 items-start">
+        <section className="bg-white py-10 sm:py-16">
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 md:gap-10 items-start">
               {[t.hero.stats.experience, t.hero.stats.products, t.hero.stats.clients].map(
                 (s, idx) => (
                   <Reveal
@@ -215,13 +218,13 @@ export default function HomePage() {
                     className="text-center"
                   >
                     <div
-                      className="text-4xl md:text-5xl lg:text-[60px] font-extrabold leading-none tracking-tight"
+                      className="text-3xl sm:text-4xl md:text-5xl lg:text-[60px] font-extrabold leading-none tracking-tight"
                       style={{ color: "#E8491D" }}
                     >
                       <CountUp to={s.num} duration={2000} suffix="+" />
                     </div>
                     <div
-                      className="mt-3 text-sm md:text-base font-semibold tracking-wide"
+                      className="mt-2 sm:mt-3 text-xs sm:text-sm md:text-base font-semibold tracking-wide"
                       style={{ color: "var(--text)" }}
                     >
                       {s.label}
@@ -234,8 +237,8 @@ export default function HomePage() {
         </section>
 
         {/* AFZALLIKLAR — Pixend "OUR SERVICES" uslubi: to'q fon */}
-        <section className="services-section py-24">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+        <section className="services-section py-8 sm:py-24">
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             {/* Label */}
             <Reveal variant="up" className="mb-10">
               <span className="section-label services-label">
@@ -320,20 +323,20 @@ export default function HomePage() {
                   key={item.title}
                   variant="up"
                   delay={(idx % 3) * 100}
-                  className="service-card group relative p-10 lg:p-12 flex flex-col items-start transition-all duration-300"
+                  className="service-card group relative p-5 sm:p-10 lg:p-12 flex flex-col items-start transition-all duration-300"
                 >
                   {/* Ikonka — yuqorida */}
                   <div
-                    className="w-14 h-14 rounded-full flex items-center justify-center mb-16 service-icon transition-transform duration-300 group-hover:scale-110"
+                    className="w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-5 sm:mb-16 service-icon transition-transform duration-300 group-hover:scale-110"
                   >
-                    <span className="scale-150">{item.icon}</span>
+                    <span className="scale-125 sm:scale-150">{item.icon}</span>
                   </div>
                   {/* Sarlavha — katta */}
-                  <h3 className="text-2xl lg:text-3xl font-medium leading-tight tracking-tight service-title">
+                  <h3 className="text-base sm:text-2xl lg:text-3xl font-medium leading-tight tracking-tight service-title">
                     {item.title}
                   </h3>
                   {/* Tavsif */}
-                  <p className="mt-5 text-[15px] leading-relaxed service-desc">
+                  <p className="mt-2 sm:mt-5 text-sm sm:text-[15px] leading-relaxed service-desc">
                     {item.desc}
                   </p>
                 </Reveal>
@@ -343,15 +346,15 @@ export default function HomePage() {
         </section>
 
         {/* JARAYON */}
-        <section className="py-20" style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-            <Reveal variant="up" className="mb-12">
+        <section className="py-12 sm:py-20" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+            <Reveal variant="up" className="mb-8 sm:mb-12">
               <span className="section-label">{L("Jarayon", "Процесс")}</span>
             </Reveal>
 
             <Reveal variant="up" delay={100}>
               <div
-                className="grid grid-cols-1 md:grid-cols-3 relative max-w-5xl mx-auto"
+                className="grid grid-cols-3 relative max-w-5xl mx-auto"
                 style={{ border: "1px solid var(--border-strong)", borderRadius: "2px" }}
               >
                 {[
@@ -383,16 +386,16 @@ export default function HomePage() {
                   <div key={idx} className="relative">
                     {/* Karta */}
                     <div
-                      className="flex flex-col items-center justify-center py-10 px-8 text-center"
+                      className="flex flex-col items-center justify-center py-5 sm:py-10 px-2 sm:px-8 text-center"
                       style={{
                         borderRight: idx < 2 ? "1px solid var(--border-strong)" : "none",
                       }}
                     >
-                      <div className="mb-5" style={{ color: "#E8491D" }}>
+                      <div className="mb-2 sm:mb-5 [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-7 sm:[&>svg]:h-7" style={{ color: "#E8491D" }}>
                         {step.icon}
                       </div>
                       <h3
-                        className="text-2xl lg:text-[28px] font-medium tracking-tight"
+                        className="text-[11px] sm:text-2xl lg:text-[28px] font-medium tracking-tight leading-tight"
                         style={{ color: "var(--text)" }}
                       >
                         {step.title}
@@ -402,7 +405,7 @@ export default function HomePage() {
                     {/* O'rtadagi strelka */}
                     {idx < 2 && (
                       <div
-                        className="hidden md:flex absolute top-1/2 -right-5 z-10 w-10 h-10 rounded-full items-center justify-center"
+                        className="flex absolute top-1/2 -right-4 sm:-right-5 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full items-center justify-center"
                         style={{
                           transform: "translateY(-50%)",
                           backgroundColor: "var(--bg)",
@@ -424,12 +427,12 @@ export default function HomePage() {
         </section>
 
         {/* DISTRIBYUTOR MAHSULOTLAR */}
-        <section className="py-20" style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-            <Reveal variant="up" className="mb-12">
+        <section className="pt-12 pb-6 sm:pt-20 sm:pb-10" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+            <Reveal variant="up" className="mb-8 sm:mb-12">
               <span className="section-label">{L("Distribyutsiya", "Дистрибуция")}</span>
               <h2
-                className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
+                className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
                 {L("Biz taqdim etadigan distribyutor mahsulotlar", "Дистрибьюторские продукты")}
@@ -440,12 +443,12 @@ export default function HomePage() {
         </section>
 
         {/* UMMED BRENDI OSTIDA MAHSULOTLAR */}
-        <section className="py-20" style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-            <Reveal variant="up" className="mb-12">
+        <section className="pt-6 pb-12 sm:pt-10 sm:pb-20" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+            <Reveal variant="up" className="mb-8 sm:mb-12">
               <span className="section-label">{L("Brend Ummed", "Бренд Ummed")}</span>
               <h2
-                className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
+                className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
                 {L("Ummed brendi ostidagi mahsulotlar", "Продукты под брендом Ummed")}
@@ -456,43 +459,43 @@ export default function HomePage() {
         </section>
 
         {/* UZUM MARKET — pricing card uslubi */}
-        <section className="pt-16 pb-4" style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+        <section className="pt-10 sm:pt-16 pb-4" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             <Reveal variant="up">
               <div
                 className="rounded-2xl overflow-hidden flex flex-col lg:flex-row"
                 style={{ backgroundColor: "var(--bg-soft)" }}
               >
                 {/* Chap qism */}
-                <div className="flex-1 p-10 lg:p-14 flex flex-col justify-center gap-6">
+                <div className="flex-1 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-3 sm:gap-5">
                   <span className="section-label">{L("Uzum Market", "Uzum Market")}</span>
                   <h2
-                    className="text-4xl lg:text-[52px] font-medium leading-[1.1] tracking-tight"
+                    className="text-2xl sm:text-3xl lg:text-[38px] font-medium leading-[1.1] tracking-tight"
                     style={{ color: "var(--text)" }}
                   >
                     {t.uzum.title}
                   </h2>
                   <p
-                    className="text-base lg:text-lg font-light leading-relaxed max-w-md"
+                    className="text-sm font-light leading-relaxed max-w-md"
                     style={{ color: "var(--text-muted)" }}
                   >
                     {t.uzum.subtitle}
                   </p>
                 </div>
 
-                {/* O'ng qism — do'konlar tugmacha shaklida */}
+                {/* O'ng qism — do'konlar, kengaytirilgan */}
                 <div
-                  className="lg:w-[420px] p-10 lg:p-14 flex flex-col justify-center"
-                  style={{ borderLeft: "1px solid var(--border)" }}
+                  className="lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
+                  style={{ borderLeft: "1px solid var(--border)", borderTop: "1px solid var(--border)" }}
                 >
                   <h3
-                    className="text-xl font-medium mb-8"
+                    className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
                     style={{ color: "var(--text)" }}
                   >
                     {L("Do'konlar", "Магазины")}
                   </h3>
 
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-row flex-wrap gap-2 sm:gap-3">
                     {[
                       t.uzum.shops.ummed,
                       t.uzum.shops.ababil,
@@ -500,14 +503,14 @@ export default function HomePage() {
                     ].map((shop) => (
                       <a
                         key={shop.name}
-                        href="#"
+                        href={shop.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-white text-base font-medium transition-all hover:opacity-85 hover:scale-[1.02] self-start"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-medium transition-all hover:opacity-85 hover:scale-[1.02] whitespace-nowrap"
                         style={{ backgroundColor: "#6E27D9" }}
                       >
                         {shop.name}
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M7 17L17 7M9 7h8v8" />
                         </svg>
                       </a>
@@ -520,150 +523,90 @@ export default function HomePage() {
         </section>
 
         {/* SO'NGI YANGILIKLAR */}
-        <section className="pt-8 pb-20" style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-            <Reveal variant="up" className="mb-12 flex items-end justify-between">
+        <section className="pt-5 sm:pt-8 pb-8 sm:pb-16" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+
+            {/* Sarlavha + "Barchasi" linki — bir qatorda */}
+            <Reveal variant="up" className="flex items-center justify-between mb-5 sm:mb-10">
               <div>
                 <span className="section-label">{L("Yangiliklar", "Новости")}</span>
-                <h2
-                  className="text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-6"
-                  style={{ color: "var(--text)" }}
-                >
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-medium leading-tight tracking-tight mt-2 sm:mt-5" style={{ color: "var(--text)" }}>
                   {L("So'nggi yangiliklar", "Последние новости")}
                 </h2>
               </div>
-              <Link
-                href="/yangiliklar"
-                className="hidden md:flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-60"
-                style={{ color: "var(--text)" }}
-              >
-                {L("Barchasi", "Все новости")}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <Link href="/yangiliklar" className="flex items-center gap-1.5 text-xs sm:text-sm font-medium flex-shrink-0 ml-4 transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
+                {L("Barchasi", "Все")}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17L17 7M9 7h8v8"/>
                 </svg>
               </Link>
             </Reveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
-              style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-              {[
-                {
-                  id: 1,
-                  date: L("15 May, 2025", "15 мая, 2025"),
-                  category: L("Yangilik", "Новость"),
-                  title: L("Ummed kompaniyasi yangi tibbiy jihozlar lineyasini taqdim etdi", "Ummed представила новую линейку медицинского оборудования"),
-                  color: "#f0f4f8",
-                  icon: "🏥",
-                },
-                {
-                  id: 2,
-                  date: L("2 May, 2025", "2 мая, 2025"),
-                  category: L("Tahlil", "Аналитика"),
-                  title: L("O'zbekistonda tibbiy jihozlar bozori: 2025 yil tendensiyalari", "Рынок медицинского оборудования Узбекистана: тенденции 2025"),
-                  color: "#f5f0f8",
-                  icon: "📊",
-                },
-                {
-                  id: 3,
-                  date: L("18 Aprel, 2025", "18 апреля, 2025"),
-                  category: L("Hamkorlik", "Партнёрство"),
-                  title: L("550 dan ortiq dorixona bilan hamkorlik: muvaffaqiyat sirlari", "Партнёрство с 550+ аптеками: секреты успеха"),
-                  color: "#f0f8f2",
-                  icon: "🤝",
-                },
-              ].map((item, idx) => (
-                <Reveal key={item.id} variant="up" delay={idx * 70}>
-                  <Link
-                    href={`/yangiliklar/${item.id}`}
-                    className="group flex flex-col"
-                    style={{
-                      backgroundColor: "var(--bg)",
-                      borderRight: idx < 2 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
-                    }}
-                  >
-                    {/* Rasm placeholder */}
-                    <div
-                      className="w-full flex items-center justify-center text-6xl"
-                      style={{ height: 220, backgroundColor: item.color }}
-                    >
-                      {item.icon}
-                    </div>
-                    {/* Ma'lumot */}
-                    <div className="p-6 flex flex-col flex-1">
-                      <p className="text-xs font-light mb-3" style={{ color: "var(--text-muted, #888)" }}>
-                        {item.date} · {item.category}
-                      </p>
-                      <h3
-                        className="text-base font-medium leading-snug group-hover:opacity-60 transition-opacity"
-                        style={{ color: "var(--text)" }}
+            {yangiliklar.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--text-muted, #888)" }}>{L("Yangiliklar yo'q", "Новостей нет")}</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-px sm:border sm:border-[var(--border-strong,#e5e5e5)]">
+                {yangiliklar.map((item, idx) => {
+                  const sarlavha = (lang === "ru" && item.sarlavhaRu) ? item.sarlavhaRu : item.sarlavha;
+                  const sana = item.sana ? new Date(item.sana).toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", { day: "numeric", month: "short", year: "numeric" }) : "";
+                  const katNom = item.kategoriya?.nom || "";
+                  return (
+                    <Reveal key={item.id} variant="up" delay={idx * 70}>
+                      <Link
+                        href={`/yangiliklar/${item.slug}`}
+                        className="group flex flex-col overflow-hidden rounded-xl sm:rounded-none border border-[var(--border-strong,#e5e5e5)] sm:border-0"
+                        style={{
+                          backgroundColor: "var(--bg)",
+                          borderRight: idx < yangiliklar.length - 1 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
+                        }}
                       >
-                        {item.title}
-                      </h3>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-
-            {/* Mobil uchun barcha yangiliklar tugmasi */}
-            <div className="mt-8 md:hidden text-center">
-              <Link
-                href="/yangiliklar"
-                className="inline-flex items-center gap-2 text-sm font-medium transition-opacity hover:opacity-60"
-                style={{ color: "var(--text)" }}
-              >
-                {L("Barcha yangiliklar", "Все новости")}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M7 17L17 7M9 7h8v8"/>
-                </svg>
-              </Link>
-            </div>
+                        <div className="w-full overflow-hidden" style={{ height: 200, backgroundColor: item.kategoriya?.rang || "#f0f4f8" }}>
+                          {item.muqovaRasmUrl ? (
+                            <Image src={item.muqovaRasmUrl} alt={sarlavha} width={400} height={200} style={{ width: "100%", height: "100%", objectFit: "cover" }} className="group-hover:scale-[1.03] transition-transform duration-500" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-4xl">📰</div>
+                          )}
+                        </div>
+                        <div className="p-3 sm:p-5 flex flex-col flex-1">
+                          <p className="text-[11px] font-light mb-2" style={{ color: "var(--text-muted, #888)" }}>
+                            {sana}{katNom ? ` · ${katNom}` : ""}
+                          </p>
+                          <h3 className="text-sm sm:text-base font-medium leading-snug group-hover:opacity-60 transition-opacity" style={{ color: "var(--text)" }}>
+                            {sarlavha}
+                          </h3>
+                        </div>
+                      </Link>
+                    </Reveal>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
         {/* CTA — Hamkorlik */}
-        <section style={{ backgroundColor: "var(--bg)" }}>
+        <section className="pb-10 sm:pb-0" style={{ backgroundColor: "var(--bg)" }}>
           <Reveal variant="up">
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
               <div
-                className="py-20 flex flex-col md:flex-row md:items-center justify-between gap-10"
+                className="py-8 sm:py-20 flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-10"
                 style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}
               >
                 <div>
                   <span className="section-label">{L("Hamkorlik", "Партнёрство")}</span>
-                  <h2
-                    className="text-2xl md:text-3xl font-medium leading-[1.15] tracking-tight mt-6"
-                    style={{ color: "var(--text)", maxWidth: 560 }}
-                  >
-                    <span className="block">{L("Apteka yoki klinikangiz uchun kerakli", "Всё необходимое для вашей аптеки")}</span>
-                    <span className="block">{L("tibbiyot buyumlarini bir joydan toping!", "или клиники — в одном месте!")}</span>
+                  <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 560 }}>
+                    {L("Apteka yoki klinikangiz uchun kerakli tibbiyot buyumlarini bir joydan toping!", "Всё необходимое для вашей аптеки или клиники — в одном месте!")}
                   </h2>
-                  <p
-                    className="mt-5 text-base font-light max-w-xl leading-relaxed"
-                    style={{ color: "var(--text-muted, #888)" }}
-                  >
-                    {L(
-                      "550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.",
-                      "Работаем на основе доверия 550+ клиентов и партнёров."
-                    )}
+                  <p className="mt-3 text-sm font-light leading-relaxed" style={{ color: "var(--text-muted, #888)" }}>
+                    {L("550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.", "Работаем на основе доверия 550+ клиентов и партнёров.")}
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4 flex-shrink-0">
-                  <Link
-                    href="/aloqa"
-                    className="hero-cta inline-flex items-center justify-center px-9 py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03]"
-                  >
-                    {L("Biz bilan hamkorlikni boshlang", "Начать сотрудничество")}
+                <div className="flex flex-row gap-3 flex-shrink-0">
+                  <Link href="/aloqa" className="hero-cta inline-flex items-center justify-center px-5 py-3 sm:px-9 sm:py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03] whitespace-nowrap">
+                    {L("Hamkorlikni boshlang", "Начать сотрудничество")}
                   </Link>
-                  <Link
-                    href="/katalog"
-                    className="inline-flex items-center justify-center px-9 py-4 rounded-full text-sm font-medium transition-all hover:opacity-70"
-                    style={{
-                      border: "1px solid var(--border-strong, #e5e5e5)",
-                      color: "var(--text)",
-                    }}
-                  >
-                    {L("Katalogni ko'rish", "Смотреть каталог")}
+                  <Link href="/katalog" className="inline-flex items-center justify-center px-5 py-3 sm:px-9 sm:py-4 rounded-full text-sm font-medium transition-all hover:opacity-70 whitespace-nowrap" style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
+                    {L("Katalog", "Каталог")}
                   </Link>
                 </div>
               </div>

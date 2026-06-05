@@ -16,13 +16,13 @@ const PARTNERS = [
 
 function PartnerItem({ name, logo }) {
   return (
-    <div className="flex items-center justify-center px-14 flex-shrink-0" data-marquee-item>
+    <div className="flex items-center justify-center px-5 sm:px-14 flex-shrink-0" data-marquee-item>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={logo}
         alt={name}
-        className="partner-logo"
-        style={{ height: 52, maxWidth: 160, objectFit: "contain" }}
+        className="partner-logo sm:!h-[52px] sm:!max-w-[160px]"
+        style={{ height: 36, maxWidth: 110, objectFit: "contain" }}
       />
     </div>
   );

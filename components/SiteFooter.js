@@ -10,22 +10,21 @@ export default function SiteFooter() {
 
   return (
     <footer style={{ backgroundColor: "#111111", color: "#e5e5e5" }}>
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
 
         {/* === YUQORI QISM === */}
-        <div className="pt-20 pb-16 flex flex-col lg:flex-row lg:justify-between gap-14">
+        <div className="pt-12 sm:pt-20 pb-10 sm:pb-16 flex flex-col lg:flex-row lg:justify-between gap-10 sm:gap-14">
 
-          {/* Chap — "Bog'laning" + katta telefon + 3 ustun */}
+          {/* Chap — email + 3 ustun */}
           <div className="flex-1">
-            {/* Kichik label */}
-            <p className="text-sm font-light mb-5" style={{ color: "#555" }}>
+            <p className="text-sm font-light mb-4 sm:mb-5" style={{ color: "#555" }}>
               {L("Elektron pochta", "Электронная почта")}
             </p>
 
-            {/* Katta email */}
+            {/* Email — kichikroq mobilda */}
             <a
               href="mailto:info@ummed.uz"
-              className="block text-[40px] lg:text-[56px] font-light leading-none tracking-tight mb-14 transition-opacity hover:opacity-60"
+              className="block text-[28px] sm:text-[40px] lg:text-[56px] font-light leading-none tracking-tight mb-8 sm:mb-14 transition-opacity hover:opacity-60"
               style={{ color: "#e5e5e5" }}
             >
               info@ummed.uz
@@ -67,10 +66,9 @@ export default function SiteFooter() {
           {/* O'ng — ijtimoiy tarmoqlar */}
           <div className="flex flex-col gap-5 lg:items-end lg:pt-14">
             {[
-              { label: "Telegram",  href: "https://t.me/ummed_tibbiy" },
-              { label: "Instagram", href: "https://instagram.com/ummed.tibbiy" },
-              { label: "YouTube",   href: "https://youtube.com/@ummed" },
-              { label: "Facebook",  href: "https://facebook.com/ummedtibbiy" },
+              { label: "Telegram",  href: "https://t.me/ummeduz" },
+              { label: "Instagram", href: "https://www.instagram.com/ummed_uz/" },
+              { label: "YouTube",   href: "https://www.youtube.com/channel/UCPE1FJuYNkMyEehQkEh01CQ" },
             ].map((s) => (
               <a
                 key={s.label}

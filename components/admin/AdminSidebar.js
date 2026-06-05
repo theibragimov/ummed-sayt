@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 
 const MENU = [
@@ -7,9 +8,11 @@ const MENU = [
   { href: '/admin/zayavkalar', label: 'Zayavkalar', icon: '◫' },
   { href: '/admin/mahsulotlar', label: 'Mahsulotlar', icon: '◈' },
   { href: '/admin/mahsulotlar/import', label: 'CSV Import', icon: '⬆', sub: true },
+  { href: '/admin/bulk-rasm', label: 'Ommaviy rasm', icon: '🖼', sub: true },
   { href: '/admin/kategoriyalar', label: 'Kategoriyalar', icon: '◉' },
   { href: '/admin/yangiliklar', label: 'Yangiliklar', icon: '◎' },
   { href: '/admin/tugmalar', label: 'Tugmalar', icon: '◯' },
+  { href: '/admin/sozlamalar', label: 'Sozlamalar', icon: '⚙' },
 ]
 
 export default function AdminSidebar() {
@@ -40,11 +43,13 @@ export default function AdminSidebar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             width: '38px', height: '38px',
-            background: '#E8491D',
+            background: '#ffffff',
             borderRadius: '10px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontSize: '18px', fontWeight: 700,
-          }}>U</div>
+            overflow: 'hidden',
+          }}>
+            <Image src="/logo-icon.png" alt="Ummed logo" width={28} height={28} style={{ objectFit: 'contain' }} />
+          </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '15px', color: '#0a0a0a', letterSpacing: '-0.02em' }}>Ummed</div>
             <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Admin Panel</div>

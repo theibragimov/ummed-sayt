@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLang } from "@/lib/i18n";
 
 const BG_COLORS = [
   "linear-gradient(160deg, #dbeafe 0%, #bfdbfe 100%)",
@@ -13,180 +14,156 @@ const BG_COLORS = [
   "linear-gradient(160deg, #e0f2fe 0%, #bae6fd 100%)",
 ];
 
-export default function ProductGrid({ items }) {
+function getCategoryEmoji(slug) {
+  const map = { diagnostika: "🩺", "nafas-jihozlari": "💨", "yurak-jihozlari": "❤️", "tibbiy-mebel": "🛏️", sterilizatsiya: "🧪" };
+  return map[slug] || "🏥";
+}
+
+export default function ProductGrid({ items, visibleCount = 4 }) {
+  const { lang } = useLang();
   const N = items.length;
-  if (N === 0) return (
-    <div className="flex items-center justify-center py-16 text-sm font-light" style={{ color: "var(--text-muted, #888)" }}>
-      Mahsulotlar yo'q
-    </div>
-  );
 
-  const VISIBLE = 4;
-  const GAP = 20;
-  const IMG_H = 340;
-
-  // N VISIBLE dan kam bo'lsa — oddiy grid, carousel yo'q
-  const useCarousel = N > VISIBLE;
-  const tripled = useCarousel ? [...items, ...items, ...items] : items;
+  // ── Barcha hooklar shart va return DAN OLDIN ──
+  const [isMobile, setIsMobile] = useState(false);
   const trackRef = useRef(null);
-  const lockRef = useRef(false);
-  const [active, setActive] = useState(N);
+  const animRef = useRef(false);
+  const [idx, setIdx] = useState(N);
 
-  const slide = (dir) => {
-    if (!useCarousel || lockRef.current) return;
-    lockRef.current = true;
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const VISIBLE = isMobile ? 2 : visibleCount;
+  const GAP = isMobile ? 10 : 20;
+  const IMG_H = isMobile ? 160 : 340;
+  const useCarousel = N >= VISIBLE;
+  const cardW = `calc((100% - ${(VISIBLE - 1) * GAP}px) / ${VISIBLE})`;
+
+  const slide = useCallback((dir) => {
+    if (!useCarousel || animRef.current) return;
+    animRef.current = true;
     const t = trackRef.current;
-    t.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
-    const newActive = active + dir;
-    setActive(newActive);
-    setTimeout(() => {
-      if (newActive >= 2 * N) { t.style.transition = "none"; setActive(newActive - N); }
-      else if (newActive < N) { t.style.transition = "none"; setActive(newActive + N); }
-      lockRef.current = false;
-    }, 580);
-  };
+    if (!t) { animRef.current = false; return; }
+    const next = idx + dir;
+    t.style.transition = "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)";
+    t.style.transform = `translateX(calc(-${next} * (${cardW} + ${GAP}px)))`;
+    const onEnd = () => {
+      t.removeEventListener("transitionend", onEnd);
+      let corrected = next;
+      if (next >= 2 * N) corrected = next - N;
+      else if (next < N) corrected = next + N;
+      if (corrected !== next) {
+        t.style.transition = "none";
+        t.style.transform = `translateX(calc(-${corrected} * (${cardW} + ${GAP}px)))`;
+        void t.offsetHeight;
+      }
+      setIdx(corrected);
+      animRef.current = false;
+    };
+    t.addEventListener("transitionend", onEnd);
+  }, [idx, N, useCarousel, cardW, GAP]);
+  // ── Hooklar tugadi ──
 
-  const arrowTop = IMG_H / 2 - 22;
-
-  // Grid mode: N <= VISIBLE
-  if (!useCarousel) {
+  if (N === 0) {
     return (
-      <div className="grid gap-5"
-        style={{ gridTemplateColumns: `repeat(${Math.min(N, VISIBLE)}, 1fr)` }}>
-        {items.map((item, idx) => <ProductCard key={idx} item={item} idx={idx} GAP={GAP} VISIBLE={VISIBLE} />)}
+      <div className="flex items-center justify-center py-16 text-sm font-light" style={{ color: "var(--text-muted, #888)" }}>
+        Mahsulotlar yo'q
       </div>
     );
   }
 
+  // Grid rejim
+  if (!useCarousel) {
+    const cols = isMobile ? 1 : Math.min(N, VISIBLE);
+    return (
+      <div className="grid gap-5" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        {items.map((item, i) => (
+          <Card key={i} item={item} bg={BG_COLORS[i % BG_COLORS.length]} imgH={isMobile ? 200 : 340} lang={lang} />
+        ))}
+      </div>
+    );
+  }
+
+  // Carousel rejim
+  const tripled = [...items, ...items, ...items];
+  const arrowTop = IMG_H / 2 - 22;
+
   return (
     <div className="relative px-14">
       {/* Chap strelka */}
-      <button onClick={() => slide(-1)}
-        className="absolute left-0 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-md"
-        style={{ top: `${arrowTop}px`, backgroundColor: "var(--bg)", border: "1px solid var(--border-strong)", color: "var(--text)" }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <button
+        onClick={() => slide(-1)}
+        className="absolute left-0 z-30 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-md"
+        style={{ top: `${arrowTop}px`, width: isMobile ? 32 : 44, height: isMobile ? 32 : 44, backgroundColor: "var(--bg)", border: "1px solid var(--border-strong)", color: "var(--text)" }}
+      >
+        <svg width={isMobile ? 13 : 18} height={isMobile ? 13 : 18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
         </svg>
       </button>
 
       {/* O'ng strelka */}
-      <button onClick={() => slide(1)}
-        className="absolute right-0 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
-        style={{ top: `${arrowTop}px`, background: "linear-gradient(135deg, #FF6B35 0%, #E8491D 100%)", color: "#ffffff", boxShadow: "0 8px 20px -6px rgba(232,73,29,0.45)" }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <button
+        onClick={() => slide(1)}
+        className="absolute right-0 z-30 rounded-full flex items-center justify-center transition-all hover:scale-110"
+        style={{ top: `${arrowTop}px`, width: isMobile ? 32 : 44, height: isMobile ? 32 : 44, background: "linear-gradient(135deg, #FF6B35 0%, #E8491D 100%)", color: "#fff", boxShadow: "0 8px 20px -6px rgba(232,73,29,0.45)" }}
+      >
+        <svg width={isMobile ? 13 : 18} height={isMobile ? 13 : 18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M9 18l6-6-6-6" />
         </svg>
       </button>
 
       <div className="overflow-hidden">
-        <div ref={trackRef} className="flex"
+        <div
+          ref={trackRef}
+          className="flex"
           style={{
             gap: `${GAP}px`,
-            transform: `translateX(calc(-${active} * (((100% - ${(VISIBLE - 1) * GAP}px) / ${VISIBLE}) + ${GAP}px)))`,
-            transition: "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}>
-          {tripled.map((item, idx) => {
-            // DB mahsulot yoki static item
-            const isDbItem = !!item.slug
-            const name = item.nom || item.name || ""
-            const desc = item.qisqaTavsif || item.desc || ""
-            const bg = item.gradient || BG_COLORS[idx % BG_COLORS.length]
-            const href = isDbItem ? `/mahsulot/${item.slug}` : null
-
-            const CardInner = (
-              <>
-                {/* Rasm */}
-                <div className="relative w-full overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-500"
-                  style={{ background: bg, height: `${IMG_H}px` }}>
-                  {item.asosiyRasmUrl ? (
-                    <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover" }} />
-                  ) : item.visual ? (
-                    <div className="transition-transform duration-500">{item.visual}</div>
-                  ) : (
-                    <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
-                  )}
-                </div>
-                {/* Matn */}
-                <div className="mt-5">
-                  {item.kategoriya?.nom && (
-                    <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#E8491D" }}>
-                      {item.kategoriya.nom}
-                    </span>
-                  )}
-                  <h3 className="text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>
-                    {name}
-                  </h3>
-                  <p className="mt-2 text-[15px] font-light leading-relaxed" style={{ color: "var(--text-muted)" }}>
-                    {desc}
-                  </p>
-                  {isDbItem && item.narx && (
-                    <p className="mt-2 text-base font-semibold" style={{ color: "#E8491D" }}>
-                      {item.narx.toLocaleString("uz-UZ")} so'm
-                    </p>
-                  )}
-                </div>
-              </>
-            )
-
-            return href ? (
-              <Link key={idx} href={href}
-                className="group flex-shrink-0 cursor-pointer block no-underline"
-                style={{ width: `calc((100% - ${(VISIBLE - 1) * GAP}px) / ${VISIBLE})` }}>
-                {CardInner}
-              </Link>
-            ) : (
-              <div key={idx} className="group flex-shrink-0"
-                style={{ width: `calc((100% - ${(VISIBLE - 1) * GAP}px) / ${VISIBLE})` }}>
-                {CardInner}
-              </div>
-            )
-          })}
+            transform: `translateX(calc(-${idx} * (${cardW} + ${GAP}px)))`,
+            transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+            willChange: "transform",
+          }}
+        >
+          {tripled.map((item, i) => (
+            <div key={i} className="flex-shrink-0" style={{ width: cardW }}>
+              <Card item={item} bg={BG_COLORS[i % BG_COLORS.length]} imgH={IMG_H} lang={lang} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-function getCategoryEmoji(slug) {
-  const map = { diagnostika: "🩺", "nafas-jihozlari": "💨", "yurak-jihozlari": "❤️", "tibbiy-mebel": "🛏️", sterilizatsiya: "🧪" };
-  return map[slug] || "🏥";
-}
-
-const IMG_H = 340;
-const BG_COLORS_GRID = [
-  "linear-gradient(160deg, #dbeafe 0%, #bfdbfe 100%)",
-  "linear-gradient(160deg, #d1fae5 0%, #a7f3d0 100%)",
-  "linear-gradient(160deg, #fef3c7 0%, #fde68a 100%)",
-  "linear-gradient(160deg, #ede9fe 0%, #ddd6fe 100%)",
-];
-
-function ProductCard({ item, idx }) {
+function Card({ item, bg, imgH, lang }) {
   const isDbItem = !!item.slug;
-  const name = item.nom || item.name || "";
-  const desc = item.qisqaTavsif || item.desc || "";
-  const bg = item.gradient || BG_COLORS_GRID[idx % BG_COLORS_GRID.length];
+  const name = lang === "ru" ? (item.nomRu || item.nom || item.name || "") : (item.nom || item.name || "");
+  const desc = lang === "ru" ? (item.qisqaTavsifRu || item.qisqaTavsif || item.desc || "") : (item.qisqaTavsif || item.desc || "");
   const href = isDbItem ? `/mahsulot/${item.slug}` : null;
 
   const inner = (
     <>
-      <div className="relative w-full overflow-hidden flex items-center justify-center"
-        style={{ background: bg, height: `${IMG_H}px` }}>
+      <div className="relative w-full overflow-hidden" style={{ height: `${imgH}px`, background: item.asosiyRasmUrl ? "transparent" : bg }}>
         {item.asosiyRasmUrl ? (
-          <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover" }} />
+          <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover", transition: "transform 0.5s ease" }} className="group-hover:scale-[1.03]" />
         ) : item.visual ? (
-          <div>{item.visual}</div>
+          <div className="w-full h-full flex items-center justify-center">{item.visual}</div>
         ) : (
-          <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-8xl select-none">{getCategoryEmoji(item.kategoriya?.slug)}</span>
+          </div>
         )}
       </div>
       <div className="mt-5">
         {item.kategoriya?.nom && (
           <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#E8491D" }}>
-            {item.kategoriya.nom}
+            {lang === "ru" ? (item.kategoriya.nomRu || item.kategoriya.nom) : item.kategoriya.nom}
           </span>
         )}
-        <h3 className="text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
-        <p className="mt-2 text-[15px] font-light leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
+        <h3 className="text-[14px] sm:text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
+        <p className="mt-1 sm:mt-2 text-[12px] sm:text-[15px] font-light leading-relaxed line-clamp-2" style={{ color: "var(--text-muted)" }}>{desc}</p>
         {isDbItem && item.narx && (
           <p className="mt-2 text-base font-semibold" style={{ color: "#E8491D" }}>{item.narx.toLocaleString("uz-UZ")} so'm</p>
         )}

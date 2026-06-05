@@ -11,10 +11,13 @@ export default async function PostTahrirlash({ params }) {
 
   const boshlangich = {
     sarlavha: post.sarlavha,
+    sarlavhaRu: post.sarlavhaRu || '',
     slug: post.slug,
     muallif: post.muallif || '',
     qisqaTavsif: post.qisqaTavsif || '',
+    qisqaTavsifRu: post.qisqaTavsifRu || '',
     toliqMatn: post.toliqMatn || '',
+    toliqMatnRu: post.toliqMatnRu || '',
     holat: post.holat,
     kategoriyaId: post.kategoriyaId || '',
     muqovaRasmUrl: post.muqovaRasmUrl || '',

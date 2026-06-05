@@ -7,13 +7,16 @@ import { A } from './AdminStyles'
 export default function PostForm({ boshlangich = {}, postId }) {
   const router = useRouter()
   const [form, setForm] = useState({
-    sarlavha: '', slug: '', muallif: '', qisqaTavsif: '',
-    toliqMatn: '', holat: 'draft', kategoriyaId: '',
+    sarlavha: '', sarlavhaRu: '', slug: '', muallif: '',
+    qisqaTavsif: '', qisqaTavsifRu: '',
+    toliqMatn: '', toliqMatnRu: '',
+    holat: 'draft', kategoriyaId: '',
     muqovaRasmUrl: '', sana: new Date().toISOString().slice(0, 16),
     ...boshlangich,
   })
   const [kategoriyalar, setKategoriyalar] = useState([])
   const [saqlash, setSaqlash] = useState(false)
+  const [til, setTil] = useState('uz') // 'uz' | 'ru'
 
   useEffect(() => { fetch('/api/post-kategoriyalar').then(r => r.json()).then(setKategoriyalar) }, [])
 
@@ -37,10 +40,12 @@ export default function PostForm({ boshlangich = {}, postId }) {
     <form onSubmit={yuborish} style={{ maxWidth: '720px' }}>
       {/* Asosiy */}
       <div style={{ ...A.cardPad, marginBottom: '16px' }}>
-        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>Asosiy ma'lumotlar</div>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Asosiy ma'lumotlar
+        </div>
         <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>Sarlavha *</label>
-          <input required value={form.sarlavha} onChange={e => oz('sarlavha', e.target.value)} style={A.input} />
+          <label style={A.label}>Sarlavha (O'zbek) *</label>
+          <input required value={form.sarlavha} onChange={e => oz('sarlavha', e.target.value)} style={A.input} placeholder="O'zbekcha sarlavha" />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <div style={{ marginBottom: '16px' }}>
@@ -70,21 +75,76 @@ export default function PostForm({ boshlangich = {}, postId }) {
 
       {/* Rasm */}
       <div style={{ ...A.cardPad, marginBottom: '16px' }}>
-        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>Muqova rasm</div>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Muqova rasm
+        </div>
         <RasmYuklash label="" qiymat={form.muqovaRasmUrl} onChange={v => oz('muqovaRasmUrl', v)} />
       </div>
 
-      {/* Matn */}
+      {/* Matn — Til tanlov tablar */}
       <div style={{ ...A.cardPad, marginBottom: '24px' }}>
-        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>Matn</div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>Qisqa tavsif (300 belgigacha)</label>
-          <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={2} maxLength={300} style={A.textarea} />
+        {/* Tab sarlavhasi */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a' }}>Matn</div>
+          <div style={{ display: 'flex', gap: '4px', background: '#f0f0ee', borderRadius: '8px', padding: '3px' }}>
+            {['uz', 'ru'].map(t => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTil(t)}
+                style={{
+                  padding: '5px 16px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  background: til === t ? '#fff' : 'transparent',
+                  color: til === t ? '#0a0a0a' : '#9ca3af',
+                  boxShadow: til === t ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                }}
+              >
+                {t === 'uz' ? "🇺🇿 O'zbek" : '🇷🇺 Русский'}
+              </button>
+            ))}
+          </div>
         </div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>To'liq matn (HTML)</label>
-          <textarea value={form.toliqMatn} onChange={e => oz('toliqMatn', e.target.value)} rows={12} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<h2>Sarlavha</h2><p>Matn...</p>" />
-        </div>
+
+        {/* O'zbek matnlari */}
+        {til === 'uz' && (
+          <>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={A.label}>Qisqa tavsif (300 belgigacha)</label>
+              <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={2} maxLength={300} style={A.textarea} placeholder="O'zbekcha qisqa tavsif..." />
+            </div>
+            <div style={{ marginBottom: '0' }}>
+              <label style={A.label}>To'liq matn (HTML)</label>
+              <textarea value={form.toliqMatn} onChange={e => oz('toliqMatn', e.target.value)} rows={12} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<h2>Sarlavha</h2><p>Matn...</p>" />
+            </div>
+          </>
+        )}
+
+        {/* Rus matnlari */}
+        {til === 'ru' && (
+          <>
+            <div style={{ marginBottom: '8px', padding: '10px 14px', background: 'rgba(99,102,241,0.05)', borderRadius: '8px', border: '1px solid rgba(99,102,241,0.12)', fontSize: '12px', color: '#6366f1' }}>
+              🇷🇺 Rus tilidagi kontentni to'ldiring — sayt rus tiliga o'zgarganda shu ma'lumotlar ko'rsatiladi
+            </div>
+            <div style={{ marginBottom: '16px', marginTop: '12px' }}>
+              <label style={A.label}>Sarlavha (Русский)</label>
+              <input value={form.sarlavhaRu} onChange={e => oz('sarlavhaRu', e.target.value)} style={A.input} placeholder="Заголовок на русском..." />
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={A.label}>Краткое описание (до 300 символов)</label>
+              <textarea value={form.qisqaTavsifRu} onChange={e => oz('qisqaTavsifRu', e.target.value)} rows={2} maxLength={300} style={A.textarea} placeholder="Краткое описание на русском..." />
+            </div>
+            <div style={{ marginBottom: '0' }}>
+              <label style={A.label}>Полный текст (HTML)</label>
+              <textarea value={form.toliqMatnRu} onChange={e => oz('toliqMatnRu', e.target.value)} rows={12} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<h2>Заголовок</h2><p>Текст...</p>" />
+            </div>
+          </>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: '12px' }}>

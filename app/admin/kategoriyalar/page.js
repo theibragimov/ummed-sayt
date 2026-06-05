@@ -4,7 +4,7 @@ import Image from 'next/image'
 import RasmYuklash from '@/components/admin/RasmYuklash'
 import { A } from '@/components/admin/AdminStyles'
 
-const INIT = { nom: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '' }
+const INIT = { nom: '', nomRu: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '' }
 
 export default function KategoriyalarPage() {
   const [kategoriyalar, setKategoriyalar] = useState([])
@@ -17,7 +17,7 @@ export default function KategoriyalarPage() {
 
   function ochModal(k = null) {
     setTahrirlash(k)
-    setForm(k ? { nom: k.nom, tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '' } : INIT)
+    setForm(k ? { nom: k.nom, nomRu: k.nomRu || '', tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '' } : INIT)
     setModal(true)
   }
 
@@ -62,7 +62,10 @@ export default function KategoriyalarPage() {
                   : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>📁</div>
                 }
               </div>
-              <span style={{ fontWeight: 600, fontSize: '14px', color: '#0a0a0a' }}>{k.nom}</span>
+              <div>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#0a0a0a' }}>{k.nom}</span>
+                {k.nomRu && <span style={{ fontSize: '12px', color: '#9ca3af', display: 'block' }}>{k.nomRu}</span>}
+              </div>
             </div>
             <span style={{ fontSize: '13px', color: '#9ca3af' }}>{k.parent?.nom || '—'}</span>
             <span style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center' }}>{k.tartibRaqami}</span>
@@ -81,9 +84,15 @@ export default function KategoriyalarPage() {
         <div style={A.overlay}>
           <div style={A.modal}>
             <h3 style={{ ...A.h2, marginBottom: '20px' }}>{tahrirlash ? 'Tahrirlash' : 'Yangi kategoriya'}</h3>
-            <div style={{ marginBottom: '14px' }}>
-              <label style={A.label}>Nom *</label>
-              <input value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} style={A.input} required />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+              <div>
+                <label style={A.label}>Nom (O'zbek) *</label>
+                <input value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} style={A.input} required />
+              </div>
+              <div>
+                <label style={A.label}>Nom (Rus tili)</label>
+                <input value={form.nomRu} onChange={e => setForm({ ...form, nomRu: e.target.value })} style={A.input} placeholder="Русское название" />
+              </div>
             </div>
             <div style={{ marginBottom: '14px' }}>
               <label style={A.label}>Asosiy kategoriya</label>

@@ -2,12 +2,27 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useLang } from "@/lib/i18n";
 import PartnersMarquee from "./PartnersMarquee";
 
 export default function InteractiveHero() {
   const { t, lang } = useLang();
   const L = (uz, ru) => (lang === "ru" ? ru : uz);
+  const [soz, setSoz] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/sozlamalar")
+      .then(r => r.json())
+      .then(setSoz)
+      .catch(() => setSoz({}));
+  }, []);
+
+  // Bazadan matn ol, bo'lmasa i18n fallback
+  const badge   = soz ? (soz[`hero_badge_${lang}`]   || t.hero.badge)   : t.hero.badge;
+  const title1  = soz ? (soz[`hero_title1_${lang}`]  || t.hero.title1)  : t.hero.title1;
+  const title2  = soz ? (soz[`hero_title2_${lang}`]  || t.hero.title2)  : t.hero.title2;
+  const title3  = soz ? (soz[`hero_title3_${lang}`]  || t.hero.title3)  : t.hero.title3;
 
   return (
     <section
@@ -55,30 +70,30 @@ export default function InteractiveHero() {
         }
       `}</style>
 
-      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 md:pt-14 pb-20">
+      <div className="relative max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-8 sm:pt-10 md:pt-14 pb-12 sm:pb-20">
         {/* Label */}
         <div className="anim-fade-up" style={{ animationDelay: "80ms" }}>
-          <span className="section-label">{t.hero.badge}</span>
+          <span className="section-label">{badge}</span>
         </div>
 
-        {/* Asosiy sarlavha — 3 qatorda, medium vazn */}
+        {/* Asosiy sarlavha */}
         <h1
-          className="mt-7 text-[42px] md:text-[60px] lg:text-[76px] font-medium leading-[1.05] tracking-[-0.04em] max-w-5xl anim-fade-up"
+          className="mt-5 sm:mt-7 text-[30px] sm:text-[42px] md:text-[60px] lg:text-[76px] font-medium leading-[1.1] sm:leading-[1.05] tracking-[-0.03em] sm:tracking-[-0.04em] max-w-5xl anim-fade-up"
           style={{ animationDelay: "180ms", color: "var(--text)" }}
         >
-          <span className="block">{t.hero.title1}</span>
-          <span className="block">{t.hero.title2}</span>
-          <span className="block">{t.hero.title3}</span>
+          <span className="block">{title1}</span>
+          <span className="block">{title2}</span>
+          <span className="block">{title3}</span>
         </h1>
 
-        {/* CTA — pastda chap tomonda */}
+        {/* CTA */}
         <div
-          className="mt-12 flex flex-wrap items-center gap-6 anim-fade-up"
+          className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6 anim-fade-up"
           style={{ animationDelay: "320ms" }}
         >
           <Link
             href="/aloqa"
-            className="hero-cta inline-flex items-center px-9 py-4 rounded-full text-base font-medium transition-all hover:scale-[1.03]"
+            className="hero-cta inline-flex items-center justify-center px-6 py-3 sm:px-9 sm:py-4 rounded-full text-sm sm:text-base font-medium transition-all hover:scale-[1.03]"
           >
             {L("Biz bilan bog'laning!", "Связаться с нами!")}
           </Link>
@@ -88,7 +103,7 @@ export default function InteractiveHero() {
             <div className="w-16 h-px bg-gray-200 mr-2" />
             {[
               {
-                href: "https://t.me/ummed_tibbiy",
+                href: "https://t.me/ummeduz",
                 label: "Telegram",
                 icon: (
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -97,7 +112,7 @@ export default function InteractiveHero() {
                 ),
               },
               {
-                href: "https://instagram.com/ummed.tibbiy",
+                href: "https://www.instagram.com/ummed_uz/",
                 label: "Instagram",
                 icon: (
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -106,7 +121,7 @@ export default function InteractiveHero() {
                 ),
               },
               {
-                href: "https://youtube.com/@ummed",
+                href: "https://www.youtube.com/channel/UCPE1FJuYNkMyEehQkEh01CQ",
                 label: "YouTube",
                 icon: (
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -130,7 +145,7 @@ export default function InteractiveHero() {
         </div>
 
         {/* Hamkorlar marquee */}
-        <div className="mt-20">
+        <div className="mt-10 sm:mt-20">
           <PartnersMarquee />
         </div>
       </div>

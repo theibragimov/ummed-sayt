@@ -14,6 +14,17 @@ function formatPrice(narx) {
   return narx.toLocaleString("uz-UZ") + " so'm";
 }
 
+function tavsifHtml(matn) {
+  if (!matn) return '';
+  // Agar HTML teglari bo'lsa, shundayligicha qaytarish
+  if (/<[a-z][\s\S]*>/i.test(matn)) return matn;
+  // Oddiy tekst: ikki yangi qator = paragraf, bir yangi qator = <br>
+  return matn
+    .split(/\n\n+/)
+    .map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`)
+    .join('');
+}
+
 function ContactForm({ productName, pt }) {
   const [form, setForm] = useState({ name: "", phone: "", comment: "" });
   const [sent, setSent] = useState(false);
@@ -97,7 +108,7 @@ function ContactForm({ productName, pt }) {
 
 export default function ProductPage({ params }) {
   const { id: slug } = use(params);
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const pt = t.product;
 
   const [product, setProduct] = useState(null);
@@ -138,7 +149,10 @@ export default function ProductPage({ params }) {
 
   const specsRaw = product.texnikXususiyatlar;
   const specs = Array.isArray(specsRaw) ? specsRaw : [];
-  const fullDesc = product.toliqTavsif || product.qisqaTavsif || "";
+  const ru = lang === 'ru';
+  const displayNom = (ru && product.nomRu) ? product.nomRu : product.nom;
+  const displayQisqa = (ru && product.qisqaTavsifRu) ? product.qisqaTavsifRu : product.qisqaTavsif;
+  const fullDesc = (ru && product.toliqTavsifRu) ? product.toliqTavsifRu : (product.toliqTavsif || product.qisqaTavsif || "");
 
   return (
     <>
@@ -152,7 +166,7 @@ export default function ProductPage({ params }) {
             <span>/</span>
             <Link href="/katalog" className="hover:text-gray-600 transition-colors">{pt.breadcrumbCatalog}</Link>
             <span>/</span>
-            <span className="font-medium text-gray-700 truncate max-w-[200px]">{product.nom}</span>
+            <span className="font-medium text-gray-700 truncate max-w-[200px]">{displayNom}</span>
           </nav>
         </div>
 
@@ -223,9 +237,9 @@ export default function ProductPage({ params }) {
 
                   <div className="p-6">
                     {activeTab === "tavsif" ? (
-                      <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                        {fullDesc || <span className="text-gray-400 italic">Tavsif mavjud emas</span>}
-                      </div>
+                      fullDesc
+                        ? <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: tavsifHtml(fullDesc) }} />
+                        : <span className="text-gray-400 italic">Tavsif mavjud emas</span>
                     ) : (
                       <table className="w-full text-sm">
                         <tbody>
@@ -247,10 +261,10 @@ export default function ProductPage({ params }) {
             <div className="space-y-5">
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
                 <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                  {product.kategoriya?.nom || ""}
+                  {lang === 'ru' ? (product.kategoriya?.nomRu || product.kategoriya?.nom || "") : (product.kategoriya?.nom || "")}
                 </span>
                 <h1 className="text-2xl font-extrabold text-gray-800 mt-2 mb-4 leading-snug">
-                  {product.nom}
+                  {displayNom}
                 </h1>
 
                 <div className="flex items-end gap-3 mb-5">
@@ -259,7 +273,7 @@ export default function ProductPage({ params }) {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-500 leading-relaxed mb-5">{product.qisqaTavsif}</p>
+                <p className="text-sm text-gray-500 leading-relaxed mb-5">{displayQisqa}</p>
 
                 <div className="flex items-center gap-2 mb-5">
                   <span className={`w-2.5 h-2.5 rounded-full ${product.mavjudligi ? "bg-green-500" : "bg-gray-400"}`} />
@@ -309,11 +323,11 @@ export default function ProductPage({ params }) {
                     )}
                   </div>
                   <div className="p-4 flex flex-col flex-1">
-                    <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">{p.kategoriya?.nom}</span>
+                    <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">{lang === 'ru' ? (p.kategoriya?.nomRu || p.kategoriya?.nom) : p.kategoriya?.nom}</span>
                     <h3 className="text-sm font-bold text-gray-800 mb-1 leading-snug group-hover:text-[#E8491D] transition-colors">
-                      {p.nom}
+                      {(ru && p.nomRu) ? p.nomRu : p.nom}
                     </h3>
-                    <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">{p.qisqaTavsif}</p>
+                    <p className="text-xs text-gray-400 flex-1 mb-3 leading-relaxed">{(ru && p.qisqaTavsifRu) ? p.qisqaTavsifRu : p.qisqaTavsif}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-base font-extrabold" style={{ color: "#E8491D" }}>
                         {formatPrice(p.narx)}

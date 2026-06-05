@@ -1,4 +1,4 @@
-export default {
+const button = {
   name: 'button',
   title: 'Tugmalar va Havolalar',
   type: 'document',
@@ -44,3 +44,5 @@ export default {
     },
   },
 }
+
+export default button

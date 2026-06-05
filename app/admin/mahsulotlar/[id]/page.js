@@ -11,17 +11,21 @@ export default async function MahsulotTahrirlash({ params }) {
 
   const boshlangich = {
     nom: mahsulot.nom,
+    nomRu: mahsulot.nomRu || '',
     slug: mahsulot.slug,
     narx: mahsulot.narx || '',
     narxBirligi: mahsulot.narxBirligi,
     brend: mahsulot.brend || '',
     modelRaqami: mahsulot.modelRaqami || '',
     qisqaTavsif: mahsulot.qisqaTavsif || '',
+    qisqaTavsifRu: mahsulot.qisqaTavsifRu || '',
     toliqTavsif: mahsulot.toliqTavsif || '',
+    toliqTavsifRu: mahsulot.toliqTavsifRu || '',
     mavjudligi: mahsulot.mavjudligi,
     featured: mahsulot.featured,
-    kategoriyaId: mahsulot.kategoriyaId || '',
+    kategoriyaId: mahsulot.kategoriyaId ? String(mahsulot.kategoriyaId) : '',
     asosiyRasmUrl: mahsulot.asosiyRasmUrl || '',
+    turi: mahsulot.turi || 'katalog',
   }
 
   return (

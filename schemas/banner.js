@@ -1,4 +1,4 @@
-export default {
+const banner = {
   name: 'banner',
   title: 'Banner / Slider',
   type: 'document',
@@ -59,3 +59,5 @@ export default {
     },
   },
 }
+
+export default banner

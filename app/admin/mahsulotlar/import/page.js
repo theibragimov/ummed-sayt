@@ -17,16 +17,15 @@ export default function ImportPage() {
   function namunaYukla() {
     const wb = XLSX.utils.book_new()
     const data = [
-      ['nom', 'kategoriya', 'narx', 'tavsif', 'brend', 'mavjud'],
-      ['Tonometr avtomatik', 'Diagnostika', 320000, 'Bilak tipidagi qon bosimi o\'lchagich', 'Beurer', 'ha'],
-      ['Glukometr to\'plami', 'Diagnostika', 180000, 'Qand darajasini o\'lchash uchun', 'Accu-Chek', 'ha'],
-      ['Kompressor nebulayzer', 'Nafas jihozlari', 450000, 'Nafas kasalliklari uchun', 'Omron', 'ha'],
-      ['UV sterilizator', 'Sterilizatsiya', 180000, 'Ultrabinafsha sterilizator', '', 'ha'],
-      ['Tibbiy krovat', 'Tibbiy mebel', 1200000, 'Statsionar, balandligi sozlanadi', '', 'ha'],
+      ['nom', 'nom_ru', 'kategoriya', 'narx', 'tavsif', 'tavsif_ru', 'brend', 'mavjud'],
+      ['Tonometr avtomatik', 'Автоматический тонометр', 'Diagnostika', 320000, 'Bilak tipidagi qon bosimi o\'lchagich', 'Измеритель давления на запястье', 'Beurer', 'ha'],
+      ['Glukometr to\'plami', 'Комплект глюкометра', 'Diagnostika', 180000, 'Qand darajasini o\'lchash uchun', 'Для измерения уровня сахара', 'Accu-Chek', 'ha'],
+      ['Kompressor nebulayzer', 'Компрессорный небулайзер', 'Nafas jihozlari', 450000, 'Nafas kasalliklari uchun', 'Для лечения органов дыхания', 'Omron', 'ha'],
+      ['UV sterilizator', 'УФ стерилизатор', 'Sterilizatsiya', 180000, 'Ultrabinafsha sterilizator', 'Ультрафиолетовый стерилизатор', '', 'ha'],
+      ['Tibbiy krovat', 'Медицинская кровать', 'Tibbiy mebel', 1200000, 'Statsionar, balandligi sozlanadi', 'Стационарная, регулируемая высота', '', 'ha'],
     ]
     const ws = XLSX.utils.aoa_to_sheet(data)
-    // Ustun kengliklari
-    ws['!cols'] = [{ wch: 30 }, { wch: 20 }, { wch: 12 }, { wch: 40 }, { wch: 18 }, { wch: 8 }]
+    ws['!cols'] = [{ wch: 30 }, { wch: 30 }, { wch: 20 }, { wch: 12 }, { wch: 35 }, { wch: 35 }, { wch: 15 }, { wch: 8 }]
     XLSX.utils.book_append_sheet(wb, ws, 'Mahsulotlar')
     XLSX.writeFile(wb, 'mahsulotlar-namuna.xlsx')
   }
@@ -36,12 +35,14 @@ export default function ImportPage() {
     if (!fayl) return
     setXato('')
 
-    // Kategoriyalarni yuklash
-    const kRes = await fetch('/api/kategoriyalar')
-    const kData = await kRes.json()
-    setKategoriyalar(kData)
-
     try {
+      // Kategoriyalarni yuklash
+      const kRes = await fetch('/api/kategoriyalar')
+      if (!kRes.ok) throw new Error('Kategoriyalarni yuklashda xatolik: ' + kRes.status)
+      const kData = await kRes.json()
+      if (!Array.isArray(kData)) throw new Error('Kategoriyalar ro\'yxati noto\'g\'ri formatda')
+      setKategoriyalar(kData)
+
       const buf = await fayl.arrayBuffer()
       const wb = XLSX.read(buf, { type: 'array' })
       const ws = wb.Sheets[wb.SheetNames[0]]
@@ -50,7 +51,7 @@ export default function ImportPage() {
       if (rows.length === 0) { setXato('Excel fayl bo\'sh'); return }
 
       // Ustun nomlarini normallashtirish (kichik harf, bo'shliqlarni olib tashlash)
-      const parse = rows.map((row, i) => {
+      const parse = rows.map((row) => {
         const r = {}
         for (const k in row) r[k.toLowerCase().trim()] = String(row[k]).trim()
         return r
@@ -67,21 +68,23 @@ export default function ImportPage() {
 
       const tayyor = parse.map(r => {
         const nom = r.nom || r['mahsulot nomi'] || r.name || ''
+        const nomRu = r.nom_ru || r['nom ru'] || r['название'] || ''
         const katRaw = (r.kategoriya || r.category || r.kat || '').toLowerCase()
         const katSlug = katNomMap[katRaw] || null
         const narx = parseFloat(r.narx || r.price || r['narx (so\'m)'] || 0) || null
-        const tavsif = r.tavsif || r.tavsif || r.description || r['qisqa tavsif'] || ''
+        const tavsif = r.tavsif || r.description || r['qisqa tavsif'] || ''
+        const tavsifRu = r.tavsif_ru || r['tavsif ru'] || r['описание'] || ''
         const brend = r.brend || r.brand || ''
         const mavjud = !['yoq', "yo'q", 'false', '0', 'no'].includes((r.mavjud || r.available || 'ha').toLowerCase())
 
-        return { nom, kategoriya_slug: katSlug, kategoriya_nomi: r.kategoriya || r.category || '', narx, qisqaTavsif: tavsif, brend, mavjudligi: mavjud }
+        return { nom, nomRu, kategoriya_slug: katSlug, kategoriya_nomi: r.kategoriya || r.category || '', narx, qisqaTavsif: tavsif, qisqaTavsifRu: tavsifRu, brend, mavjudligi: mavjud }
       }).filter(r => r.nom)
 
       setQatorlar(tayyor)
       if (tayyor.length > 0) setQadam(2)
       else setXato('Hech qanday mahsulot topilmadi')
     } catch (e) {
-      setXato('Fayl o\'qishda xatolik: ' + e.message)
+      setXato('Xatolik: ' + e.message)
     }
   }
 
@@ -166,24 +169,26 @@ export default function ImportPage() {
                   <thead>
                     <tr style={{ background: '#e8e8e8' }}>
                       <td style={{ width: 32, padding: '5px 8px', borderRight: '1px solid #d1d5db', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}></td>
-                      {['A', 'B', 'C', 'D', 'E', 'F'].map(h => (
-                        <td key={h} style={{ padding: '5px 20px', borderRight: '1px solid #d1d5db', fontWeight: 700, color: '#374151', textAlign: 'center', fontSize: 11 }}>{h}</td>
+                      {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map(h => (
+                        <td key={h} style={{ padding: '5px 14px', borderRight: '1px solid #d1d5db', fontWeight: 700, color: '#374151', textAlign: 'center', fontSize: 11 }}>{h}</td>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {/* 1-qator — sarlavha */}
-                    <tr style={{ background: '#217346', }}>
+                    <tr style={{ background: '#217346' }}>
                       <td style={{ padding: '6px 8px', borderRight: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', fontSize: 11, textAlign: 'center', fontWeight: 600 }}>1</td>
                       {[
                         ['nom', true],
+                        ['nom_ru', false],
                         ['kategoriya', true],
                         ['narx', false],
                         ['tavsif', false],
+                        ['tavsif_ru', false],
                         ['brend', false],
                         ['mavjud', false],
                       ].map(([h, req]) => (
-                        <td key={h} style={{ padding: '6px 16px', borderRight: '1px solid rgba(255,255,255,0.15)', color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        <td key={h} style={{ padding: '6px 12px', borderRight: '1px solid rgba(255,255,255,0.15)', color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}>
                           {h}
                           {req && <span style={{ marginLeft: 4, fontSize: 9, background: 'rgba(255,255,255,0.25)', padding: '1px 4px', borderRadius: 3 }}>*</span>}
                         </td>
@@ -192,22 +197,22 @@ export default function ImportPage() {
                     {/* 2-qator — misol 1 */}
                     <tr style={{ background: '#fff' }}>
                       <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>2</td>
-                      {['Tonometr avtomatik', 'Diagnostika', '320000', 'Bilak tipidagi...', 'Beurer', 'ha'].map((v, i) => (
-                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
+                      {['Tonometr avtomatik', 'Автоматический тонометр', 'Diagnostika', '320000', 'Bilak tipidagi...', 'На запястье...', 'Beurer', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 12px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
                       ))}
                     </tr>
                     {/* 3-qator — misol 2 */}
                     <tr style={{ background: '#f9fafb' }}>
                       <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>3</td>
-                      {['Glukometr to\'plami', 'Diagnostika', '180000', 'Qand o\'lchagich', 'Accu-Chek', 'ha'].map((v, i) => (
-                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
+                      {['Glukometr to\'plami', 'Комплект глюкометра', 'Diagnostika', '180000', 'Qand o\'lchagich', 'Для измерения сахара', 'Accu-Chek', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 12px', borderRight: '1px solid #e5e7eb', color: '#374151', whiteSpace: 'nowrap' }}>{v}</td>
                       ))}
                     </tr>
                     {/* 4-qator — misol 3 */}
                     <tr style={{ background: '#fff' }}>
                       <td style={{ padding: '5px 8px', borderRight: '1px solid #e5e7eb', color: '#9ca3af', fontSize: 11, textAlign: 'center' }}>4</td>
-                      {['UV sterilizator', 'Sterilizatsiya', '180000', '', '', 'ha'].map((v, i) => (
-                        <td key={i} style={{ padding: '5px 16px', borderRight: '1px solid #e5e7eb', color: v ? '#374151' : '#d1d5db', whiteSpace: 'nowrap' }}>{v || '—'}</td>
+                      {['UV sterilizator', 'УФ стерилизатор', 'Sterilizatsiya', '180000', '', '', '', 'ha'].map((v, i) => (
+                        <td key={i} style={{ padding: '5px 12px', borderRight: '1px solid #e5e7eb', color: v ? '#374151' : '#d1d5db', whiteSpace: 'nowrap' }}>{v || '—'}</td>
                       ))}
                     </tr>
                     <tr style={{ background: '#f9fafb' }}>

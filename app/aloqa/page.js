@@ -29,12 +29,28 @@ export default function AloqaPage() {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const e2 = validate();
     if (Object.keys(e2).length > 0) { setErrors(e2); return; }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1400);
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ism: form.name, telefon: form.phone, xabar: form.message }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSent(true);
+      } else {
+        alert(data.xato || 'Xatolik yuz berdi');
+      }
+    } catch {
+      alert('Server bilan bog\'lanishda xatolik');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,13 +58,13 @@ export default function AloqaPage() {
       <SiteHeader />
 
       <main style={{ backgroundColor: "var(--bg)" }}>
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-24">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-8 sm:pt-10 pb-16 sm:pb-24">
 
           {/* Sarlavha */}
-          <Reveal variant="up" className="mb-16">
+          <Reveal variant="up" className="mb-8 sm:mb-16">
             <span className="section-label">{c.label}</span>
             <h1
-              className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
               style={{ color: "var(--text)" }}
             >
               {c.title}
@@ -67,7 +83,7 @@ export default function AloqaPage() {
             style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
           >
             {/* Chap — Forma */}
-            <Reveal variant="up" className="flex-1 p-8 lg:p-12">
+            <Reveal variant="up" className="flex-1 p-6 sm:p-8 lg:p-12">
               <p
                 className="text-xs font-medium uppercase tracking-widest mb-8"
                 style={{ color: "var(--text-muted, #888)" }}
@@ -184,7 +200,7 @@ export default function AloqaPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="hero-cta inline-flex items-center gap-2 px-8 py-4 text-sm font-medium transition-all hover:scale-[1.03] disabled:opacity-60"
+                    className="hero-cta inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03] disabled:opacity-60"
                   >
                     {loading ? (
                       <>
@@ -204,7 +220,7 @@ export default function AloqaPage() {
             <Reveal
               variant="up"
               delay={120}
-              className="lg:w-80 xl:w-96 flex-shrink-0 p-8 lg:p-12 flex flex-col gap-10"
+              className="lg:w-80 xl:w-96 flex-shrink-0 p-6 sm:p-8 lg:p-12 flex flex-col gap-7 sm:gap-10"
               style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}
             >
               <div>
@@ -241,10 +257,9 @@ export default function AloqaPage() {
                 </p>
                 <div className="flex flex-col gap-3">
                   {[
-                    { label: "Telegram",  href: "https://t.me/ummed_tibbiy" },
-                    { label: "Instagram", href: "https://instagram.com/ummed.tibbiy" },
-                    { label: "YouTube",   href: "https://youtube.com/@ummed" },
-                    { label: "Facebook",  href: "https://facebook.com/ummedtibbiy" },
+                    { label: "Telegram",  href: "https://t.me/ummeduz" },
+                    { label: "Instagram", href: "https://www.instagram.com/ummed_uz/" },
+                    { label: "YouTube",   href: "https://www.youtube.com/channel/UCPE1FJuYNkMyEehQkEh01CQ" },
                   ].map((s) => (
                     <a
                       key={s.label}

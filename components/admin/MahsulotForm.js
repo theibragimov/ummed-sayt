@@ -7,8 +7,9 @@ import { A } from './AdminStyles'
 export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
   const router = useRouter()
   const [form, setForm] = useState({
-    nom: '', slug: '', narx: '', narxBirligi: "so'm",
-    brend: '', modelRaqami: '', qisqaTavsif: '', toliqTavsif: '',
+    nom: '', nomRu: '', slug: '', narx: '', narxBirligi: "so'm",
+    brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '',
+    toliqTavsif: '', toliqTavsifRu: '',
     mavjudligi: true, featured: false, kategoriyaId: '',
     asosiyRasmUrl: '', turi: 'katalog', ...boshlangich,
   })
@@ -53,9 +54,15 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Asosiy ma'lumotlar
         </div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>Mahsulot nomi *</label>
-          <input required value={form.nom} onChange={e => oz('nom', e.target.value)} style={A.input} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div>
+            <label style={A.label}>Mahsulot nomi (O'zbek) *</label>
+            <input required value={form.nom} onChange={e => oz('nom', e.target.value)} style={A.input} placeholder="O'zbekcha nom" />
+          </div>
+          <div>
+            <label style={A.label}>Название (Русский)</label>
+            <input value={form.nomRu} onChange={e => oz('nomRu', e.target.value)} style={A.input} placeholder="Русское название" />
+          </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <div style={{ marginBottom: '16px' }}><label style={A.label}>Brend</label><input value={form.brend} onChange={e => oz('brend', e.target.value)} style={A.input} /></div>
@@ -103,13 +110,25 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Tavsiflar
         </div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>Qisqa tavsif</label>
-          <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={2} style={A.textarea} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div>
+            <label style={A.label}>Qisqa tavsif (O'zbek)</label>
+            <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={3} style={A.textarea} placeholder="O'zbekcha qisqa tavsif" />
+          </div>
+          <div>
+            <label style={A.label}>Краткое описание (Русский)</label>
+            <textarea value={form.qisqaTavsifRu} onChange={e => oz('qisqaTavsifRu', e.target.value)} rows={3} style={A.textarea} placeholder="Краткое описание на русском" />
+          </div>
         </div>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={A.label}>To'liq tavsif (HTML qabul qilinadi)</label>
-          <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div>
+            <label style={A.label}>To'liq tavsif — O'zbek (HTML)</label>
+            <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
+          </div>
+          <div>
+            <label style={A.label}>Полное описание — Русский (HTML)</label>
+            <textarea value={form.toliqTavsifRu} onChange={e => oz('toliqTavsifRu', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Описание...</p>" />
+          </div>
         </div>
       </div>
 

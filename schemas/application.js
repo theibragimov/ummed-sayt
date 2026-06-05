@@ -1,4 +1,4 @@
-export default {
+const application = {
   name: 'application',
   title: 'Zayavkalar',
   type: 'document',
@@ -88,3 +88,5 @@ export default {
     },
   },
 }
+
+export default application

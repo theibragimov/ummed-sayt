@@ -9,6 +9,7 @@ datasource db {
 model Kategoriya {
   id           Int          @id @default(autoincrement())
   nom          String
+  nomRu        String?      @map("nom_ru")
   slug         String       @unique
   rasmUrl      String?      @map("rasm_url")
   tavsif       String?
@@ -23,23 +24,26 @@ model Kategoriya {
 }
 
 model Mahsulot {
-  id            Int            @id @default(autoincrement())
-  nom           String
-  slug          String         @unique
-  kategoriyaId  Int?           @map("kategoriya_id")
-  kategoriya    Kategoriya?    @relation(fields: [kategoriyaId], references: [id])
-  asosiyRasmUrl String?        @map("asosiy_rasm_url")
-  narx          Float?
-  narxBirligi   String         @default("so'm") @map("narx_birligi")
-  mavjudligi    Boolean        @default(true)
-  qisqaTavsif   String?        @map("qisqa_tavsif")
-  toliqTavsif   String?        @map("toliq_tavsif")
-  brend         String?
-  modelRaqami   String?        @map("model_raqami")
-  featured      Boolean        @default(false)
-  turi          String         @default("katalog")
-  rasmlar       MahsulotRasm[]
-  yaratilgan    DateTime       @default(now()) @map("yaratilgan")
+  id              Int            @id @default(autoincrement())
+  nom             String
+  nomRu           String?        @map("nom_ru")
+  slug            String         @unique
+  kategoriyaId    Int?           @map("kategoriya_id")
+  kategoriya      Kategoriya?    @relation(fields: [kategoriyaId], references: [id])
+  asosiyRasmUrl   String?        @map("asosiy_rasm_url")
+  narx            Float?
+  narxBirligi     String         @default("so'm") @map("narx_birligi")
+  mavjudligi      Boolean        @default(true)
+  qisqaTavsif     String?        @map("qisqa_tavsif")
+  qisqaTavsifRu   String?        @map("qisqa_tavsif_ru")
+  toliqTavsif     String?        @map("toliq_tavsif")
+  toliqTavsifRu   String?        @map("toliq_tavsif_ru")
+  brend           String?
+  modelRaqami     String?        @map("model_raqami")
+  featured        Boolean        @default(false)
+  turi            String         @default("katalog")
+  rasmlar         MahsulotRasm[]
+  yaratilgan      DateTime       @default(now()) @map("yaratilgan")
 
   @@map("mahsulotlar")
 }
@@ -67,10 +71,13 @@ model PostKategoriya {
 model Post {
   id            Int             @id @default(autoincrement())
   sarlavha      String
+  sarlavhaRu    String?         @map("sarlavha_ru")
   slug          String          @unique
   muqovaRasmUrl String?         @map("muqova_rasm_url")
   qisqaTavsif   String?         @map("qisqa_tavsif")
+  qisqaTavsifRu String?         @map("qisqa_tavsif_ru")
   toliqMatn     String?         @map("toliq_matn")
+  toliqMatnRu   String?         @map("toliq_matn_ru")
   kategoriyaId  Int?            @map("kategoriya_id")
   kategoriya    PostKategoriya? @relation(fields: [kategoriyaId], references: [id])
   muallif       String?
@@ -93,6 +100,14 @@ model Zayavka {
   izoh     String?
 
   @@map("zayavkalar")
+}
+
+model SaytSozlamalari {
+  id    Int    @id @default(autoincrement())
+  kalit String @unique
+  qiymat String @default("")
+
+  @@map("sayt_sozlamalari")
 }
 
 model Tugma {

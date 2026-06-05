@@ -6,6 +6,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { useLang } from "@/lib/i18n";
 
 function formatDate(sana) {
   if (!sana) return "";
@@ -14,6 +15,8 @@ function formatDate(sana) {
 
 export default function YangilikDetailPage({ params }) {
   const { slug } = use(params);
+  const { lang } = useLang();
+  const ru = lang === 'ru';
   const [post, setPost] = useState(null);
   const [notFoundState, setNotFoundState] = useState(false);
 
@@ -53,7 +56,7 @@ export default function YangilikDetailPage({ params }) {
             <span>/</span>
             <Link href="/yangiliklar" className="hover:opacity-70 transition-opacity">Yangiliklar</Link>
             <span>/</span>
-            <span style={{ color: "var(--text)" }} className="truncate max-w-[200px]">{post.sarlavha}</span>
+            <span style={{ color: "var(--text)" }} className="truncate max-w-[200px]">{(ru && post.sarlavhaRu) ? post.sarlavhaRu : post.sarlavha}</span>
           </nav>
 
           {/* Kategoriya + Sana */}
@@ -84,18 +87,18 @@ export default function YangilikDetailPage({ params }) {
             className="text-3xl md:text-4xl font-medium leading-[1.15] tracking-tight mb-8"
             style={{ color: "var(--text)" }}
           >
-            {post.sarlavha}
+            {(ru && post.sarlavhaRu) ? post.sarlavhaRu : post.sarlavha}
           </h1>
 
           {/* Muqova rasm */}
           {post.muqovaRasmUrl && (
             <div className="relative w-full mb-10 overflow-hidden rounded-xl" style={{ height: "clamp(220px, 40vw, 480px)" }}>
-              <Image src={post.muqovaRasmUrl} alt={post.sarlavha} fill style={{ objectFit: "cover" }} />
+              <Image src={post.muqovaRasmUrl} alt={(ru && post.sarlavhaRu) ? post.sarlavhaRu : post.sarlavha} fill style={{ objectFit: "cover" }} />
             </div>
           )}
 
           {/* Qisqa tavsif */}
-          {post.qisqaTavsif && (
+          {(ru ? (post.qisqaTavsifRu || post.qisqaTavsif) : post.qisqaTavsif) && (
             <p
               className="text-lg font-light leading-relaxed mb-8 pb-8"
               style={{
@@ -103,20 +106,20 @@ export default function YangilikDetailPage({ params }) {
                 borderBottom: "1px solid var(--border-strong, #e5e5e5)",
               }}
             >
-              {post.qisqaTavsif}
+              {(ru && post.qisqaTavsifRu) ? post.qisqaTavsifRu : post.qisqaTavsif}
             </p>
           )}
 
           {/* To'liq matn */}
-          {post.toliqMatn ? (
+          {((ru ? (post.toliqMatnRu || post.toliqMatn) : post.toliqMatn)) ? (
             <div
               className="prose prose-lg max-w-none"
               style={{ color: "var(--text)" }}
-              dangerouslySetInnerHTML={{ __html: post.toliqMatn }}
+              dangerouslySetInnerHTML={{ __html: (ru && post.toliqMatnRu) ? post.toliqMatnRu : post.toliqMatn }}
             />
           ) : (
             <p className="text-sm italic" style={{ color: "var(--text-muted, #888)" }}>
-              To'liq matn mavjud emas.
+              {ru ? 'Полный текст недоступен.' : "To'liq matn mavjud emas."}
             </p>
           )}
 
@@ -130,7 +133,7 @@ export default function YangilikDetailPage({ params }) {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M11 6l-6 6 6 6" />
               </svg>
-              Barcha yangiliklarga qaytish
+              {ru ? 'Все новости' : 'Barcha yangiliklarga qaytish'}
             </Link>
           </div>
         </div>
