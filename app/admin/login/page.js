@@ -103,7 +103,7 @@ export default function AdminLogin() {
           </div>
 
           <p style={{ textAlign: 'center', fontSize: '12px', color: '#d1d5db', marginTop: '24px' }}>
-            Ummed — Tibbiy Jihozlar © 2024
+            Ummed — Tibbiy Jihozlar © 2026
           </p>
         </div>
       </body>

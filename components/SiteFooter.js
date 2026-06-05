@@ -98,7 +98,7 @@ export default function SiteFooter() {
 
           {/* Copyright */}
           <p className="text-xs font-light" style={{ color: "#3a3a3a" }}>
-            © 2025 Ummed. {L("Barcha huquqlar himoyalangan", "Все права защищены")}
+            © 2026 Ummed. {L("Barcha huquqlar himoyalangan", "Все права защищены")}
           </p>
         </div>
 
