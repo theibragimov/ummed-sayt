@@ -1,16 +1,9 @@
-import { config } from "dotenv";
-import { defineConfig } from "prisma/config";
-
-// .env.local ni yuklash (Next.js style)
-config({ path: ".env.local" });
-config({ path: ".env" });
+import { defineConfig } from 'prisma/config'
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
   },
-  datasource: {
-    url: process.env["DATABASE_URL"] as string,
-  },
-});
+})
