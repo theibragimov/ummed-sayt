@@ -99,7 +99,19 @@
       "Bash(node -e \"const a=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); console.log\\('distribyutor:', a.length\\); console.log\\(JSON.stringify\\(a.slice\\(0,2\\).map\\(m=>\\({id:m.id,nom:m.nom,slug:m.slug,asosiyRasmUrl:m.asosiyRasmUrl}\\)\\),null,2\\)\\)\")",
       "Bash(find /var/folders -name \"*.jpg\" -newer /tmp -maxdepth 6 2>/dev/null | head -5; ls -lt ~/Desktop/ 2>/dev/null | head -5)",
       "Bash(sed -n '104,115p' /Users/test/ummed-sayt/lib/i18n.js)",
-      "Bash(sed -n '365,380p' /Users/test/ummed-sayt/lib/i18n.js)"
+      "Bash(sed -n '365,380p' /Users/test/ummed-sayt/lib/i18n.js)",
+      "Bash(gh auth *)",
+      "Bash(git --version)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('html_url'\\) or d.get\\('message',''\\)\\)\")",
+      "Bash(curl -s -H \"Authorization: token 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\" https://api.github.com/user)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Login:', d.get\\('login'\\), '| Scopes ga qarang'\\)\")",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "mcp__ba423260-97b0-4939-80c0-cd24f1da1d6c__deploy_to_vercel",
+      "Bash(npx vercel *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
+      "Bash(git commit -m 'fix: prisma generate before build for Vercel deploy *)",
+      "Bash(git commit -m 'fix: force-dynamic on all API routes for Vercel *)"
     ]
   }
 }

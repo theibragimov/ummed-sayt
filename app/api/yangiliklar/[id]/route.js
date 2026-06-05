@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { getPostById, getPostBySlug, updatePost, deletePost } from '@/lib/db'
 
