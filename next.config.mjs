@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ['@prisma/client', 'prisma'],
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/*': [
+        './node_modules/.prisma/client/**/*',
+        './node_modules/@prisma/client/**/*',
+      ],
+    },
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.sanity.io' },
