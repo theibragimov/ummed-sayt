@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // 60 soniyada bir yangilanadi
 import { NextResponse } from 'next/server'
 import { getAllMahsulotlar, getMahsulotlar, createMahsulot } from '@/lib/db'
 
