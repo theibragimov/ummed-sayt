@@ -11,8 +11,16 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Ummed — Tibbiy Jihozlar",
-  description: "Sifatli tibbiy jihozlar yetkazib berish. Dorixonalar va shifokorlar uchun.",
+  title: "Ummed — Tibbiy Buyumlar",
+  description: "Sifatli tibbiy buyumlar yetkazib berish. Dorixonalar va shifokorlar uchun.",
+  icons: {
+    icon: [
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
