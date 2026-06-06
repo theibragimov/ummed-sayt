@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Ummed — Tibbiy Buyumlar",
+  title: "Ummed — Tibbiy Buyumlari",
   description: "Sifatli tibbiy buyumlar yetkazib berish. Dorixonalar va shifokorlar uchun.",
   icons: {
     icon: [
