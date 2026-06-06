@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
+import { Analytics } from '@vercel/analytics/next';
 
 // Inter — fallback (kirillca uchun)
 const inter = Inter({
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
