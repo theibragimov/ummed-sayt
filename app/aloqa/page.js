@@ -292,7 +292,7 @@ export default function AloqaPage() {
               }}
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2995.8!2d69.2385!3d41.2995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDE3JzU4LjIiTiA2OcKwMTQnMTguMyJF!5e0!3m2!1suz!2suz!4v1700000000000"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.0!2d69.24167!3d41.39961!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDIzJzU4LjYiTiA2OcKwMTQnMzAuMCJF!5e0!3m2!1suz!2suz!4v1700000000001"
                 width="100%"
                 height="100%"
                 style={{ border: 0, display: "block" }}
