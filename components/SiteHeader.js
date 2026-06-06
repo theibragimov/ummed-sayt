@@ -10,6 +10,7 @@ import { useTheme } from "@/lib/theme";
 const LANGS = [
   { code: "uz", label: "Uz", flag: "🇺🇿" },
   { code: "ru", label: "Ру", flag: "🇷🇺" },
+  { code: "en", label: "En", flag: "🇬🇧" },
 ];
 
 export default function SiteHeader() {

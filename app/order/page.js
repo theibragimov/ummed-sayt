@@ -11,7 +11,7 @@ const TELEGRAM_MANAGER = "https://t.me/ummeduz";
 
 export default function OrderPage() {
   const { lang } = useLang();
-  const L = (uz, ru) => (lang === "ru" ? ru : uz);
+  const L = (uz, ru, en) => (lang === "ru" ? ru : lang === "en" && en ? en : uz);
 
   const [step, setStep] = useState("main");
   const [payType, setPayType] = useState("");
@@ -27,8 +27,8 @@ export default function OrderPage() {
 
   function validate() {
     const e = {};
-    if (!form.name.trim()) e.name = L("Ism familiya kiritilmadi", "Введите имя");
-    if (!form.phone.trim()) e.phone = L("Telefon raqam kiritilmadi", "Введите телефон");
+    if (!form.name.trim()) e.name = L("Ism familiya kiritilmadi", "Введите имя", "Name is required");
+    if (!form.phone.trim()) e.phone = L("Telefon raqam kiritilmadi", "Введите телефон", "Phone is required");
     return e;
   }
 
@@ -63,13 +63,13 @@ export default function OrderPage() {
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-12 pb-6 sm:pt-16 sm:pb-8 flex flex-col items-center text-center">
             <Reveal variant="up" className="flex flex-col items-center">
               <span className="section-label">
-                {L("Hamkorlar uchun", "Для партнёров")}
+                {L("Hamkorlar uchun", "Для партнёров", "For Partners")}
               </span>
               <h1
                 className="mt-4 sm:mt-6 text-3xl sm:text-4xl lg:text-[52px] font-medium leading-[1.1] tracking-tight"
                 style={{ color: "var(--text)" }}
               >
-                {L("Buyurtma rasmiylashtirish", "Оформление заказа")}
+                {L("Buyurtma rasmiylashtirish", "Оформление заказа", "Place an Order")}
               </h1>
               <p
                 className="mt-4 text-sm sm:text-base font-light leading-relaxed max-w-xl"
@@ -78,12 +78,13 @@ export default function OrderPage() {
                 {L(
                   "Biz sizning vaqt va qulayligingizni qadrlaymiz — buyurtmani tez va oson rasmiylashtirish uchun Telegram botimizga o'ting.",
                   "Мы ценим ваше время — перейдите в наш Telegram бот для быстрого и удобного оформления заказа.",
+                  "We value your time — go to our Telegram bot to place an order quickly and easily.",
                 )}
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#3DB851" }} />
                 <span className="text-sm font-medium" style={{ color: "#3DB851" }}>
-                  {L("2 mln so'mdan yuqori buyurtmalarga bepul yetkazib berish", "Бесплатная доставка при заказе от 2 млн сум")}
+                  {L("2 mln so'mdan yuqori buyurtmalarga bepul yetkazib berish", "Бесплатная доставка при заказе от 2 млн сум", "Free delivery for orders over 2M UZS")}
                 </span>
               </div>
             </Reveal>
@@ -125,7 +126,7 @@ export default function OrderPage() {
                     <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
                     </svg>
-                    {L("Telegram botga o'tish", "Перейти в Telegram бот")}
+                    {L("Telegram botga o'tish", "Перейти в Telegram бот", "Go to Telegram Bot")}
                   </a>
                 </Reveal>
 
@@ -139,8 +140,8 @@ export default function OrderPage() {
                           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                         </svg>
                       ),
-                      title: L("Ish vaqti", "Время работы"),
-                      desc: L("Du–Sha, 09:00–18:00", "Пн–Сб, 09:00–18:00"),
+                      title: L("Ish vaqti", "Время работы", "Working Hours"),
+                      desc: L("Du–Sha, 09:00–18:00", "Пн–Сб, 09:00–18:00", "Mon–Sat, 09:00–18:00"),
                     },
                     {
                       icon: (
@@ -148,7 +149,7 @@ export default function OrderPage() {
                           <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                         </svg>
                       ),
-                      title: L("Telefon", "Телефон"),
+                      title: L("Telefon", "Телефон", "Phone"),
                       desc: "+998 77 550-40-40",
                       href: "tel:+998775504040",
                     },
@@ -158,8 +159,8 @@ export default function OrderPage() {
                           <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
                         </svg>
                       ),
-                      title: L("Yetkazish", "Доставка"),
-                      desc: L("2 mln+ — bepul", "От 2 млн — бесплатно"),
+                      title: L("Yetkazish", "Доставка", "Delivery"),
+                      desc: L("2 mln+ — bepul", "От 2 млн — бесплатно", "2M+ UZS — free"),
                     },
                   ].map((card) => (
                     <div
@@ -204,7 +205,7 @@ export default function OrderPage() {
                       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M15 18l-6-6 6-6"/>
                     </svg>
-                    {L("Orqaga", "Назад")}
+                    {L("Orqaga", "Назад", "Back")}
                   </button>
 
                   {/* Tanlangan tur badge */}
@@ -216,7 +217,7 @@ export default function OrderPage() {
 
                   <p className="text-xs font-medium uppercase tracking-widest mb-8"
                     style={{ color: "var(--text-muted, #888)" }}>
-                    {L("Ma'lumotlaringizni kiriting", "Введите ваши данные")}
+                    {L("Ma'lumotlaringizni kiriting", "Введите ваши данные", "Enter Your Details")}
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -224,11 +225,11 @@ export default function OrderPage() {
                     <div>
                       <label className="block text-xs font-medium uppercase tracking-widest mb-3"
                         style={{ color: "var(--text-muted, #888)" }}>
-                        {L("Ism familiya", "Имя и фамилия")} *
+                        {L("Ism familiya", "Имя и фамилия", "Full Name")} *
                       </label>
                       <input
                         name="name" value={form.name} onChange={handleChange}
-                        placeholder={L("Masalan: Abdullayev Jasur", "Например: Иванов Иван")}
+                        placeholder={L("Masalan: Abdullayev Jasur", "Например: Иванов Иван", "E.g.: John Smith")}
                         className="w-full px-4 py-3 text-sm font-light focus:outline-none"
                         style={{
                           backgroundColor: "var(--bg)",
@@ -242,7 +243,7 @@ export default function OrderPage() {
                     <div>
                       <label className="block text-xs font-medium uppercase tracking-widest mb-3"
                         style={{ color: "var(--text-muted, #888)" }}>
-                        {L("Telefon raqam", "Номер телефона")} *
+                        {L("Telefon raqam", "Номер телефона", "Phone Number")} *
                       </label>
                       <input
                         name="phone" value={form.phone} onChange={handleChange}
@@ -260,14 +261,14 @@ export default function OrderPage() {
                     <div>
                       <label className="block text-xs font-medium uppercase tracking-widest mb-3"
                         style={{ color: "var(--text-muted, #888)" }}>
-                        {L("Kompaniya / Dorixona nomi", "Компания / Аптека")}{" "}
+                        {L("Kompaniya / Dorixona nomi", "Компания / Аптека", "Company / Pharmacy")}{" "}
                         <span style={{ color: "var(--text-muted, #aaa)", textTransform: "none", fontWeight: 400 }}>
-                          ({L("ixtiyoriy", "необязательно")})
+                          ({L("ixtiyoriy", "необязательно", "optional")})
                         </span>
                       </label>
                       <input
                         name="company" value={form.company} onChange={handleChange}
-                        placeholder={L("Masalan: Salomatlik dorixonasi", "Например: Аптека Здоровье")}
+                        placeholder={L("Masalan: Salomatlik dorixonasi", "Например: Аптека Здоровье", "E.g.: Health Pharmacy")}
                         className="w-full px-4 py-3 text-sm font-light focus:outline-none"
                         style={{
                           backgroundColor: "var(--bg)",
@@ -280,15 +281,15 @@ export default function OrderPage() {
                     <div>
                       <label className="block text-xs font-medium uppercase tracking-widest mb-3"
                         style={{ color: "var(--text-muted, #888)" }}>
-                        {L("Izoh", "Комментарий")}{" "}
+                        {L("Izoh", "Комментарий", "Comment")}{" "}
                         <span style={{ color: "var(--text-muted, #aaa)", textTransform: "none", fontWeight: 400 }}>
-                          ({L("ixtiyoriy", "необязательно")})
+                          ({L("ixtiyoriy", "необязательно", "optional")})
                         </span>
                       </label>
                       <textarea
                         name="note" value={form.note} onChange={handleChange}
                         rows={4}
-                        placeholder={L("Buyurtma haqida qo'shimcha ma'lumot...", "Дополнительная информация о заказе...")}
+                        placeholder={L("Buyurtma haqida qo'shimcha ma'lumot...", "Дополнительная информация о заказе...", "Additional information about the order...")}
                         className="w-full px-4 py-3 text-sm font-light focus:outline-none resize-none"
                         style={{
                           backgroundColor: "var(--bg)",
@@ -311,11 +312,11 @@ export default function OrderPage() {
                             <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="4"/>
                             <path fill="rgba(255,255,255,0.9)" d="M4 12a8 8 0 018-8v8z"/>
                           </svg>
-                          {L("Yuborilmoqda...", "Отправка...")}
+                          {L("Yuborilmoqda...", "Отправка...", "Sending...")}
                         </>
                       ) : (
                         <>
-                          {L("Buyurtmani yuborish", "Отправить заказ")}
+                          {L("Buyurtmani yuborish", "Отправить заказ", "Submit Order")}
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -325,7 +326,7 @@ export default function OrderPage() {
                     </button>
 
                     <p className="text-xs font-light" style={{ color: "var(--text-muted, #aaa)" }}>
-                      {L("Ma'lumotlaringiz xavfsiz saqlanadi", "Ваши данные в безопасности")}
+                      {L("Ma'lumotlaringiz xavfsiz saqlanadi", "Ваши данные в безопасности", "Your data is kept secure")}
                     </p>
                   </form>
                 </Reveal>
@@ -339,29 +340,29 @@ export default function OrderPage() {
                 >
                   <p className="text-xs font-medium uppercase tracking-widest"
                     style={{ color: "var(--text-muted, #888)" }}>
-                    {L("Keyingi qadamlar", "Следующие шаги")}
+                    {L("Keyingi qadamlar", "Следующие шаги", "Next Steps")}
                   </p>
 
                   {[
                     {
                       num: "01",
-                      title: L("Ariza yuborish", "Отправка заявки"),
-                      desc: L("Formani to'ldiring va yuboring", "Заполните и отправьте форму"),
+                      title: L("Ariza yuborish", "Отправка заявки", "Submit Request"),
+                      desc: L("Formani to'ldiring va yuboring", "Заполните и отправьте форму", "Fill in and submit the form"),
                     },
                     {
                       num: "02",
-                      title: L("Menejer bog'lanadi", "Звонок менеджера"),
-                      desc: L("30 daqiqa ichida telefon qilamiz", "Позвоним в течение 30 минут"),
+                      title: L("Menejer bog'lanadi", "Звонок менеджера", "Manager Calls You"),
+                      desc: L("30 daqiqa ichida telefon qilamiz", "Позвоним в течение 30 минут", "We'll call within 30 minutes"),
                     },
                     {
                       num: "03",
-                      title: L("Narx va shartlar", "Цена и условия"),
-                      desc: L("To'lov turi va narxni muhokama qilamiz", "Обсудим цену и условия оплаты"),
+                      title: L("Narx va shartlar", "Цена и условия", "Price & Terms"),
+                      desc: L("To'lov turi va narxni muhokama qilamiz", "Обсудим цену и условия оплаты", "We'll discuss pricing and payment terms"),
                     },
                     {
                       num: "04",
-                      title: L("Yetkazib berish", "Доставка"),
-                      desc: L("1–3 ish kuni ichida yetkazib beramiz", "Доставим в течение 1–3 рабочих дней"),
+                      title: L("Yetkazib berish", "Доставка", "Delivery"),
+                      desc: L("1–3 ish kuni ichida yetkazib beramiz", "Доставим в течение 1–3 рабочих дней", "Delivered within 1–3 business days"),
                     },
                   ].map((s, i) => (
                     <div key={s.num} className="flex gap-4">
@@ -399,18 +400,19 @@ export default function OrderPage() {
 
                   <h2 className="text-2xl sm:text-3xl font-medium tracking-tight mb-4"
                     style={{ color: "var(--text)" }}>
-                    {L("Buyurtma qabul qilindi!", "Заказ принят!")}
+                    {L("Buyurtma qabul qilindi!", "Заказ принят!", "Order Received!")}
                   </h2>
                   <p className="text-base font-light leading-relaxed mb-2 max-w-md"
                     style={{ color: "var(--text-muted, #888)" }}>
                     {L(
                       "Menejerimiz siz bilan 30 daqiqa ichida bog'lanadi.",
                       "Наш менеджер свяжется с вами в течение 30 минут.",
+                      "Our manager will contact you within 30 minutes.",
                     )}
                   </p>
                   <p className="text-sm font-light mb-10 max-w-sm"
                     style={{ color: "var(--text-muted, #aaa)" }}>
-                    {L("Tezroq javob olish uchun Telegram orqali murojaat qiling.", "Для более быстрого ответа напишите в Telegram.")}
+                    {L("Tezroq javob olish uchun Telegram orqali murojaat qiling.", "Для более быстрого ответа напишите в Telegram.", "For a faster response, reach us on Telegram.")}
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4">
@@ -422,7 +424,7 @@ export default function OrderPage() {
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
                       </svg>
-                      {L("Telegram menejer", "Telegram менеджер")}
+                      {L("Telegram menejer", "Telegram менеджер", "Telegram Manager")}
                     </a>
                     <button
                       onClick={() => { setStep("main"); setForm({ name: "", phone: "", company: "", note: "" }); setPayType(""); }}
@@ -433,7 +435,7 @@ export default function OrderPage() {
                         cursor: "pointer", fontFamily: "inherit",
                       }}
                     >
-                      {L("Yangi buyurtma", "Новый заказ")}
+                      {L("Yangi buyurtma", "Новый заказ", "New Order")}
                     </button>
                   </div>
                 </Reveal>
