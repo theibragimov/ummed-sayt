@@ -183,7 +183,7 @@ const OWN_VISUALS = {
 
 export default function HomePage() {
   const { t, lang } = useLang();
-  const L = (uz, ru) => (lang === "ru" ? ru : uz);
+  const L = (uz, ru, en) => (lang === "ru" ? ru : lang === "en" && en ? en : uz);
 
   const [distribItems, setDistribItems] = useState([]);
   const [ownItems, setOwnItems] = useState([]);
@@ -242,7 +242,7 @@ export default function HomePage() {
             {/* Label */}
             <Reveal variant="up" className="mb-10">
               <span className="section-label services-label">
-                {L("Bizning Afzalliklarimiz", "Наши преимущества")}
+                {L("Bizning Afzalliklarimiz", "Наши преимущества", "Our Advantages")}
               </span>
             </Reveal>
 
@@ -349,7 +349,7 @@ export default function HomePage() {
         <section className="py-12 sm:py-20" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             <Reveal variant="up" className="mb-8 sm:mb-12">
-              <span className="section-label">{L("Jarayon", "Процесс")}</span>
+              <span className="section-label">{L("Jarayon", "Процесс", "Process")}</span>
             </Reveal>
 
             <Reveal variant="up" delay={100}>
@@ -359,7 +359,7 @@ export default function HomePage() {
               >
                 {[
                   {
-                    title: L("Buyurtma bering", "Оформите заказ"),
+                    title: L("Buyurtma bering", "Оформите заказ", "Place an Order"),
                     icon: (
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
@@ -367,7 +367,7 @@ export default function HomePage() {
                     ),
                   },
                   {
-                    title: L("Tasdiqlating", "Подтвердите"),
+                    title: L("Tasdiqlating", "Подтвердите", "Confirm"),
                     icon: (
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
@@ -375,7 +375,7 @@ export default function HomePage() {
                     ),
                   },
                   {
-                    title: L("Qabul qiling", "Получите"),
+                    title: L("Qabul qiling", "Получите", "Receive"),
                     icon: (
                       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
@@ -430,12 +430,12 @@ export default function HomePage() {
         <section className="pt-12 pb-6 sm:pt-20 sm:pb-10" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             <Reveal variant="up" className="mb-8 sm:mb-12">
-              <span className="section-label">{L("Distribyutsiya", "Дистрибуция")}</span>
+              <span className="section-label">{L("Distribyutsiya", "Дистрибуция", "Distribution")}</span>
               <h2
                 className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
-                {L("Biz taqdim etadigan distribyutor mahsulotlar", "Дистрибьюторские продукты")}
+                {L("Biz taqdim etadigan distribyutor mahsulotlar", "Дистрибьюторские продукты", "Distributor Products We Offer")}
               </h2>
             </Reveal>
             <ProductGrid items={distribItems} />
@@ -446,12 +446,12 @@ export default function HomePage() {
         <section className="pt-6 pb-12 sm:pt-10 sm:pb-20" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             <Reveal variant="up" className="mb-8 sm:mb-12">
-              <span className="section-label">{L("Brend Ummed", "Бренд Ummed")}</span>
+              <span className="section-label">{L("Brend Ummed", "Бренд Ummed", "Ummed Brand")}</span>
               <h2
                 className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
-                {L("Ummed brendi ostidagi mahsulotlar", "Продукты под брендом Ummed")}
+                {L("Ummed brendi ostidagi mahsulotlar", "Продукты под брендом Ummed", "Products Under the Ummed Brand")}
               </h2>
             </Reveal>
             <ProductGrid items={ownItems} />
@@ -468,7 +468,7 @@ export default function HomePage() {
               >
                 {/* Chap qism */}
                 <div className="flex-1 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-3 sm:gap-5">
-                  <span className="section-label">{L("Uzum Market", "Uzum Market")}</span>
+                  <span className="section-label">{L("Uzum Market", "Uzum Market", "Uzum Market")}</span>
                   <h2
                     className="text-2xl sm:text-3xl lg:text-[38px] font-medium leading-[1.1] tracking-tight"
                     style={{ color: "var(--text)" }}
@@ -492,7 +492,7 @@ export default function HomePage() {
                     className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
                     style={{ color: "var(--text)" }}
                   >
-                    {L("Do'konlar", "Магазины")}
+                    {L("Do'konlar", "Магазины", "Stores")}
                   </h3>
 
                   <div className="flex flex-row flex-wrap gap-2 sm:gap-3">
@@ -529,13 +529,13 @@ export default function HomePage() {
             {/* Sarlavha + "Barchasi" linki — bir qatorda */}
             <Reveal variant="up" className="flex items-center justify-between mb-5 sm:mb-10">
               <div>
-                <span className="section-label">{L("Yangiliklar", "Новости")}</span>
+                <span className="section-label">{L("Yangiliklar", "Новости", "News")}</span>
                 <h2 className="text-xl sm:text-3xl md:text-4xl font-medium leading-tight tracking-tight mt-2 sm:mt-5" style={{ color: "var(--text)" }}>
-                  {L("So'nggi yangiliklar", "Последние новости")}
+                  {L("So'nggi yangiliklar", "Последние новости", "Latest News")}
                 </h2>
               </div>
               <Link href="/yangiliklar" className="flex items-center gap-1.5 text-xs sm:text-sm font-medium flex-shrink-0 ml-4 transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
-                {L("Barchasi", "Все")}
+                {L("Barchasi", "Все", "All")}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17L17 7M9 7h8v8"/>
                 </svg>
@@ -543,7 +543,7 @@ export default function HomePage() {
             </Reveal>
 
             {yangiliklar.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--text-muted, #888)" }}>{L("Yangiliklar yo'q", "Новостей нет")}</p>
+              <p className="text-sm" style={{ color: "var(--text-muted, #888)" }}>{L("Yangiliklar yo'q", "Новостей нет", "No news yet")}</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-px sm:border sm:border-[var(--border-strong,#e5e5e5)]">
                 {yangiliklar.map((item, idx) => {
@@ -593,20 +593,20 @@ export default function HomePage() {
                 style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}
               >
                 <div>
-                  <span className="section-label">{L("Hamkorlik", "Партнёрство")}</span>
+                  <span className="section-label">{L("Hamkorlik", "Партнёрство", "Partnership")}</span>
                   <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 560 }}>
-                    {L("Apteka yoki klinikangiz uchun kerakli tibbiyot buyumlarini bir joydan toping!", "Всё необходимое для вашей аптеки или клиники — в одном месте!")}
+                    {L("Apteka yoki klinikangiz uchun kerakli tibbiyot buyumlarini bir joydan toping!", "Всё необходимое для вашей аптеки или клиники — в одном месте!", "Find all the medical supplies your pharmacy or clinic needs — in one place!")}
                   </h2>
                   <p className="mt-3 text-sm font-light leading-relaxed" style={{ color: "var(--text-muted, #888)" }}>
-                    {L("550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.", "Работаем на основе доверия 550+ клиентов и партнёров.")}
+                    {L("550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.", "Работаем на основе доверия 550+ клиентов и партнёров.", "We operate on the trust of 550+ clients and partners.")}
                   </p>
                 </div>
                 <div className="flex flex-row gap-3 flex-shrink-0">
                   <Link href="/aloqa" className="hero-cta inline-flex items-center justify-center px-5 py-3 sm:px-9 sm:py-4 rounded-full text-sm font-medium transition-all hover:scale-[1.03] whitespace-nowrap">
-                    {L("Hamkorlikni boshlang", "Начать сотрудничество")}
+                    {L("Hamkorlikni boshlang", "Начать сотрудничество", "Start Partnership")}
                   </Link>
                   <Link href="/katalog" className="inline-flex items-center justify-center px-5 py-3 sm:px-9 sm:py-4 rounded-full text-sm font-medium transition-all hover:opacity-70 whitespace-nowrap" style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
-                    {L("Katalog", "Каталог")}
+                    {L("Katalog", "Каталог", "Catalog")}
                   </Link>
                 </div>
               </div>
