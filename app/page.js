@@ -499,7 +499,6 @@ export default function HomePage() {
                     {[
                       t.uzum.shops.ummed,
                       t.uzum.shops.ababil,
-                      t.uzum.shops.ummedIhma,
                     ].map((shop) => (
                       <a
                         key={shop.name}
