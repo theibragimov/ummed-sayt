@@ -59,7 +59,7 @@ export default function OrderPage() {
       <main style={{ backgroundColor: "var(--bg)" }}>
 
         {/* ─── HERO ─── */}
-        <section style={{ backgroundColor: "var(--bg)", borderBottom: "1px solid var(--border-strong, #e5e5e5)" }}>
+        <section style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-12 sm:py-20 flex flex-col items-center text-center">
             <Reveal variant="up" className="flex flex-col items-center">
               <span className="section-label">
@@ -92,7 +92,7 @@ export default function OrderPage() {
 
         {/* ─── ASOSIY KONTENT ─── */}
         <section style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-8 sm:py-12">
+          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-4 sm:py-8">
 
             {/* ── Asosiy ekran ── */}
             {step === "main" && (
@@ -108,8 +108,8 @@ export default function OrderPage() {
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
-                      fontSize: "17px",
-                      padding: "18px 48px",
+                      fontSize: "19px",
+                      padding: "22px 60px",
                       boxShadow: "0 4px 24px rgba(232,73,29,0.35)",
                     }}
                     onMouseEnter={e => {
@@ -132,7 +132,7 @@ export default function OrderPage() {
 
 
                 {/* Info kartalar — vektor ikonkali */}
-                <Reveal variant="up" delay={150} className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
+                <Reveal variant="up" delay={150} className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                   {[
                     {
                       icon: (
@@ -161,15 +161,6 @@ export default function OrderPage() {
                       ),
                       title: L("Yetkazish", "Доставка"),
                       desc: L("2 mln+ — bepul", "От 2 млн — бесплатно"),
-                    },
-                    {
-                      icon: (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                      ),
-                      title: L("Kafolat", "Гарантия"),
-                      desc: L("Sertifikatlangan", "Сертифицировано"),
                     },
                   ].map((card) => (
                     <div
