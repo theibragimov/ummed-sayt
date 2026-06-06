@@ -8,7 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
 function formatPrice(narx, lang) {
-  if (!narx) return lang === 'ru' ? "Узнать цену" : "Narxlar bilan tanishish";
+  if (!narx) return lang === 'ru' ? "Узнать цену" : lang === 'en' ? "Request Price" : "Narxlar bilan tanishish";
   return narx.toLocaleString("uz-UZ") + " so'm";
 }
 
@@ -54,7 +54,7 @@ function FilterPanel({
               <button onClick={() => setCategory(k.slug)} className="w-full text-left text-sm font-light px-4 py-2.5 transition-colors"
                 style={category === k.slug ? { color: "#E8491D", fontWeight: 500 } : { color: "var(--text)" }}>
                 {category === k.slug && <span className="inline-block w-1.5 h-1.5 mr-2 align-middle" style={{ backgroundColor: "#E8491D" }} />}
-                {lang === 'ru' ? (k.nomRu || k.nom) : k.nom}
+                {lang === 'ru' ? (k.nomRu || k.nom) : lang === 'en' ? (k.nomEn || k.nom) : k.nom}
               </button>
             </li>
           ))}
@@ -208,11 +208,11 @@ export default function KatalogPage() {
                       {/* Ma'lumot */}
                       <div className="p-3 sm:p-6 flex flex-col flex-1">
                         <h3 className="text-xs sm:text-base font-medium leading-snug mb-1 sm:mb-2 line-clamp-2" style={{ color: "var(--text)" }}>
-                          {lang === 'ru' ? (product.nomRu || product.nom) : product.nom}
+                          {lang === 'ru' ? (product.nomRu || product.nom) : lang === 'en' ? (product.nomEn || product.nom) : product.nom}
                         </h3>
                         {(product.qisqaTavsif || product.qisqaTavsifRu) && (
                           <p className="hidden sm:block text-sm font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
-                            {lang === 'ru' ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif}
+                            {lang === 'ru' ? (product.qisqaTavsifRu || product.qisqaTavsif) : lang === 'en' ? (product.qisqaTavsifEn || product.qisqaTavsif) : product.qisqaTavsif}
                           </p>
                         )}
                         <div className="mt-auto flex items-center justify-between gap-1.5 sm:gap-3">

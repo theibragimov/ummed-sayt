@@ -11,6 +11,8 @@ import { useLang } from "@/lib/i18n";
 export default function MahsulotDetailPage({ params }) {
   const { lang } = useLang();
   const ru = lang === "ru";
+  const en = lang === "en";
+  const L = (uz, ru_t, en_t) => ru ? ru_t : en && en_t ? en_t : uz;
   const { slug } = use(params);
   const [product, setProduct] = useState(null);
   const [boshqalar, setBoshqalar] = useState([]);
@@ -43,7 +45,7 @@ export default function MahsulotDetailPage({ params }) {
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-2 border-[#E8491D] border-t-transparent rounded-full animate-spin" />
             <p className="text-sm font-light" style={{ color: "var(--text-muted, #888)" }}>
-              {ru ? "Загрузка..." : "Yuklanmoqda..."}
+              {L("Yuklanmoqda...", "Загрузка...", "Loading...")}
             </p>
           </div>
         </main>
@@ -53,15 +55,18 @@ export default function MahsulotDetailPage({ params }) {
   }
 
   // Til bo'yicha matnlar
-  const nom = (ru && product.nomRu) ? product.nomRu : product.nom;
-  const qisqaTavsif = (ru && product.qisqaTavsifRu) ? product.qisqaTavsifRu : product.qisqaTavsif;
-  const toliqTavsif = (ru && product.toliqTavsifRu) ? product.toliqTavsifRu : product.toliqTavsif;
+  const nom = ru ? (product.nomRu || product.nom) : en ? (product.nomEn || product.nom) : product.nom;
+  const qisqaTavsif = ru ? (product.qisqaTavsifRu || product.qisqaTavsif) : en ? (product.qisqaTavsifEn || product.qisqaTavsif) : product.qisqaTavsif;
+  const toliqTavsif = ru ? (product.toliqTavsifRu || product.toliqTavsif) : en ? (product.toliqTavsifEn || product.toliqTavsif) : product.toliqTavsif;
   const kategoriyaNom = ru
     ? (product.kategoriya?.nomRu || product.kategoriya?.nom || "")
+    : en ? (product.kategoriya?.nomEn || product.kategoriya?.nom || "")
     : (product.kategoriya?.nom || "");
 
   const turiLabel = ru
     ? (product.turi === "ummed-brend" ? "Бренд Ummed" : product.turi === "distribyutor" ? "Дистрибьютор" : "Каталог")
+    : en
+    ? (product.turi === "ummed-brend" ? "Ummed Brand" : product.turi === "distribyutor" ? "Distributor" : "Catalog")
     : (product.turi === "ummed-brend" ? "Ummed Brendi" : product.turi === "distribyutor" ? "Distribyutor" : "Katalog");
 
   const backHref = product.turi === "ummed-brend" || product.turi === "distribyutor" ? "/" : "/katalog";
@@ -75,7 +80,7 @@ export default function MahsulotDetailPage({ params }) {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-10 pt-6">
           <nav className="flex items-center gap-2 text-sm flex-wrap" style={{ color: "var(--text-muted, #888)" }}>
             <Link href="/" className="hover:opacity-70 transition-opacity">
-              {ru ? "Главная" : "Bosh sahifa"}
+              {L("Bosh sahifa", "Главная", "Home")}
             </Link>
             <span>/</span>
             <Link href={backHref} className="hover:opacity-70 transition-opacity">{turiLabel}</Link>
@@ -142,9 +147,9 @@ export default function MahsulotDetailPage({ params }) {
               {/* Brend */}
               {product.brend && (
                 <p className="text-sm font-light mb-2" style={{ color: "var(--text-muted, #888)" }}>
-                  {ru ? "Бренд" : "Brend"}: <strong style={{ color: "var(--text)" }}>{product.brend}</strong>
+                  {L("Brend", "Бренд", "Brand")}: <strong style={{ color: "var(--text)" }}>{product.brend}</strong>
                   {product.modelRaqami && (
-                    <> · {ru ? "Модель" : "Model"}: <strong style={{ color: "var(--text)" }}>{product.modelRaqami}</strong></>
+                    <> · {L("Model", "Модель", "Model")}: <strong style={{ color: "var(--text)" }}>{product.modelRaqami}</strong></>
                   )}
                 </p>
               )}
@@ -155,8 +160,8 @@ export default function MahsulotDetailPage({ params }) {
                   <span className={`w-2 h-2 rounded-full ${product.mavjudligi ? "bg-green-500" : "bg-gray-400"}`} />
                   <span className="text-sm font-light" style={{ color: product.mavjudligi ? "#16a34a" : "#9ca3af" }}>
                     {product.mavjudligi
-                      ? (ru ? "В наличии" : "Mavjud")
-                      : (ru ? "Нет в наличии" : "Tugagan")}
+                      ? L("Mavjud", "В наличии", "In Stock")
+                      : L("Tugagan", "Нет в наличии", "Out of Stock")}
                   </span>
                 </div>
               </div>
@@ -182,7 +187,7 @@ export default function MahsulotDetailPage({ params }) {
                   className="inline-flex items-center justify-center w-full py-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                   style={{ background: "#E8491D" }}
                 >
-                  {ru ? "Связаться с нами" : "Bog'lanish"}
+                  {L("Bog'lanish", "Связаться с нами", "Contact Us")}
                 </Link>
               </div>
             </div>
@@ -193,12 +198,12 @@ export default function MahsulotDetailPage({ params }) {
           <div style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}>
             <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-20">
               <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-10" style={{ color: "var(--text)" }}>
-                {ru ? "Другие продукты дистрибьютора" : "Boshqa distribyutor mahsulotlarimiz"}
+                {L("Boshqa distribyutor mahsulotlarimiz", "Другие продукты дистрибьютора", "Other Distributor Products")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {boshqalar.map((m) => {
-                  const mNom = (ru && m.nomRu) ? m.nomRu : m.nom;
-                  const mTavsif = (ru && m.qisqaTavsifRu) ? m.qisqaTavsifRu : m.qisqaTavsif;
+                  const mNom = ru ? (m.nomRu || m.nom) : en ? (m.nomEn || m.nom) : m.nom;
+                  const mTavsif = ru ? (m.qisqaTavsifRu || m.qisqaTavsif) : en ? (m.qisqaTavsifEn || m.qisqaTavsif) : m.qisqaTavsif;
                   return (
                     <Link key={m.id} href={`/mahsulot/${m.slug}`} className="group block">
                       {/* Rasm */}
@@ -222,7 +227,7 @@ export default function MahsulotDetailPage({ params }) {
                       {/* Matn */}
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#E8491D" }}>
-                          {ru ? (m.kategoriya?.nomRu || m.kategoriya?.nom || "") : (m.kategoriya?.nom || "")}
+                          {ru ? (m.kategoriya?.nomRu || m.kategoriya?.nom || "") : en ? (m.kategoriya?.nomEn || m.kategoriya?.nom || "") : (m.kategoriya?.nom || "")}
                         </span>
                         <h3 className="text-lg font-medium leading-snug mt-1 group-hover:opacity-70 transition-opacity"
                           style={{ color: "var(--text)" }}>

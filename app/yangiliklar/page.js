@@ -20,6 +20,7 @@ export default function YangiliklarPage() {
   const { t, lang } = useLang();
   const n = t.news;
   const ru = lang === 'ru';
+  const notUz = lang !== 'uz';
 
   const [postlar, setPostlar] = useState([]);
   const [yuklanmoqda, setYuklanmoqda] = useState(true);

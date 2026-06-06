@@ -6,7 +6,7 @@ import { useLang } from "@/lib/i18n";
 
 export default function SiteFooter() {
   const { t, lang } = useLang();
-  const L = (uz, ru) => (lang === "ru" ? ru : uz);
+  const L = (uz, ru, en) => (lang === "ru" ? ru : lang === "en" && en ? en : uz);
 
   return (
     <footer style={{ backgroundColor: "#111111", color: "#e5e5e5" }}>
@@ -18,7 +18,7 @@ export default function SiteFooter() {
           {/* Chap — email + 3 ustun */}
           <div className="flex-1">
             <p className="text-sm font-light mb-4 sm:mb-5" style={{ color: "#555" }}>
-              {L("Elektron pochta", "Электронная почта")}
+              {L("Elektron pochta", "Электронная почта", "Email")}
             </p>
 
             {/* Email — kichikroq mobilda */}
@@ -34,7 +34,7 @@ export default function SiteFooter() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div>
                 <p className="text-xs font-light mb-3" style={{ color: "#444" }}>
-                  {L("Aloqa uchun", "Для связи")}
+                  {L("Aloqa uchun", "Для связи", "Contact")}
                 </p>
                 <a
                   href="tel:+998775504040"
@@ -46,7 +46,7 @@ export default function SiteFooter() {
               </div>
               <div>
                 <p className="text-xs font-light mb-3" style={{ color: "#444" }}>
-                  {L("Manzil", "Адрес")}
+                  {L("Manzil", "Адрес", "Address")}
                 </p>
                 <p className="text-sm font-light leading-relaxed" style={{ color: "#999" }}>
                   {t.footer.address}
@@ -54,7 +54,7 @@ export default function SiteFooter() {
               </div>
               <div>
                 <p className="text-xs font-light mb-3" style={{ color: "#444" }}>
-                  {L("Ish vaqti", "Рабочее время")}
+                  {L("Ish vaqti", "Рабочее время", "Working Hours")}
                 </p>
                 <p className="text-sm font-light" style={{ color: "#999" }}>
                   {t.footer.workHours}
@@ -98,7 +98,7 @@ export default function SiteFooter() {
 
           {/* Copyright */}
           <p className="text-xs font-light" style={{ color: "#3a3a3a" }}>
-            © 2026 Ummed. {L("Barcha huquqlar himoyalangan", "Все права защищены")}
+            © 2026 Ummed. {L("Barcha huquqlar himoyalangan", "Все права защищены", "All rights reserved")}
           </p>
         </div>
 

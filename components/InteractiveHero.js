@@ -8,7 +8,7 @@ import PartnersMarquee from "./PartnersMarquee";
 
 export default function InteractiveHero() {
   const { t, lang } = useLang();
-  const L = (uz, ru) => (lang === "ru" ? ru : uz);
+  const L = (uz, ru, en) => (lang === "ru" ? ru : lang === "en" && en ? en : uz);
   const [soz, setSoz] = useState(null);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function InteractiveHero() {
             href="/aloqa"
             className="hero-cta inline-flex items-center justify-center px-6 py-3 sm:px-9 sm:py-4 rounded-full text-sm sm:text-base font-medium transition-all hover:scale-[1.03]"
           >
-            {L("Biz bilan bog'laning!", "Связаться с нами!")}
+            {L("Biz bilan bog'laning!", "Связаться с нами!", "Get in Touch!")}
           </Link>
 
           {/* Ijtimoiy ikonkalar */}
