@@ -60,7 +60,7 @@ export default function OrderPage() {
 
         {/* ─── HERO ─── */}
         <section style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-12 sm:py-20 flex flex-col items-center text-center">
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-12 pb-6 sm:pt-16 sm:pb-8 flex flex-col items-center text-center">
             <Reveal variant="up" className="flex flex-col items-center">
               <span className="section-label">
                 {L("Hamkorlar uchun", "Для партнёров")}
@@ -92,7 +92,7 @@ export default function OrderPage() {
 
         {/* ─── ASOSIY KONTENT ─── */}
         <section style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-4 sm:py-8">
+          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 pt-2 pb-10 sm:pt-4 sm:pb-14">
 
             {/* ── Asosiy ekran ── */}
             {step === "main" && (
@@ -108,8 +108,8 @@ export default function OrderPage() {
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
-                      fontSize: "19px",
-                      padding: "22px 60px",
+                      fontSize: "21px",
+                      padding: "24px 72px",
                       boxShadow: "0 4px 24px rgba(232,73,29,0.35)",
                     }}
                     onMouseEnter={e => {
