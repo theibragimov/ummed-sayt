@@ -92,25 +92,14 @@ export default function OrderPage() {
 
         {/* ─── ASOSIY KONTENT ─── */}
         <section style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-10 sm:py-16">
+          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-8 sm:py-12">
 
             {/* ── Asosiy ekran ── */}
             {step === "main" && (
-              <div className="flex flex-col items-center gap-8">
+              <div className="flex flex-col items-center gap-5">
 
                 {/* Telegram Bot — asosiy CTA */}
-                <Reveal variant="up" className="w-full flex flex-col items-center text-center gap-5">
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-muted, #888)" }}>
-                      {L("Tezkor buyurtma", "Быстрый заказ")}
-                    </span>
-                    <p className="text-base font-light max-w-md" style={{ color: "var(--text-muted, #888)" }}>
-                      {L(
-                        "Telegram botimiz orqali bir necha daqiqada buyurtma bering",
-                        "Оформите заказ через наш Telegram бот за несколько минут",
-                      )}
-                    </p>
-                  </div>
+                <Reveal variant="up" className="w-full flex flex-col items-center text-center gap-4">
                   <a
                     href={TELEGRAM_BOT}
                     target="_blank"
@@ -141,79 +130,6 @@ export default function OrderPage() {
                   </a>
                 </Reveal>
 
-                {/* Divider */}
-                <div className="w-full flex items-center gap-4 max-w-lg">
-                  <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-strong, #e5e5e5)" }} />
-                  <span className="text-xs font-light px-2 whitespace-nowrap" style={{ color: "var(--text-muted, #aaa)" }}>
-                    {L("yoki to'lov turini tanlang", "или выберите тип оплаты")}
-                  </span>
-                  <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-strong, #e5e5e5)" }} />
-                </div>
-
-                {/* To'lov tugmalari */}
-                <Reveal variant="up" delay={100} className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-                  {/* Bo'lib to'lash */}
-                  <button
-                    onClick={() => { setPayType(L("Bo'lib to'lash (НДС siz)", "Рассрочка (без НДС)")); setStep("form"); }}
-                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto"
-                    style={{
-                      backgroundColor: "#E8491D",
-                      color: "#fff",
-                      fontSize: "16px",
-                      padding: "16px 40px",
-                      border: "none",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                      boxShadow: "0 4px 20px rgba(232,73,29,0.3)",
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.backgroundColor = "#c73a16";
-                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(232,73,29,0.5)";
-                      e.currentTarget.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.backgroundColor = "#E8491D";
-                      e.currentTarget.style.boxShadow = "0 4px 20px rgba(232,73,29,0.3)";
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-                    </svg>
-                    {L("Bo'lib to'lash", "Рассрочка")}
-                  </button>
-
-                  {/* 100% to'lov */}
-                  <button
-                    onClick={() => { setPayType(L("100% to'lov (НДС siz)", "100% оплата (без НДС)")); setStep("form"); }}
-                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto"
-                    style={{
-                      backgroundColor: "#E8491D",
-                      color: "#fff",
-                      fontSize: "16px",
-                      padding: "16px 40px",
-                      border: "none",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                      boxShadow: "0 4px 20px rgba(232,73,29,0.3)",
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.backgroundColor = "#c73a16";
-                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(232,73,29,0.5)";
-                      e.currentTarget.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.backgroundColor = "#E8491D";
-                      e.currentTarget.style.boxShadow = "0 4px 20px rgba(232,73,29,0.3)";
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
-                    </svg>
-                    {L("100% to'lov", "100% оплата")}
-                  </button>
-                </Reveal>
 
                 {/* Info kartalar — vektor ikonkali */}
                 <Reveal variant="up" delay={150} className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
