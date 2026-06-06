@@ -104,13 +104,12 @@ export default function OrderPage() {
                     href={TELEGRAM_BOT}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300"
+                    className="inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 text-[16px] px-8 py-4 sm:text-[21px] sm:px-[72px] sm:py-6"
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
-                      fontSize: "21px",
-                      padding: "24px 72px",
                       boxShadow: "0 4px 24px rgba(232,73,29,0.35)",
+                      whiteSpace: "nowrap",
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.backgroundColor = "#c73a16";
@@ -123,7 +122,7 @@ export default function OrderPage() {
                       e.currentTarget.style.transform = "scale(1)";
                     }}
                   >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
                     </svg>
                     {L("Telegram botga o'tish", "Перейти в Telegram бот")}
@@ -132,11 +131,11 @@ export default function OrderPage() {
 
 
                 {/* Info kartalar — vektor ikonkali */}
-                <Reveal variant="up" delay={150} className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                <Reveal variant="up" delay={150} className="w-full grid grid-cols-3 gap-3 mt-2">
                   {[
                     {
                       icon: (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                         </svg>
                       ),
@@ -145,7 +144,7 @@ export default function OrderPage() {
                     },
                     {
                       icon: (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                         </svg>
                       ),
@@ -155,7 +154,7 @@ export default function OrderPage() {
                     },
                     {
                       icon: (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
                         </svg>
                       ),
@@ -165,22 +164,22 @@ export default function OrderPage() {
                   ].map((card) => (
                     <div
                       key={card.title}
-                      className="flex flex-col items-center text-center p-5 sm:p-7 rounded-2xl gap-3"
+                      className="flex flex-col items-center text-center p-3 sm:p-7 rounded-xl sm:rounded-2xl gap-2 sm:gap-3"
                       style={{ border: "1px solid var(--border-strong, #e5e5e5)", backgroundColor: "var(--bg)" }}
                     >
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0"
                         style={{ backgroundColor: "rgba(232,73,29,0.08)" }}>
                         {card.icon}
                       </div>
-                      <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted, #888)" }}>
+                      <p className="text-[9px] sm:text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted, #888)" }}>
                         {card.title}
                       </p>
                       {card.href ? (
-                        <a href={card.href} className="text-sm font-medium transition-opacity hover:opacity-60" style={{ color: "var(--text)" }}>
+                        <a href={card.href} className="text-[11px] sm:text-sm font-medium transition-opacity hover:opacity-60 leading-tight" style={{ color: "var(--text)" }}>
                           {card.desc}
                         </a>
                       ) : (
-                        <p className="text-sm font-medium" style={{ color: "var(--text)" }}>{card.desc}</p>
+                        <p className="text-[11px] sm:text-sm font-medium leading-tight" style={{ color: "var(--text)" }}>{card.desc}</p>
                       )}
                     </div>
                   ))}
