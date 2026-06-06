@@ -150,6 +150,20 @@ export default function SiteHeader() {
                 </Link>
               );
             })}
+            <div className="flex items-center gap-2 px-4 py-3 border-t border-white/10 mt-1">
+              {LANGS.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { setLang(l.code); setMobileOpen(false); }}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-colors lang-item ${
+                    lang === l.code ? "text-[#E8491D]" : ""
+                  }`}
+                >
+                  <span className="text-base">{l.flag}</span>
+                  <span>{l.label}</span>
+                </button>
+              ))}
+            </div>
           </nav>
         </div>
       )}
