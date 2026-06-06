@@ -60,27 +60,27 @@ export default function OrderPage() {
 
         {/* ─── HERO ─── */}
         <section style={{ backgroundColor: "var(--bg)", borderBottom: "1px solid var(--border-strong, #e5e5e5)" }}>
-          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-12 sm:py-20">
-            <Reveal variant="up">
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-12 sm:py-20 flex flex-col items-center text-center">
+            <Reveal variant="up" className="flex flex-col items-center">
               <span className="section-label">
                 {L("Hamkorlar uchun", "Для партнёров")}
               </span>
               <h1
                 className="mt-4 sm:mt-6 text-3xl sm:text-4xl lg:text-[52px] font-medium leading-[1.1] tracking-tight"
-                style={{ color: "var(--text)", maxWidth: 640 }}
+                style={{ color: "var(--text)" }}
               >
                 {L("Buyurtma rasmiylashtirish", "Оформление заказа")}
               </h1>
               <p
-                className="mt-4 text-sm sm:text-base font-light leading-relaxed"
-                style={{ color: "var(--text-muted, #888)", maxWidth: 560 }}
+                className="mt-4 text-sm sm:text-base font-light leading-relaxed max-w-xl"
+                style={{ color: "var(--text-muted, #888)" }}
               >
                 {L(
                   "Biz sizning vaqt va qulayligingizni qadrlaymiz — buyurtmani tez va oson rasmiylashtirish uchun Telegram botimizga o'ting.",
                   "Мы ценим ваше время — перейдите в наш Telegram бот для быстрого и удобного оформления заказа.",
                 )}
               </p>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-4 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#3DB851" }} />
                 <span className="text-sm font-medium" style={{ color: "#3DB851" }}>
                   {L("2 mln so'mdan yuqori buyurtmalarga bepul yetkazib berish", "Бесплатная доставка при заказе от 2 млн сум")}
@@ -92,15 +92,15 @@ export default function OrderPage() {
 
         {/* ─── ASOSIY KONTENT ─── */}
         <section style={{ backgroundColor: "var(--bg)" }}>
-          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-12 sm:py-20">
+          <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-10 py-10 sm:py-16">
 
             {/* ── Asosiy ekran ── */}
             {step === "main" && (
-              <div className="flex flex-col items-center gap-12">
+              <div className="flex flex-col items-center gap-8">
 
                 {/* Telegram Bot — asosiy CTA */}
-                <Reveal variant="up" className="w-full flex flex-col items-center text-center gap-6">
-                  <div className="flex flex-col items-center gap-2">
+                <Reveal variant="up" className="w-full flex flex-col items-center text-center gap-5">
+                  <div className="flex flex-col items-center gap-1.5">
                     <span className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-muted, #888)" }}>
                       {L("Tezkor buyurtma", "Быстрый заказ")}
                     </span>
@@ -115,16 +115,18 @@ export default function OrderPage() {
                     href={TELEGRAM_BOT}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full text-[15px] font-semibold transition-all duration-300"
+                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300"
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
+                      fontSize: "17px",
+                      padding: "18px 48px",
                       boxShadow: "0 4px 24px rgba(232,73,29,0.35)",
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.backgroundColor = "#c73a16";
-                      e.currentTarget.style.boxShadow = "0 6px 32px rgba(232,73,29,0.5)";
-                      e.currentTarget.style.transform = "scale(1.04)";
+                      e.currentTarget.style.boxShadow = "0 8px 36px rgba(232,73,29,0.55)";
+                      e.currentTarget.style.transform = "scale(1.05)";
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.backgroundColor = "#E8491D";
@@ -132,7 +134,7 @@ export default function OrderPage() {
                       e.currentTarget.style.transform = "scale(1)";
                     }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
                     </svg>
                     {L("Telegram botga o'tish", "Перейти в Telegram бот")}
@@ -140,23 +142,25 @@ export default function OrderPage() {
                 </Reveal>
 
                 {/* Divider */}
-                <div className="w-full flex items-center gap-4 max-w-2xl">
+                <div className="w-full flex items-center gap-4 max-w-lg">
                   <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-strong, #e5e5e5)" }} />
-                  <span className="text-xs font-light px-2" style={{ color: "var(--text-muted, #aaa)" }}>
+                  <span className="text-xs font-light px-2 whitespace-nowrap" style={{ color: "var(--text-muted, #aaa)" }}>
                     {L("yoki to'lov turini tanlang", "или выберите тип оплаты")}
                   </span>
                   <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-strong, #e5e5e5)" }} />
                 </div>
 
                 {/* To'lov tugmalari */}
-                <Reveal variant="up" delay={100} className="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Reveal variant="up" delay={100} className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
                   {/* Bo'lib to'lash */}
                   <button
                     onClick={() => { setPayType(L("Bo'lib to'lash (НДС siz)", "Рассрочка (без НДС)")); setStep("form"); }}
-                    className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto"
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
+                      fontSize: "16px",
+                      padding: "16px 40px",
                       border: "none",
                       cursor: "pointer",
                       fontFamily: "inherit",
@@ -164,8 +168,8 @@ export default function OrderPage() {
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.backgroundColor = "#c73a16";
-                      e.currentTarget.style.boxShadow = "0 6px 28px rgba(232,73,29,0.5)";
-                      e.currentTarget.style.transform = "scale(1.04)";
+                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(232,73,29,0.5)";
+                      e.currentTarget.style.transform = "scale(1.05)";
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.backgroundColor = "#E8491D";
@@ -173,7 +177,7 @@ export default function OrderPage() {
                       e.currentTarget.style.transform = "scale(1)";
                     }}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
                     </svg>
                     {L("Bo'lib to'lash", "Рассрочка")}
@@ -182,10 +186,12 @@ export default function OrderPage() {
                   {/* 100% to'lov */}
                   <button
                     onClick={() => { setPayType(L("100% to'lov (НДС siz)", "100% оплата (без НДС)")); setStep("form"); }}
-                    className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-[15px] font-semibold transition-all duration-300 w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto"
                     style={{
                       backgroundColor: "#E8491D",
                       color: "#fff",
+                      fontSize: "16px",
+                      padding: "16px 40px",
                       border: "none",
                       cursor: "pointer",
                       fontFamily: "inherit",
@@ -193,8 +199,8 @@ export default function OrderPage() {
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.backgroundColor = "#c73a16";
-                      e.currentTarget.style.boxShadow = "0 6px 28px rgba(232,73,29,0.5)";
-                      e.currentTarget.style.transform = "scale(1.04)";
+                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(232,73,29,0.5)";
+                      e.currentTarget.style.transform = "scale(1.05)";
                     }}
                     onMouseLeave={e => {
                       e.currentTarget.style.backgroundColor = "#E8491D";
@@ -202,27 +208,63 @@ export default function OrderPage() {
                       e.currentTarget.style.transform = "scale(1)";
                     }}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
                     </svg>
                     {L("100% to'lov", "100% оплата")}
                   </button>
                 </Reveal>
 
-                {/* Info kartalar */}
-                <Reveal variant="up" delay={150} className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                {/* Info kartalar — vektor ikonkali */}
+                <Reveal variant="up" delay={150} className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
                   {[
-                    { icon: "🕐", title: L("Ish vaqti", "Время работы"), desc: L("Du–Sha, 09:00–18:00", "Пн–Сб, 09:00–18:00") },
-                    { icon: "📞", title: L("Telefon", "Телефон"), desc: "+998 77 550-40-40", href: "tel:+998775504040" },
-                    { icon: "🚚", title: L("Yetkazish", "Доставка"), desc: L("2 mln+ — bepul", "От 2 млн — бесплатно") },
-                    { icon: "✅", title: L("Kafolat", "Гарантия"), desc: L("Sertifikatlangan", "Сертифицировано") },
+                    {
+                      icon: (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                      ),
+                      title: L("Ish vaqti", "Время работы"),
+                      desc: L("Du–Sha, 09:00–18:00", "Пн–Сб, 09:00–18:00"),
+                    },
+                    {
+                      icon: (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                        </svg>
+                      ),
+                      title: L("Telefon", "Телефон"),
+                      desc: "+998 77 550-40-40",
+                      href: "tel:+998775504040",
+                    },
+                    {
+                      icon: (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                      ),
+                      title: L("Yetkazish", "Доставка"),
+                      desc: L("2 mln+ — bepul", "От 2 млн — бесплатно"),
+                    },
+                    {
+                      icon: (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8491D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                      ),
+                      title: L("Kafolat", "Гарантия"),
+                      desc: L("Sertifikatlangan", "Сертифицировано"),
+                    },
                   ].map((card) => (
                     <div
                       key={card.title}
-                      className="flex flex-col items-center text-center p-4 sm:p-6 rounded-2xl gap-2"
+                      className="flex flex-col items-center text-center p-5 sm:p-7 rounded-2xl gap-3"
                       style={{ border: "1px solid var(--border-strong, #e5e5e5)", backgroundColor: "var(--bg)" }}
                     >
-                      <span className="text-2xl">{card.icon}</span>
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: "rgba(232,73,29,0.08)" }}>
+                        {card.icon}
+                      </div>
                       <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted, #888)" }}>
                         {card.title}
                       </p>
