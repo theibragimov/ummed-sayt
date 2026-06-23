@@ -103,9 +103,9 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
   const msKatIdMap = new Map()
 
   for (const msKat of msKategoriyalar) {
-    const msId = msIdOl(msKat.meta.href)
+    const msId = msKat.id || msIdOl(msKat.meta.href)
     const nom = msKat.name
-    const parentMsId = msKat.productFolder ? msIdOl(msKat.productFolder.meta.href) : null
+    const parentMsId = msKat.productFolder ? (msKat.productFolder.id || msIdOl(msKat.productFolder.meta.href)) : null
     const parentId = parentMsId ? (msKatIdMap.get(parentMsId) ?? katMsMap.get(parentMsId)?.id ?? null) : null
 
     const mavjud = katMsMap.get(msId)
@@ -127,7 +127,7 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
 
   // ─── 2. Mahsulotlar ──────────────────────────────────────────────────────────
   // Incremental: faqat yangilangan mahsulotlarni olish
-  const [msMahsulotlar, stokMap] = await Promise.all([
+  const [msMahsulotlar, { productMap, variantMap }] = await Promise.all([
     isIncremental ? msYangilanganMahsulotlarOl(lastSyncAt) : msMahsulotlarOl(),
     msStokOl(),
   ])
@@ -136,14 +136,16 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
   const yangilash = []
 
   for (const msProd of msMahsulotlar) {
-    const msId = msIdOl(msProd.meta.href)
+    const msId = msProd.id || msIdOl(msProd.meta.href)
     const nom = msProd.name
-    const stok = stokMap.get(msId) ?? 0
+    const variantsCount = msProd.variantsCount || 0
+    // Varianti bor mahsulot: variantlar orqali stock tekshiriladi (variantlarniYangilash da)
+    // Varianti yo'q mahsulot: productMap dan to'g'ridan tekshiriladi
+    const stok = variantsCount > 0 ? 1 : (productMap.get(msId) ?? 0)
     const mavjudligi = !msProd.archived && stok > 0
-    const kategoriyaMsId = msProd.productFolder ? msIdOl(msProd.productFolder.meta.href) : null
+    const kategoriyaMsId = msProd.productFolder ? (msProd.productFolder.id || msIdOl(msProd.productFolder.meta.href)) : null
     const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
     const msUpdated = new Date(msProd.updated)
-    const variantsCount = msProd.variantsCount || 0
 
     const dataBase = {
       nom,
@@ -182,7 +184,7 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     prodMsMap.set(created.moyskladId, { id: created.id, moyskladId: created.moyskladId })
     natija.mahsulotlar.qoshildi++
     if (rasmYuklama) await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
-    if (variantsCount > 0) await variantlarniYangilash(created.moyskladId, created.id, natija)
+    if (variantsCount > 0) await variantlarniYangilash(created.moyskladId, created.id, variantMap, natija)
   }
 
   // Yangilanganlarni update
@@ -191,7 +193,7 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     await prisma.mahsulot.update({ where: { id }, data })
     natija.mahsulotlar.yangilandi++
     if (rasmYuklama && rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
-    if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
+    if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, variantMap, natija)
   }
 
   // ─── 3. O'chirilgan/arxivlangan/stoksizlarni yashirish ──────────────────────
@@ -261,12 +263,14 @@ async function rasmlarniYangilash(supabase, msMahsulotId, dbMahsulotId, natija) 
   }
 }
 
-async function variantlarniYangilash(msMahsulotId, dbMahsulotId, natija) {
+async function variantlarniYangilash(msMahsulotId, dbMahsulotId, variantMap, natija) {
   try {
-    const variantlar = await msMahsulotVariantlarOl(msMahsulotId)
+    const variantlar = await msMahsulotVariantlarOl(msMahsulotId, variantMap)
+    // Ota mahsulot mavjudligi: kamida bitta varianti stokda bo'lsa true
+    const parentMavjudligi = variantlar.some(v => v.mavjudligi)
     await prisma.mahsulot.update({
       where: { id: dbMahsulotId },
-      data: { variantlar: variantlar },
+      data: { variantlar, mavjudligi: parentMavjudligi },
     })
     natija.variantlar.yuklandi += variantlar.length
   } catch (e) {
