@@ -8,33 +8,25 @@ export default function MoySkladPage() {
   const [natija, setNatija] = useState(null)
   const [xato, setXato] = useState('')
 
-  useEffect(() => {
-    statusniYuklash()
-  }, [])
+  useEffect(() => { statusniYuklash() }, [])
 
   async function statusniYuklash() {
     try {
       const res = await fetch('/api/moysklad/status')
-      const data = await res.json()
-      setStatus(data)
+      setStatus(await res.json())
     } catch {}
   }
 
-  async function syncBoshlash() {
-    setJarayon(true)
+  async function syncBoshlash(toliq = false) {
+    setJarayon(toliq ? 'toliq' : 'incremental')
     setNatija(null)
     setXato('')
     try {
-      const res = await fetch('/api/moysklad/sync?secret=ummed-cron-secret-2024', {
-        method: 'GET',
-      })
+      const url = `/api/moysklad/sync?secret=ummed-cron-secret-2024${toliq ? '&toliq=true' : ''}`
+      const res = await fetch(url)
       const data = await res.json()
-      if (res.ok) {
-        setNatija(data)
-        statusniYuklash()
-      } else {
-        setXato(data.xato || 'Xatolik yuz berdi')
-      }
+      if (res.ok) { setNatija(data); statusniYuklash() }
+      else setXato(data.xato || 'Xatolik yuz berdi')
     } catch (e) {
       setXato(e.message)
     } finally {
@@ -55,15 +47,13 @@ export default function MoySkladPage() {
       <div style={{ marginBottom: '28px' }}>
         <h1 style={A.h1}>MoySklad sinxronizatsiyasi</h1>
         <p style={{ ...A.sub, marginTop: '4px' }}>
-          Mahsulotlar va kategoriyalar MoySkladdan avtomatik yangilanadi (har 1 soatda)
+          Mahsulotlar va kategoriyalar MoySkladdan qo'lda yangilanadi
         </p>
       </div>
 
-      {/* Status kartochka */}
+      {/* Status */}
       <div style={{ ...A.cardPad, marginBottom: '16px' }}>
-        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px' }}>
-          Holat
-        </div>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px' }}>Holat</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
           <Stat label="Oxirgi sync" value={status ? vaqtFormat(status.oxirgiSync) : '...'} />
           <Stat label="MS mahsulotlar" value={status ? status.moyskladMahsulotlar : '...'} />
@@ -71,22 +61,40 @@ export default function MoySkladPage() {
         </div>
       </div>
 
-      {/* Qo'lda sinxronizatsiya */}
+      {/* Sinxronizatsiya tugmalari */}
       <div style={{ ...A.cardPad, marginBottom: '16px' }}>
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '8px' }}>
-          Qo'lda sinxronlash
+          Sinxronlash
         </div>
-        <p style={{ ...A.sub, marginBottom: '16px' }}>
-          Yangi mahsulot qo'shgan bo'lsangiz yoki 1 soatni kutmasdan yangilash uchun ishlatring.
-          Jarayon bir necha daqiqa davom etishi mumkin.
-        </p>
-        <button
-          onClick={syncBoshlash}
-          disabled={jarayon}
-          style={{ ...A.btnPrimary, opacity: jarayon ? 0.6 : 1, cursor: jarayon ? 'wait' : 'pointer' }}
-        >
-          {jarayon ? '⏳ Sinxronlanmoqda...' : '🔄 Hozir sinxronlash'}
-        </button>
+
+        <div style={{ ...A.sub, marginBottom: '16px', padding: '12px', background: '#f9fafb', borderRadius: '8px', fontSize: '13px' }}>
+          <div style={{ marginBottom: '6px' }}>
+            <strong>Incremental:</strong> Faqat yangi va o'zgargan mahsulotlar yangilanadi. Tez ishlaydi.
+          </div>
+          <div>
+            <strong>To'liq sync:</strong> Hamma mahsulot qayta yuklanadi, rasmlar ham. Sekin, lekin to'liq tozalanadi.
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => syncBoshlash(false)}
+            disabled={!!jarayon}
+            style={{ ...A.btnPrimary, opacity: jarayon ? 0.6 : 1, cursor: jarayon ? 'wait' : 'pointer' }}>
+            {jarayon === 'incremental' ? '⏳ Sinxronlanmoqda...' : '🔄 Incremental sync'}
+          </button>
+          <button
+            onClick={() => syncBoshlash(true)}
+            disabled={!!jarayon}
+            style={{
+              padding: '10px 20px', borderRadius: '8px', fontWeight: 600, fontSize: '14px',
+              border: '1px solid #d1d5db', background: '#fff', color: '#374151',
+              opacity: jarayon ? 0.6 : 1, cursor: jarayon ? 'wait' : 'pointer',
+            }}>
+            {jarayon === 'toliq' ? '⏳ To\'liq sync...' : '♻️ To\'liq sync'}
+          </button>
+        </div>
+
         {xato && (
           <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', fontSize: '13px' }}>
             ❌ {xato}
@@ -98,15 +106,16 @@ export default function MoySkladPage() {
       {natija && (
         <div style={{ ...A.cardPad, background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
           <div style={{ fontWeight: 700, fontSize: '14px', color: '#16a34a', marginBottom: '12px' }}>
-            ✅ Sinxronizatsiya muvaffaqiyatli yakunlandi
+            ✅ {natija.tur === 'incremental' ? 'Incremental' : "To'liq"} sinxronizatsiya yakunlandi
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '13px', color: '#374151' }}>
             <div>Kategoriyalar qo'shildi: <b>{natija.kategoriyalar?.qoshildi}</b></div>
             <div>Kategoriyalar yangilandi: <b>{natija.kategoriyalar?.yangilandi}</b></div>
             <div>Mahsulotlar qo'shildi: <b>{natija.mahsulotlar?.qoshildi}</b></div>
             <div>Mahsulotlar yangilandi: <b>{natija.mahsulotlar?.yangilandi}</b></div>
-            <div>Yashirildi (o'chirilgan): <b>{natija.mahsulotlar?.yashirildi}</b></div>
+            <div>Yashirildi: <b>{natija.mahsulotlar?.yashirildi}</b></div>
             <div>Rasmlar yuklandi: <b>{natija.rasmlar?.yuklandi}</b></div>
+            <div>Variantlar: <b>{natija.variantlar?.yuklandi}</b></div>
             {natija.rasmlar?.xato > 0 && (
               <div style={{ color: '#dc2626' }}>Rasm xatolari: <b>{natija.rasmlar?.xato}</b></div>
             )}
@@ -116,15 +125,14 @@ export default function MoySkladPage() {
 
       {/* Qanday ishlaydi */}
       <div style={{ ...A.cardPad, marginTop: '16px', background: 'rgba(232,73,29,0.03)', border: '1px solid rgba(232,73,29,0.12)' }}>
-        <div style={{ fontWeight: 700, fontSize: '13px', color: '#E8491D', marginBottom: '10px' }}>
-          ℹ️ Qanday ishlaydi?
-        </div>
-        <ul style={{ fontSize: '13px', color: '#6b7280', paddingLeft: '18px', margin: 0, lineHeight: 1.8 }}>
-          <li>Har <b>1 soatda</b> MoySkladdan yangi ma'lumotlar olinadi</li>
-          <li>MoySkladga qo'shilgan mahsulotlar 1 soatdan keyin saytda ko'rinadi</li>
-          <li>MoySkladda <b>arxivlangan</b> mahsulotlar saytda yashiriladi</li>
-          <li>Rasmlar Supabase'ga yuklanadi (MoySklad o'chsa ham rasmlar ishlaydi)</li>
-          <li>MoySklad vaqtincha ishlamasa, saytdagi ma'lumotlar o'zgarmaydi</li>
+        <div style={{ fontWeight: 700, fontSize: '13px', color: '#E8491D', marginBottom: '10px' }}>ℹ️ Qanday ishlaydi?</div>
+        <ul style={{ fontSize: '13px', color: '#6b7280', paddingLeft: '18px', margin: 0, lineHeight: 1.9 }}>
+          <li><b>Incremental:</b> Oxirgi sync dan keyin yangilangan mahsulotlar olinadi</li>
+          <li>Yangi mahsulot qo'shilsa — <b>Incremental sync</b> ni bosing (tez)</li>
+          <li>Mahsulot MoySkladda o'chirilsa — saytda avtomatik yashiriladi</li>
+          <li>Rasmlar Supabase'da saqlanadi (MoySklad o'chsa ham ishlaydi)</li>
+          <li>Narx va tavsif ko'rsatilmaydi. Modifikatsiyalar (razmer, rang) ko'rinadi</li>
+          <li>Kategoriyaga kiritilmagan mahsulotlar saytda chiqmaydi</li>
         </ul>
       </div>
     </div>
@@ -135,7 +143,7 @@ function Stat({ label, value }) {
   return (
     <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
       <div style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '4px', fontWeight: 500 }}>{label}</div>
-      <div style={{ fontSize: '15px', fontWeight: 700, color: '#0a0a0a' }}>{value}</div>
+      <div style={{ fontSize: '14px', fontWeight: 700, color: '#0a0a0a' }}>{value}</div>
     </div>
   )
 }

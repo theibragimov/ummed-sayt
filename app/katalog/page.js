@@ -2,25 +2,13 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
-function formatPrice(narx, lang) {
-  if (!narx) return lang === 'ru' ? "Узнать цену" : lang === 'en' ? "Request Price" : "Narxlar bilan tanishish";
-  return narx.toLocaleString("uz-UZ") + " so'm";
-}
-
-function FilterPanel({
-  cat,
-  category,
-  kategoriyalar,
-  lang,
-  search,
-  setCategory,
-  setSearch,
-}) {
+function FilterPanel({ cat, category, kategoriyalar, lang, search, setCategory, setSearch }) {
   return (
     <div className="space-y-8">
       <div>
@@ -91,7 +79,9 @@ export default function KatalogPage() {
         fetch("/api/kategoriyalar"),
       ]);
       const [m, k] = await Promise.all([mRes.json(), kRes.json()]);
-      setMahsulotlar(Array.isArray(m) ? m : []);
+      // Faqat kategoriyali mahsulotlar
+      const faqatKategoriyali = Array.isArray(m) ? m.filter(p => p.kategoriya) : [];
+      setMahsulotlar(faqatKategoriyali);
       setKategoriyalar(Array.isArray(k) ? k : []);
       setYuklanmoqda(false);
     }
@@ -136,30 +126,16 @@ export default function KatalogPage() {
 
           {mobileFilterOpen && (
             <div className="md:hidden p-6 mb-8" style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-              <FilterPanel
-                cat={cat}
-                category={category}
-                kategoriyalar={kategoriyalar}
-                lang={lang}
-                search={search}
-                setCategory={setCategory}
-                setSearch={setSearch}
-              />
+              <FilterPanel cat={cat} category={category} kategoriyalar={kategoriyalar} lang={lang}
+                search={search} setCategory={setCategory} setSearch={setSearch} />
             </div>
           )}
 
           <div className="flex gap-12">
             <aside className="hidden md:block w-56 flex-shrink-0">
               <div className="sticky top-28">
-                <FilterPanel
-                  cat={cat}
-                  category={category}
-                  kategoriyalar={kategoriyalar}
-                  lang={lang}
-                  search={search}
-                  setCategory={setCategory}
-                  setSearch={setSearch}
-                />
+                <FilterPanel cat={cat} category={category} kategoriyalar={kategoriyalar} lang={lang}
+                  search={search} setCategory={setCategory} setSearch={setSearch} />
               </div>
             </aside>
 
@@ -176,59 +152,72 @@ export default function KatalogPage() {
               ) : (
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-px"
                   style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
-                  {filtered.map((product) => (
-                    <div key={product.id} className="flex flex-col overflow-hidden"
-                      style={{
-                        backgroundColor: "var(--bg)",
-                        borderRight: "1px solid var(--border-strong, #e5e5e5)",
-                        borderBottom: "1px solid var(--border-strong, #e5e5e5)",
-                      }}>
-                      {/* Rasm */}
-                      <div className="relative flex items-center justify-center overflow-hidden w-full"
-                        style={{ aspectRatio: "1 / 1" }}>
-                        {product.badge && (
-                          <span className="absolute top-4 left-4 text-xs font-medium px-3 py-1 text-white z-10"
-                            style={{ backgroundColor: product.badge === "Yangi" ? "#3DB851" : product.badge === "Ommabop" ? "#E8491D" : "#6366f1" }}>
-                            {product.badge}
-                          </span>
-                        )}
-                        {!product.mavjudligi && (
-                          <span className="absolute top-4 right-4 text-xs font-medium px-3 py-1 text-white z-10"
-                            style={{ backgroundColor: "#9ca3af" }}>
-                            Tugagan
-                          </span>
-                        )}
-                        {product.asosiyRasmUrl ? (
-                          <Image src={product.asosiyRasmUrl} alt={product.nom} fill style={{ objectFit: "cover" }} />
-                        ) : (
-                          <span className="text-7xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
-                        )}
-                      </div>
-
-                      {/* Ma'lumot */}
-                      <div className="p-3 sm:p-6 flex flex-col flex-1">
-                        <h3 className="text-xs sm:text-base font-medium leading-snug mb-1 sm:mb-2 line-clamp-2" style={{ color: "var(--text)" }}>
-                          {lang === 'ru' ? (product.nomRu || product.nom) : lang === 'en' ? (product.nomEn || product.nom) : product.nom}
-                        </h3>
-                        {(product.qisqaTavsif || product.qisqaTavsifRu) && (
-                          <p className="hidden sm:block text-sm font-light leading-relaxed mb-4" style={{ color: "var(--text-muted, #888)" }}>
-                            {lang === 'ru' ? (product.qisqaTavsifRu || product.qisqaTavsif) : lang === 'en' ? (product.qisqaTavsifEn || product.qisqaTavsif) : product.qisqaTavsif}
-                          </p>
-                        )}
-                        <div className="mt-auto flex items-center justify-between gap-1.5 sm:gap-3">
-                          <span className="text-[11px] sm:text-sm font-semibold leading-tight" style={{ color: "#E8491D" }}>
-                            {formatPrice(product.narx, lang)}
-                          </span>
-                          <a href="https://t.me/ummeduzbot"
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex-shrink-0 text-[10px] sm:text-xs font-medium px-2.5 py-1.5 sm:px-4 sm:py-2 transition-colors"
-                            style={{ background: "#E8491D", color: "#fff", borderRadius: "50px" }}>
-                            Telegram
-                          </a>
+                  {filtered.map((product) => {
+                    const nom = lang === 'ru' ? (product.nomRu || product.nom) : lang === 'en' ? (product.nomEn || product.nom) : product.nom;
+                    const variantlar = Array.isArray(product.variantlar) ? product.variantlar : [];
+                    return (
+                      <Link key={product.id} href={`/mahsulot/${product.slug}`}
+                        className="flex flex-col overflow-hidden group"
+                        style={{
+                          backgroundColor: "var(--bg)",
+                          borderRight: "1px solid var(--border-strong, #e5e5e5)",
+                          borderBottom: "1px solid var(--border-strong, #e5e5e5)",
+                          textDecoration: "none",
+                        }}>
+                        {/* Rasm */}
+                        <div className="relative flex items-center justify-center overflow-hidden w-full"
+                          style={{ aspectRatio: "1 / 1" }}>
+                          {!product.mavjudligi && (
+                            <span className="absolute top-4 right-4 text-xs font-medium px-3 py-1 text-white z-10"
+                              style={{ backgroundColor: "#9ca3af" }}>
+                              Tugagan
+                            </span>
+                          )}
+                          {product.asosiyRasmUrl ? (
+                            <Image src={product.asosiyRasmUrl} alt={nom} fill
+                              style={{ objectFit: "cover", transition: "transform 0.4s ease" }}
+                              className="group-hover:scale-[1.04]" />
+                          ) : (
+                            <span className="text-7xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
+                          )}
                         </div>
-                      </div>
-                    </div>
-                  ))}
+
+                        {/* Ma'lumot */}
+                        <div className="p-3 sm:p-5 flex flex-col flex-1">
+                          <h3 className="text-xs sm:text-sm font-medium leading-snug mb-2 line-clamp-2"
+                            style={{ color: "var(--text)" }}>
+                            {nom}
+                          </h3>
+
+                          {/* Variantlar */}
+                          {variantlar.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {variantlar.slice(0, 4).map((v, i) => (
+                                <span key={i}
+                                  className="text-[10px] sm:text-xs font-medium px-2 py-0.5"
+                                  style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text-muted, #888)" }}>
+                                  {v.xususiyatlar.map(x => x.qiymat).join(' / ')}
+                                </span>
+                              ))}
+                              {variantlar.length > 4 && (
+                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5"
+                                  style={{ color: "var(--text-muted, #888)" }}>
+                                  +{variantlar.length - 4}
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="mt-auto">
+                            <span className="inline-block text-[10px] sm:text-xs font-medium px-3 py-1.5 transition-opacity group-hover:opacity-80"
+                              style={{ background: "#E8491D", color: "#fff", borderRadius: "50px" }}>
+                              {lang === 'ru' ? 'Подробнее' : lang === 'en' ? 'View' : "Ko'rish"}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

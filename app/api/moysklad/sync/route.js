@@ -7,8 +7,12 @@ import { prisma } from '@/lib/prisma'
 import {
   msKategoriyalarOl,
   msMahsulotlarOl,
+  msYangilanganMahsulotlarOl,
+  msMahsulotIdlarOl,
   msMahsulotRasmlariOl,
+  msMahsulotVariantlarOl,
   msRasmniYuklash,
+  msIdOl,
 } from '@/lib/moysklad'
 
 function slugYarat(matn) {
@@ -30,15 +34,10 @@ function slugYarat(matn) {
     .slice(0, 100) || 'mahsulot'
 }
 
-function msIdOl(href) {
-  return href?.split('/').pop()
-}
-
 function noyobSlug(base, usedSlugs) {
-  let slug = base || 'mahsulot'
   let n = 0
-  while (usedSlugs.has(n === 0 ? slug : `${slug}-${n}`)) n++
-  const result = n === 0 ? slug : `${slug}-${n}`
+  while (usedSlugs.has(n === 0 ? base : `${base}-${n}`)) n++
+  const result = n === 0 ? base : `${base}-${n}`
   usedSlugs.add(result)
   return result
 }
@@ -48,7 +47,9 @@ export async function GET(request) {
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
-  return syncQil()
+  // to'liq yoki incremental?
+  const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
+  return syncQil({ tolik })
 }
 
 export async function POST(request) {
@@ -57,37 +58,45 @@ export async function POST(request) {
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
-  return syncQil()
+  const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
+  return syncQil({ tolik })
 }
 
-async function syncQil() {
+async function syncQil({ tolik = false } = {}) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY
   )
 
   const natija = {
+    tur: tolik ? 'toliq' : 'incremental',
     kategoriyalar: { qoshildi: 0, yangilandi: 0 },
     mahsulotlar: { qoshildi: 0, yangilandi: 0, yashirildi: 0 },
     rasmlar: { yuklandi: 0, xato: 0 },
+    variantlar: { yuklandi: 0 },
     boshlanganVaqt: new Date().toISOString(),
   }
 
-  // ─── 1. DB dagi barcha ma'lumotlarni bir marta olish ────────────────────────
-  const [dbKategoriyalar, dbMahsulotlar, dbSluglar] = await Promise.all([
+  // ─── Oxirgi sync vaqtini olish ───────────────────────────────────────────────
+  const lastSyncRow = await prisma.saytSozlamalari.findUnique({
+    where: { kalit: 'moysklad_last_sync' },
+  })
+  const lastSyncAt = lastSyncRow?.qiymat || null
+  const isIncremental = !tolik && !!lastSyncAt
+
+  // ─── DB hashmaplanri ─────────────────────────────────────────────────────────
+  const [dbKategoriyalar, dbMahsulotlar] = await Promise.all([
     prisma.kategoriya.findMany({ select: { id: true, moyskladId: true, slug: true } }),
     prisma.mahsulot.findMany({ select: { id: true, moyskladId: true, slug: true, moyskladUpdated: true } }),
-    prisma.mahsulot.findMany({ select: { slug: true } }),
   ])
 
-  // Hashmap: moyskladId → {id, slug, moyskladUpdated}
   const katMsMap = new Map(dbKategoriyalar.filter(k => k.moyskladId).map(k => [k.moyskladId, k]))
   const prodMsMap = new Map(dbMahsulotlar.filter(p => p.moyskladId).map(p => [p.moyskladId, p]))
-  const usedSlugs = new Set(dbSluglar.map(p => p.slug))
+  const usedSlugs = new Set(dbMahsulotlar.map(p => p.slug))
 
-  // ─── 2. Kategoriyalar ────────────────────────────────────────────────────────
+  // ─── 1. Kategoriyalar ────────────────────────────────────────────────────────
   const msKategoriyalar = await msKategoriyalarOl()
-  const msKatIdMap = new Map() // msId → DB id
+  const msKatIdMap = new Map()
 
   for (const msKat of msKategoriyalar) {
     const msId = msIdOl(msKat.meta.href)
@@ -97,32 +106,27 @@ async function syncQil() {
 
     const mavjud = katMsMap.get(msId)
     if (mavjud) {
-      await prisma.kategoriya.update({
-        where: { id: mavjud.id },
-        data: { nom, ...(parentId ? { parentId } : {}) },
-      })
+      await prisma.kategoriya.update({ where: { id: mavjud.id }, data: { nom, ...(parentId ? { parentId } : {}) } })
       msKatIdMap.set(msId, mavjud.id)
       natija.kategoriyalar.yangilandi++
     } else {
       const slugBase = slugYarat(nom)
+      const dbKatSluglar = new Set((await prisma.kategoriya.findMany({ select: { slug: true } })).map(k => k.slug))
       let slug = slugBase, n = 0
-      const katSluglar = new Set((await prisma.kategoriya.findMany({ select: { slug: true } })).map(k => k.slug))
-      while (katSluglar.has(slug)) { n++; slug = `${slugBase}-${n}` }
-
-      const yangi = await prisma.kategoriya.create({
-        data: { nom, slug, moyskladId: msId, parentId },
-      })
+      while (dbKatSluglar.has(slug)) { n++; slug = `${slugBase}-${n}` }
+      const yangi = await prisma.kategoriya.create({ data: { nom, slug, moyskladId: msId, parentId } })
       msKatIdMap.set(msId, yangi.id)
-      katMsMap.set(msId, { id: yangi.id, moyskladId: msId, slug })
+      katMsMap.set(msId, { id: yangi.id, moyskladId: msId })
       natija.kategoriyalar.qoshildi++
     }
   }
 
-  // ─── 3. Mahsulotlar ──────────────────────────────────────────────────────────
-  const msMahsulotlar = await msMahsulotlarOl()
-  const msMahsulotIdlar = new Set(msMahsulotlar.map(p => msIdOl(p.meta.href)))
+  // ─── 2. Mahsulotlar ──────────────────────────────────────────────────────────
+  // Incremental: faqat yangilangan mahsulotlarni olish
+  const msMahsulotlar = isIncremental
+    ? await msYangilanganMahsulotlarOl(lastSyncAt)
+    : await msMahsulotlarOl()
 
-  // Batch upsert: yangi va yangilangan mahsulotlarni ajratish
   const yangilar = []
   const yangilash = []
 
@@ -130,67 +134,87 @@ async function syncQil() {
     const msId = msIdOl(msProd.meta.href)
     const nom = msProd.name
     const mavjudligi = !msProd.archived
-    const narx = msProd.salePrices?.[0]?.value ? msProd.salePrices[0].value / 100 : null
-    const tavsif = msProd.description || null
-    const kod = msProd.article || msProd.code || null
     const kategoriyaMsId = msProd.productFolder ? msIdOl(msProd.productFolder.meta.href) : null
     const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
     const msUpdated = new Date(msProd.updated)
+    const variantsCount = msProd.variantsCount || 0
+
+    const dataBase = {
+      nom,
+      mavjudligi,
+      narx: null, // Narx ko'rsatilmaydi
+      qisqaTavsif: null, // Tavsif ko'rsatilmaydi
+      toliqTavsif: null,
+      kategoriyaId,
+      modelRaqami: msProd.article || msProd.code || null,
+      moyskladId: msId,
+      moyskladUpdated: msUpdated,
+    }
 
     const mavjud = prodMsMap.get(msId)
-    const dataBase = { nom, mavjudligi, narx, qisqaTavsif: tavsif, kategoriyaId, modelRaqami: kod, moyskladId: msId, moyskladUpdated: msUpdated }
-
     if (mavjud) {
-      yangilash.push({ id: mavjud.id, ...dataBase, rasimYangilash: !mavjud.moyskladUpdated || msUpdated > mavjud.moyskladUpdated })
+      const rasmYangilash = !mavjud.moyskladUpdated || msUpdated > mavjud.moyskladUpdated
+      yangilash.push({ id: mavjud.id, ...dataBase, rasmYangilash, variantsCount })
     } else {
       const slug = noyobSlug(slugYarat(nom), usedSlugs)
-      yangilar.push({ ...dataBase, slug, turi: 'katalog' })
+      yangilar.push({ ...dataBase, slug, turi: 'katalog', variantsCount })
     }
   }
 
-  // Yangilarni batch create
-  if (yangilar.length) {
-    for (const m of yangilar) {
-      const { rasimYangilash, ...data } = m
-      let created
-      try {
-        created = await prisma.mahsulot.create({ data, select: { id: true, moyskladId: true } })
-      } catch (e) {
-        if (e.code === 'P2002') {
-          // Slug conflict: timestamp suffix bilan qayta urinish
-          const newSlug = `${data.slug}-${Date.now().toString(36)}`
-          created = await prisma.mahsulot.create({
-            data: { ...data, slug: newSlug },
-            select: { id: true, moyskladId: true },
-          })
-        } else throw e
-      }
-      prodMsMap.set(created.moyskladId, { id: created.id, moyskladId: created.moyskladId })
-      natija.mahsulotlar.qoshildi++
-      await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
+  // Yangi mahsulotlarni create
+  for (const m of yangilar) {
+    const { variantsCount, ...data } = m
+    let created
+    try {
+      created = await prisma.mahsulot.create({ data, select: { id: true, moyskladId: true } })
+    } catch (e) {
+      if (e.code === 'P2002') {
+        const newSlug = `${data.slug}-${Date.now().toString(36)}`
+        created = await prisma.mahsulot.create({ data: { ...data, slug: newSlug }, select: { id: true, moyskladId: true } })
+      } else throw e
     }
+    prodMsMap.set(created.moyskladId, { id: created.id, moyskladId: created.moyskladId })
+    natija.mahsulotlar.qoshildi++
+    await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
+    if (variantsCount > 0) await variantlarniYangilash(created.moyskladId, created.id, natija)
   }
 
-  // Yangilanishlarni batch update
+  // Yangilanganlarni update
   for (const m of yangilash) {
-    const { id, rasimYangilash, ...data } = m
+    const { id, rasmYangilash, variantsCount, ...data } = m
     await prisma.mahsulot.update({ where: { id }, data })
     natija.mahsulotlar.yangilandi++
-    if (rasimYangilash) {
-      await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
+    if (rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
+    if (rasmYangilash && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
+  }
+
+  // ─── 3. O'chirilgan/arxivlanganlarni yashirish ───────────────────────────────
+  // To'liq sync bo'lsa yoki birinchi sync bo'lsa — barcha IDlarni tekshirish
+  if (!isIncremental || tolik) {
+    const msMahsulotIdlar = new Set(msMahsulotlar.map(p => msIdOl(p.meta.href)))
+    for (const [msId, dbProd] of prodMsMap) {
+      if (!msMahsulotIdlar.has(msId)) {
+        await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
+        natija.mahsulotlar.yashirildi++
+      }
+    }
+  } else {
+    // Incremental: faqat lightweight ID ro'yxatini olish va arxivlanganlarni yashirish
+    try {
+      const msIdlar = await msMahsulotIdlarOl()
+      const msMahsulotIdSet = new Set(msIdlar.filter(p => !p.archived).map(p => p.id))
+      for (const [msId, dbProd] of prodMsMap) {
+        if (!msMahsulotIdSet.has(msId)) {
+          await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
+          natija.mahsulotlar.yashirildi++
+        }
+      }
+    } catch (e) {
+      console.error('ID tekshirish xato:', e.message)
     }
   }
 
-  // ─── 4. MoySkladda yo'q mahsulotlarni yashirish ──────────────────────────────
-  for (const [msId, dbProd] of prodMsMap) {
-    if (!msMahsulotIdlar.has(msId)) {
-      await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
-      natija.mahsulotlar.yashirildi++
-    }
-  }
-
-  // ─── 5. Oxirgi sync vaqtini saqlash ─────────────────────────────────────────
-  // Raw SQL — pgbouncer bilan prisma upsert ishonchsiz
+  // ─── 4. Oxirgi sync vaqtini saqlash ─────────────────────────────────────────
   await prisma.$executeRaw`
     INSERT INTO sayt_sozlamalari (kalit, qiymat)
     VALUES ('moysklad_last_sync', ${new Date().toISOString()})
@@ -206,19 +230,14 @@ async function rasmlarniYangilash(supabase, msMahsulotId, dbMahsulotId, natija) 
   try {
     const msRasmlar = await msMahsulotRasmlariOl(msMahsulotId)
     if (!msRasmlar.length) return
-
     await prisma.mahsulotRasm.deleteMany({ where: { mahsulotId: dbMahsulotId } })
-
     let tartib = 0
     for (const rasm of msRasmlar) {
       const downloadHref = rasm.meta?.downloadHref
       if (!downloadHref) continue
       try {
-        const fileName = `${msMahsulotId}-${tartib}`
-        const url = await msRasmniYuklash(downloadHref, supabase, fileName)
-        await prisma.mahsulotRasm.create({
-          data: { mahsulotId: dbMahsulotId, rasmUrl: url, tartib },
-        })
+        const url = await msRasmniYuklash(downloadHref, supabase, `${msMahsulotId}-${tartib}`)
+        await prisma.mahsulotRasm.create({ data: { mahsulotId: dbMahsulotId, rasmUrl: url, tartib } })
         if (tartib === 0) {
           await prisma.mahsulot.update({ where: { id: dbMahsulotId }, data: { asosiyRasmUrl: url } })
         }
@@ -231,5 +250,18 @@ async function rasmlarniYangilash(supabase, msMahsulotId, dbMahsulotId, natija) 
     }
   } catch (e) {
     console.error(`Rasmlar xato (${msMahsulotId}):`, e.message)
+  }
+}
+
+async function variantlarniYangilash(msMahsulotId, dbMahsulotId, natija) {
+  try {
+    const variantlar = await msMahsulotVariantlarOl(msMahsulotId)
+    await prisma.mahsulot.update({
+      where: { id: dbMahsulotId },
+      data: { variantlar: variantlar },
+    })
+    natija.variantlar.yuklandi += variantlar.length
+  } catch (e) {
+    console.error(`Variantlar xato (${msMahsulotId}):`, e.message)
   }
 }

@@ -47,6 +47,7 @@ model Mahsulot {
   turi            String         @default("katalog")
   moyskladId      String?        @unique @map("moysklad_id")
   moyskladUpdated DateTime?      @map("moysklad_updated")
+  variantlar      Json?          @default("[]")
   rasmlar         MahsulotRasm[]
   yaratilgan      DateTime       @default(now()) @map("yaratilgan")
 
