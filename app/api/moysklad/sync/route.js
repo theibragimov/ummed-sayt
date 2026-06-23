@@ -139,10 +139,18 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     const msId = msProd.id || msIdOl(msProd.meta.href)
     const nom = msProd.name
     const variantsCount = msProd.variantsCount || 0
-    // Varianti bor mahsulot: variantlar orqali stock tekshiriladi (variantlarniYangilash da)
-    // Varianti yo'q mahsulot: productMap dan to'g'ridan tekshiriladi
-    const stok = variantsCount > 0 ? 1 : (productMap.get(msId) ?? 0)
-    const mavjudligi = !msProd.archived && stok > 0
+    // Faqat reportda ANIQ <= 0 bo'lsa yashir.
+    // Reportda yo'q (hech qachon stock kelmagan) → ko'rsat.
+    let mavjudligi
+    if (msProd.archived) {
+      mavjudligi = false
+    } else if (variantsCount > 0) {
+      mavjudligi = true // variantlarniYangilash da aniqlanadi
+    } else if (productMap.has(msId)) {
+      mavjudligi = productMap.get(msId) > 0
+    } else {
+      mavjudligi = true // Reportda yo'q = stock hisobi yo'q, lekin mahsulot mavjud
+    }
     const kategoriyaMsId = msProd.productFolder ? (msProd.productFolder.id || msIdOl(msProd.productFolder.meta.href)) : null
     const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
     const msUpdated = new Date(msProd.updated)
@@ -196,25 +204,27 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, variantMap, natija)
   }
 
-  // ─── 3. O'chirilgan/arxivlangan/stoksizlarni yashirish ──────────────────────
+  // ─── 3. Arxivlangan/aniq stoksizlarni yashirish ─────────────────────────────
   if (!isIncremental || tolik) {
-    // To'liq sync: stokMap va msMahsulotlar orqali tekshirish
-    const msMahsulotIdlar = new Set(msMahsulotlar.map(p => msIdOl(p.meta.href)))
+    // To'liq sync: faqat arxivlangan YOKI reportda aniq 0 bo'lganlarni yashir
+    const msMahsulotIdlar = new Set(msMahsulotlar.map(p => p.id || msIdOl(p.meta.href)))
     for (const [msId, dbProd] of prodMsMap) {
-      const stok = stokMap.get(msId) ?? 0
-      if (!msMahsulotIdlar.has(msId) || stok <= 0) {
+      const arxivlangan = !msMahsulotIdlar.has(msId)
+      const stokAniq = productMap.has(msId) && productMap.get(msId) <= 0
+      if (arxivlangan || stokAniq) {
         await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
         natija.mahsulotlar.yashirildi++
       }
     }
   } else {
-    // Incremental: stock + archived tekshirish
+    // Incremental: arxivlangan YOKI aniq 0 bo'lganlarni yashir
     try {
       const msIdlar = await msMahsulotIdlarOl()
       const msMahsulotIdSet = new Set(msIdlar.filter(p => !p.archived).map(p => p.id))
       for (const [msId, dbProd] of prodMsMap) {
-        const stok = stokMap.get(msId) ?? 0
-        if (!msMahsulotIdSet.has(msId) || stok <= 0) {
+        const arxivlangan = !msMahsulotIdSet.has(msId)
+        const stokAniq = productMap.has(msId) && productMap.get(msId) <= 0
+        if (arxivlangan || stokAniq) {
           await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
           natija.mahsulotlar.yashirildi++
         }
