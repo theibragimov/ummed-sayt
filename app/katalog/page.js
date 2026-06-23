@@ -201,7 +201,7 @@ export default function KatalogPage() {
                             style={{ aspectRatio: "1 / 1" }}>
                             {first.asosiyRasmUrl ? (
                               <Image src={first.asosiyRasmUrl} alt={nom} fill
-                                style={{ objectFit: "cover", transition: "transform 0.4s ease" }}
+                                style={{ objectFit: "contain", background: "#fff", transition: "transform 0.4s ease" }}
                                 className="group-hover:scale-[1.04]" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
@@ -266,7 +266,7 @@ export default function KatalogPage() {
                           )}
                           {product.asosiyRasmUrl ? (
                             <Image src={product.asosiyRasmUrl} alt={nom} fill
-                              style={{ objectFit: "cover", transition: "transform 0.4s ease" }}
+                              style={{ objectFit: "contain", background: "#fff", transition: "transform 0.4s ease" }}
                               className="group-hover:scale-[1.04]" />
                           ) : (
                             <span className="text-7xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
