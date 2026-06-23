@@ -111,9 +111,6 @@ export default function KatalogPage() {
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6" style={{ color: "var(--text)" }}>
               {cat.title}
             </h1>
-            <p className="mt-3 sm:mt-4 text-sm sm:text-base font-light" style={{ color: "var(--text-muted, #888)" }}>
-              {filtered.length} {cat.countSuffix}
-            </p>
           </Reveal>
 
           <div className="md:hidden mb-6">
@@ -150,7 +147,7 @@ export default function KatalogPage() {
                   <p className="text-sm font-light mt-2">{cat.notFoundHint}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 xl:grid-cols-3 gap-px"
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-px"
                   style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
                   {filtered.map((product) => {
                     const nom = lang === 'ru' ? (product.nomRu || product.nom) : lang === 'en' ? (product.nomEn || product.nom) : product.nom;
