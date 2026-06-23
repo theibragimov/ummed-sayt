@@ -185,7 +185,7 @@ async function syncQil({ tolik = false } = {}) {
     await prisma.mahsulot.update({ where: { id }, data })
     natija.mahsulotlar.yangilandi++
     if (rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
-    if (rasmYangilash && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
+    if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
   }
 
   // ─── 3. O'chirilgan/arxivlanganlarni yashirish ───────────────────────────────
