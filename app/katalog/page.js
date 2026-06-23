@@ -164,7 +164,7 @@ export default function KatalogPage() {
 
           <div className="flex gap-12">
             <aside className="hidden md:block w-56 flex-shrink-0">
-              <div className="sticky top-28">
+              <div className="sticky top-28 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
                 <FilterPanel cat={cat} category={category} kategoriyalar={kategoriyalar} lang={lang}
                   search={search} setCategory={setCategory} setSearch={setSearch} />
               </div>
