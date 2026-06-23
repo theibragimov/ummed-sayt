@@ -87,7 +87,7 @@ async function syncQil({ tolik = false } = {}) {
   // ─── DB hashmaplanri ─────────────────────────────────────────────────────────
   const [dbKategoriyalar, dbMahsulotlar] = await Promise.all([
     prisma.kategoriya.findMany({ select: { id: true, moyskladId: true, slug: true } }),
-    prisma.mahsulot.findMany({ select: { id: true, moyskladId: true, slug: true, moyskladUpdated: true } }),
+    prisma.mahsulot.findMany({ select: { id: true, moyskladId: true, slug: true, moyskladUpdated: true, asosiyRasmUrl: true } }),
   ])
 
   const katMsMap = new Map(dbKategoriyalar.filter(k => k.moyskladId).map(k => [k.moyskladId, k]))
@@ -153,7 +153,7 @@ async function syncQil({ tolik = false } = {}) {
 
     const mavjud = prodMsMap.get(msId)
     if (mavjud) {
-      const rasmYangilash = !mavjud.moyskladUpdated || msUpdated > mavjud.moyskladUpdated
+      const rasmYangilash = !mavjud.moyskladUpdated || msUpdated > mavjud.moyskladUpdated || !mavjud.asosiyRasmUrl
       yangilash.push({ id: mavjud.id, ...dataBase, rasmYangilash, variantsCount })
     } else {
       const slug = noyobSlug(slugYarat(nom), usedSlugs)
