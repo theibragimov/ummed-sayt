@@ -17,6 +17,7 @@ model Kategoriya {
   tavsif       String?
   tartibRaqami Int          @default(100) @map("tartib_raqami")
   parentId     Int?         @map("parent_id")
+  moyskladId   String?      @unique @map("moysklad_id")
   parent       Kategoriya?  @relation("SubKategoriya", fields: [parentId], references: [id])
   bolalar      Kategoriya[] @relation("SubKategoriya")
   mahsulotlar  Mahsulot[]
@@ -44,6 +45,8 @@ model Mahsulot {
   modelRaqami     String?        @map("model_raqami")
   featured        Boolean        @default(false)
   turi            String         @default("katalog")
+  moyskladId      String?        @unique @map("moysklad_id")
+  moyskladUpdated DateTime?      @map("moysklad_updated")
   rasmlar         MahsulotRasm[]
   yaratilgan      DateTime       @default(now()) @map("yaratilgan")
 

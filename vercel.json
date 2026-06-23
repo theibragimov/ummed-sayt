@@ -1,5 +1,11 @@
 {
   "regions": ["hnd1"],
+  "crons": [
+    {
+      "path": "/api/moysklad/sync?secret=ummed-cron-secret-2024",
+      "schedule": "0 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/studio/(.*)",

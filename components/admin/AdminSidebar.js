@@ -13,6 +13,7 @@ const MENU = [
   { href: '/admin/yangiliklar', label: 'Yangiliklar', icon: '◎' },
   { href: '/admin/tugmalar', label: 'Tugmalar', icon: '◯' },
   { href: '/admin/sozlamalar', label: 'Sozlamalar', icon: '⚙' },
+  { href: '/admin/moysklad', label: 'MoySklad Sync', icon: '🔄' },
 ]
 
 export default function AdminSidebar() {

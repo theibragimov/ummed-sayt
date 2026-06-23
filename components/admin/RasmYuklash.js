@@ -28,7 +28,14 @@ export default function RasmYuklash({ qiymat, onChange, label = 'Rasm' }) {
       const fd = new FormData()
       fd.append('fayl', fayl)
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      const data = await res.json()
+      let data
+      try {
+        data = await res.json()
+      } catch {
+        setXato(`Server xatosi (${res.status})`)
+        setHolat('xato')
+        return
+      }
       if (data.url) {
         onChange(data.url)
         setHolat('')

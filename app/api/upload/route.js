@@ -3,37 +3,47 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
-  )
-  const formData = await request.formData()
-  const file = formData.get('fayl')
+  try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+      return NextResponse.json({ xato: 'Supabase sozlanmagan (env vars yetishmayapti)' }, { status: 500 })
+    }
 
-  if (!file) {
-    return NextResponse.json({ xato: 'Fayl topilmadi' }, { status: 400 })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_KEY
+    )
+
+    const formData = await request.formData()
+    const file = formData.get('fayl')
+
+    if (!file) {
+      return NextResponse.json({ xato: 'Fayl topilmadi' }, { status: 400 })
+    }
+
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
+    const filePath = `rasmlar/${fileName}`
+
+    const { error } = await supabase.storage
+      .from('ummed')
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: false,
+      })
+
+    if (error) {
+      console.error('Upload xatosi:', error)
+      return NextResponse.json({ xato: error.message }, { status: 500 })
+    }
+
+    const { data } = supabase.storage.from('ummed').getPublicUrl(filePath)
+
+    return NextResponse.json({ url: data.publicUrl })
+  } catch (err) {
+    console.error('Upload kutilmagan xato:', err)
+    return NextResponse.json({ xato: 'Server xatosi: ' + err.message }, { status: 500 })
   }
-
-  const bytes = await file.arrayBuffer()
-  const buffer = Buffer.from(bytes)
-
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
-  const filePath = `rasmlar/${fileName}`
-
-  const { error } = await supabase.storage
-    .from('ummed')
-    .upload(filePath, buffer, {
-      contentType: file.type,
-      upsert: false,
-    })
-
-  if (error) {
-    console.error('Upload xatosi:', error)
-    return NextResponse.json({ xato: error.message }, { status: 500 })
-  }
-
-  const { data } = supabase.storage.from('ummed').getPublicUrl(filePath)
-
-  return NextResponse.json({ url: data.publicUrl })
 }
