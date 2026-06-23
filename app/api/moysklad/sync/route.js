@@ -190,11 +190,12 @@ async function syncQil() {
   }
 
   // ─── 5. Oxirgi sync vaqtini saqlash ─────────────────────────────────────────
-  await prisma.saytSozlamalari.upsert({
-    where: { kalit: 'moysklad_last_sync' },
-    update: { qiymat: new Date().toISOString() },
-    create: { kalit: 'moysklad_last_sync', qiymat: new Date().toISOString() },
-  })
+  // Raw SQL — pgbouncer bilan prisma upsert ishonchsiz
+  await prisma.$executeRaw`
+    INSERT INTO sayt_sozlamalari (kalit, qiymat)
+    VALUES ('moysklad_last_sync', ${new Date().toISOString()})
+    ON CONFLICT (kalit) DO UPDATE SET qiymat = EXCLUDED.qiymat
+  `
 
   natija.tugaganVaqt = new Date().toISOString()
   console.log('MoySklad sync:', JSON.stringify(natija))
