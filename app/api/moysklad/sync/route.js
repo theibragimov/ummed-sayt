@@ -152,7 +152,19 @@ async function syncQil() {
   if (yangilar.length) {
     for (const m of yangilar) {
       const { rasimYangilash, ...data } = m
-      const created = await prisma.mahsulot.create({ data, select: { id: true, moyskladId: true } })
+      let created
+      try {
+        created = await prisma.mahsulot.create({ data, select: { id: true, moyskladId: true } })
+      } catch (e) {
+        if (e.code === 'P2002') {
+          // Slug conflict: timestamp suffix bilan qayta urinish
+          const newSlug = `${data.slug}-${Date.now().toString(36)}`
+          created = await prisma.mahsulot.create({
+            data: { ...data, slug: newSlug },
+            select: { id: true, moyskladId: true },
+          })
+        } else throw e
+      }
       prodMsMap.set(created.moyskladId, { id: created.id, moyskladId: created.moyskladId })
       natija.mahsulotlar.qoshildi++
       await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
