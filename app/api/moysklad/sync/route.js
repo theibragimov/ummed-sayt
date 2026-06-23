@@ -12,6 +12,7 @@ import {
   msMahsulotRasmlariOl,
   msMahsulotVariantlarOl,
   msRasmniYuklash,
+  msStokOl,
   msIdOl,
 } from '@/lib/moysklad'
 
@@ -126,9 +127,10 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
 
   // ─── 2. Mahsulotlar ──────────────────────────────────────────────────────────
   // Incremental: faqat yangilangan mahsulotlarni olish
-  const msMahsulotlar = isIncremental
-    ? await msYangilanganMahsulotlarOl(lastSyncAt)
-    : await msMahsulotlarOl()
+  const [msMahsulotlar, stokMap] = await Promise.all([
+    isIncremental ? msYangilanganMahsulotlarOl(lastSyncAt) : msMahsulotlarOl(),
+    msStokOl(),
+  ])
 
   const yangilar = []
   const yangilash = []
@@ -136,7 +138,8 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
   for (const msProd of msMahsulotlar) {
     const msId = msIdOl(msProd.meta.href)
     const nom = msProd.name
-    const mavjudligi = !msProd.archived
+    const stok = stokMap.get(msId) ?? 0
+    const mavjudligi = !msProd.archived && stok > 0
     const kategoriyaMsId = msProd.productFolder ? msIdOl(msProd.productFolder.meta.href) : null
     const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
     const msUpdated = new Date(msProd.updated)
@@ -191,23 +194,25 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
   }
 
-  // ─── 3. O'chirilgan/arxivlanganlarni yashirish ───────────────────────────────
-  // To'liq sync bo'lsa yoki birinchi sync bo'lsa — barcha IDlarni tekshirish
+  // ─── 3. O'chirilgan/arxivlangan/stoksizlarni yashirish ──────────────────────
   if (!isIncremental || tolik) {
+    // To'liq sync: stokMap va msMahsulotlar orqali tekshirish
     const msMahsulotIdlar = new Set(msMahsulotlar.map(p => msIdOl(p.meta.href)))
     for (const [msId, dbProd] of prodMsMap) {
-      if (!msMahsulotIdlar.has(msId)) {
+      const stok = stokMap.get(msId) ?? 0
+      if (!msMahsulotIdlar.has(msId) || stok <= 0) {
         await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
         natija.mahsulotlar.yashirildi++
       }
     }
   } else {
-    // Incremental: faqat lightweight ID ro'yxatini olish va arxivlanganlarni yashirish
+    // Incremental: stock + archived tekshirish
     try {
       const msIdlar = await msMahsulotIdlarOl()
       const msMahsulotIdSet = new Set(msIdlar.filter(p => !p.archived).map(p => p.id))
       for (const [msId, dbProd] of prodMsMap) {
-        if (!msMahsulotIdSet.has(msId)) {
+        const stok = stokMap.get(msId) ?? 0
+        if (!msMahsulotIdSet.has(msId) || stok <= 0) {
           await prisma.mahsulot.update({ where: { id: dbProd.id }, data: { mavjudligi: false } })
           natija.mahsulotlar.yashirildi++
         }
