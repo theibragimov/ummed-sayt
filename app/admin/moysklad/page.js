@@ -7,6 +7,8 @@ export default function MoySkladPage() {
   const [jarayon, setJarayon] = useState(false)
   const [natija, setNatija] = useState(null)
   const [xato, setXato] = useState('')
+  const [rasmNatija, setRasmNatija] = useState(null)
+  const [rasmXato, setRasmXato] = useState('')
 
   useEffect(() => { statusniYuklash() }, [])
 
@@ -29,6 +31,22 @@ export default function MoySkladPage() {
       else setXato(data.xato || 'Xatolik yuz berdi')
     } catch (e) {
       setXato(e.message)
+    } finally {
+      setJarayon(false)
+    }
+  }
+
+  async function rasmlarniYukla() {
+    setJarayon('rasmlar')
+    setRasmNatija(null)
+    setRasmXato('')
+    try {
+      const res = await fetch('/api/moysklad/sync-images?secret=ummed-cron-secret-2024')
+      const data = await res.json()
+      if (res.ok) setRasmNatija(data)
+      else setRasmXato(data.xato || 'Xatolik yuz berdi')
+    } catch (e) {
+      setRasmXato(e.message)
     } finally {
       setJarayon(false)
     }
@@ -98,6 +116,36 @@ export default function MoySkladPage() {
         {xato && (
           <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', fontSize: '13px' }}>
             ❌ {xato}
+          </div>
+        )}
+      </div>
+
+      {/* Rasmlarni yuklash */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '8px' }}>
+          🖼️ Rasmlarni yuklash
+        </div>
+        <div style={{ ...A.sub, marginBottom: '16px', fontSize: '13px' }}>
+          Rasmi yo'q mahsulotlar uchun MoySkladdan rasm yuklaydi (har safar 80 tagacha). To'liq syncdan keyin ishlatiladi.
+        </div>
+        <button
+          onClick={rasmlarniYukla}
+          disabled={!!jarayon}
+          style={{ padding: '10px 20px', borderRadius: '8px', fontWeight: 600, fontSize: '14px',
+            border: '1px solid #d1d5db', background: '#fff', color: '#374151',
+            opacity: jarayon ? 0.6 : 1, cursor: jarayon ? 'wait' : 'pointer' }}>
+          {jarayon === 'rasmlar' ? '⏳ Rasmlar yuklanmoqda...' : '🖼️ Rasmsiz mahsulotlarga rasm yuklash'}
+        </button>
+        {rasmXato && (
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', fontSize: '13px' }}>
+            ❌ {rasmXato}
+          </div>
+        )}
+        {rasmNatija && (
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f0fdf4', borderRadius: '8px', fontSize: '13px', color: '#374151' }}>
+            ✅ Yuklandi: <b>{rasmNatija.yuklandi}</b> ta &nbsp;•&nbsp; Xato: <b>{rasmNatija.xato}</b> ta &nbsp;•&nbsp;
+            Qolgan rasmsiz: <b>{rasmNatija.qolgan}</b> ta
+            {rasmNatija.qolgan > 0 && <span style={{ color: '#E8491D', marginLeft: 8 }}>← Yana bosing</span>}
           </div>
         )}
       </div>

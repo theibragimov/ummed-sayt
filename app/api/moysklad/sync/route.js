@@ -49,7 +49,9 @@ export async function GET(request) {
   }
   // to'liq yoki incremental?
   const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
-  return syncQil({ tolik })
+  // To'liq syncda rasmlar yuklanmaydi (timeout oldini olish uchun)
+  const rasmYuklama = tolik ? false : true
+  return syncQil({ tolik, rasmYuklama })
 }
 
 export async function POST(request) {
@@ -59,10 +61,11 @@ export async function POST(request) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
   const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
-  return syncQil({ tolik })
+  const rasmYuklama = tolik ? false : true
+  return syncQil({ tolik, rasmYuklama })
 }
 
-async function syncQil({ tolik = false } = {}) {
+async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY
@@ -175,7 +178,7 @@ async function syncQil({ tolik = false } = {}) {
     }
     prodMsMap.set(created.moyskladId, { id: created.id, moyskladId: created.moyskladId })
     natija.mahsulotlar.qoshildi++
-    await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
+    if (rasmYuklama) await rasmlarniYangilash(supabase, created.moyskladId, created.id, natija)
     if (variantsCount > 0) await variantlarniYangilash(created.moyskladId, created.id, natija)
   }
 
@@ -184,7 +187,7 @@ async function syncQil({ tolik = false } = {}) {
     const { id, rasmYangilash, variantsCount, ...data } = m
     await prisma.mahsulot.update({ where: { id }, data })
     natija.mahsulotlar.yangilandi++
-    if (rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
+    if (rasmYuklama && rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
     if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, natija)
   }
 
