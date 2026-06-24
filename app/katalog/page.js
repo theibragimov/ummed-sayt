@@ -191,66 +191,9 @@ export default function KatalogPage() {
                       textDecoration: "none",
                     }
 
-                    if (item.type === 'group') {
-                      const first = item.group[0]
-                      const nom = lang === 'ru' ? (first.nomRu || item.nom) : lang === 'en' ? (first.nomEn || item.nom) : item.nom
-                      return (
-                        <div key={`group-${first.id}`} className="flex flex-col overflow-hidden" style={cardStyle}>
-                          {/* Rasm — birinchi mahsulotga link */}
-                          <Link href={`/mahsulot/${first.slug}`} className="relative block overflow-hidden group"
-                            style={{ aspectRatio: "1 / 1" }}>
-                            {first.asosiyRasmUrl ? (
-                              <Image src={first.asosiyRasmUrl} alt={nom} fill
-                                style={{ objectFit: "contain", background: "#fff", transition: "transform 0.4s ease" }}
-                                className="group-hover:scale-[1.04]" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-7xl select-none">{getCategoryEmoji(first.kategoriya?.slug)}</span>
-                              </div>
-                            )}
-                          </Link>
-
-                          {/* Ma'lumot */}
-                          <div className="p-3 sm:p-4 flex flex-col flex-1">
-                            <Link href={`/mahsulot/${first.slug}`} style={{ textDecoration: 'none' }}>
-                              <h3 className="text-xs sm:text-sm font-medium leading-snug mb-3 line-clamp-2"
-                                style={{ color: "var(--text)" }}>
-                                {nom}
-                              </h3>
-                            </Link>
-
-                            {/* Har bir mahsulot uchun orange chip */}
-                            <div className="flex flex-wrap gap-1.5 mb-3">
-                              {item.group.map((gp) => {
-                                const chipText = Array.isArray(gp.variantlar) && gp.variantlar[0]
-                                  ? gp.variantlar[0].xususiyatlar.map(x => x.qiymat).join(' / ')
-                                  : gp.modelRaqami || '—'
-                                return (
-                                  <Link key={gp.id} href={`/mahsulot/${gp.slug}`}
-                                    className="flex items-center gap-1.5 transition-all hover:opacity-80"
-                                    style={{ textDecoration: 'none' }}>
-                                    <span className="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5"
-                                      style={{ border: "1.5px solid #E8491D", color: "#E8491D", borderRadius: "5px" }}>
-                                      {chipText}
-                                    </span>
-                                    {gp.modelRaqami && (
-                                      <span className="text-[10px] font-light" style={{ color: "var(--text-muted, #aaa)" }}>
-                                        {gp.modelRaqami}
-                                      </span>
-                                    )}
-                                  </Link>
-                                )
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    }
-
-                    // Oddiy karta (modifikatsiyasiz yoki yagona)
-                    const product = item.product
+                    // Grouped bo'lsa birinchi mahsulotni oddiy karta sifatida ko'rsat
+                    const product = item.type === 'group' ? item.group[0] : item.product
                     const nom = lang === 'ru' ? (product.nomRu || product.nom) : lang === 'en' ? (product.nomEn || product.nom) : product.nom
-                    const variantlar = Array.isArray(product.variantlar) ? product.variantlar : []
                     return (
                       <Link key={product.id} href={`/mahsulot/${product.slug}`}
                         className="flex flex-col overflow-hidden group"
@@ -280,24 +223,6 @@ export default function KatalogPage() {
                             {nom}
                           </h3>
 
-                          {/* Variantlar (bir mahsulotda ko'p variant) */}
-                          {variantlar.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mb-2">
-                              {variantlar.slice(0, 4).map((v, i) => (
-                                <span key={i}
-                                  className="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5"
-                                  style={{ border: "1.5px solid #E8491D", color: "#E8491D", borderRadius: "5px" }}>
-                                  {v.xususiyatlar.map(x => x.qiymat).join(' / ')}
-                                </span>
-                              ))}
-                              {variantlar.length > 4 && (
-                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5"
-                                  style={{ color: "var(--text-muted, #888)" }}>
-                                  +{variantlar.length - 4}
-                                </span>
-                              )}
-                            </div>
-                          )}
 
                           <div className="mt-auto">
                             <span className="inline-block text-[10px] sm:text-xs font-medium px-3 py-1.5 transition-opacity group-hover:opacity-80"
