@@ -17,6 +17,16 @@ const nextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/yangi-ummed-pro-burun-aspiratori-u-08',
+        destination: '/mahsulot/yangi-ummed-pro-burun-aspiratori-u-08',
+        permanent: true,
+      },
+    ]
+  },
+
   async headers() {
     return [
       {
