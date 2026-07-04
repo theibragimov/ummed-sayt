@@ -674,77 +674,91 @@ export default function OrderPage() {
 
   if (view === 'landing') {
     const cartCount2 = Object.values(cart).reduce((s, i) => s + i.quantity, 0);
+    const features = lang === 'uz'
+      ? ['700+ mahsulot assortimenti', 'Qulay narxlar va chegirmalar', 'Tezkor yetkazib berish']
+      : ['Ассортимент 700+ товаров', 'Удобные цены и скидки', 'Быстрая доставка'];
     return (
-      <div className="fixed inset-0 flex flex-col" style={{ background: 'linear-gradient(160deg,#fff 0%,#FFF5F0 60%,#FFE8DC 100%)' }}>
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4">
-          <img src="/logo.webp" alt="Logo" style={{ width: 38, height: 38, objectFit: 'contain' }} />
-          <span className="font-bold text-gray-900 text-[15px]">Умmed</span>
+      <div className="min-h-screen flex flex-col bg-white"
+        style={{ fontFamily: '"Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+
+        {/* ── Header ── */}
+        <header className="flex items-center gap-3 px-5 py-3.5 border-b"
+          style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
+          <img src="/logo.webp" alt="Умmed" style={{ width: 36, height: 36, objectFit: 'contain' }} />
+          <span className="font-bold text-[15px]" style={{ color: '#0a0a0a' }}>Умmed</span>
           <div className="flex-1" />
           <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
-            className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold border"
-            style={{ borderColor: '#E5E5E5', color: '#666', background: '#fff' }}>
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+            style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent', letterSpacing: '0.05em' }}>
             {lang === 'uz' ? 'RU' : 'UZ'}
           </button>
           {cartCount2 > 0 && (
             <button onClick={() => setView('cart')}
-              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[13px] text-white ml-1"
-              style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
-              <ShoppingCart size={15} />
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold text-white ml-1"
+              style={{ background: '#E8491D' }}>
+              <ShoppingCart size={14} />
               <span>{cartCount2}</span>
             </button>
           )}
-        </div>
+        </header>
 
-        {/* Main content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-10">
-          {/* Icon */}
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-lg"
-            style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 16px 48px rgba(255,107,53,0.35)' }}>
-            <ShoppingCart size={36} color="#fff" />
+        {/* ── Main ── */}
+        <main className="flex-1 flex flex-col items-center justify-center px-5 py-16 max-w-lg mx-auto w-full">
+
+          {/* Section label */}
+          <div className="flex items-center gap-2.5 mb-8">
+            <span className="inline-block w-1.5 h-1.5 rounded-none flex-shrink-0" style={{ background: '#E8491D' }} />
+            <span className="text-[11px] font-medium tracking-widest uppercase" style={{ color: '#18181b', letterSpacing: '0.16em' }}>
+              {lang === 'uz' ? 'Online Buyurtma' : 'Онлайн Заказ'}
+            </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-center font-extrabold text-gray-900 mb-3 leading-tight"
-            style={{ fontSize: 'clamp(22px,5vw,30px)', letterSpacing: '-0.5px' }}>
+          <h1 className="text-center font-extrabold mb-4 leading-[1.1]"
+            style={{ fontSize: 'clamp(28px,6vw,42px)', color: '#0a0a0a', letterSpacing: '-0.03em' }}>
             {lang === 'uz'
-              ? 'Buyurtma berish uchun\nmahsulotlar ro\'yxati'
-              : 'Список товаров\nдля заказа'}
+              ? <>Buyurtma berish uchun<br />mahsulotlar ro&apos;yxati</>
+              : <>Список товаров<br />для заказа</>}
           </h1>
 
           {/* Description */}
-          <p className="text-center text-gray-500 mb-3 max-w-xs leading-relaxed" style={{ fontSize: 15 }}>
+          <p className="text-center mb-10 leading-relaxed max-w-sm"
+            style={{ fontSize: 16, color: '#7c7c80' }}>
             {lang === 'uz'
-              ? 'Buyurtmani oson va qulay usulda bering — operatorimiz siz bilan tez orada bog\'lanadi.'
+              ? "Buyurtmani oson va qulay usulda bering — operatorimiz siz bilan tez orada bog'lanadi."
               : 'Оформите заказ быстро и удобно — наш оператор свяжется с вами в ближайшее время.'}
           </p>
 
           {/* Features */}
-          <div className="flex flex-col gap-2.5 mb-10 w-full max-w-xs">
-            {[
-              lang === 'uz' ? '✓  Keng mahsulotlar assortimenti' : '✓  Широкий ассортимент товаров',
-              lang === 'uz' ? '✓  Qulay narxlar va chegirmalar' : '✓  Удобные цены и скидки',
-              lang === 'uz' ? '✓  Tezkor yetkazib berish' : '✓  Быстрая доставка',
-            ].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-2xl"
-                style={{ background: 'rgba(255,107,53,0.08)', color: '#FF6B35', fontSize: 13, fontWeight: 600 }}>
-                {f}
+          <div className="w-full flex flex-col gap-3 mb-10">
+            {features.map((f, i) => (
+              <div key={i} className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl"
+                style={{ border: '1px solid rgba(0,0,0,0.06)', background: '#fafafa' }}>
+                <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: '#E8491D' }}>
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <span className="text-[14px] font-medium" style={{ color: '#18181b' }}>{f}</span>
               </div>
             ))}
           </div>
 
-          {/* Main CTA button */}
+          {/* CTA */}
           <button
             onClick={() => { setView('catalog'); loadCatalog(); }}
-            className="w-full max-w-xs py-4 rounded-2xl text-white font-bold text-[16px] shadow-lg"
-            style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 12px 36px rgba(255,107,53,0.4)', letterSpacing: '-0.2px' }}>
-            {lang === 'uz' ? '100% to\'lov uchun mahsulotlar ro\'yxati' : 'Список товаров для 100% оплаты'}
+            className="w-full py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+            style={{ background: '#E8491D', letterSpacing: '-0.01em' }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#d43d16')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#E8491D')}>
+            {lang === 'uz' ? "100% to'lov uchun mahsulotlar ro'yxati" : 'Список товаров для 100% оплаты'}
           </button>
 
-          <p className="text-center text-gray-400 mt-4 text-[12px]">
+          <p className="text-center mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
             {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
           </p>
-        </div>
+        </main>
       </div>
     );
   }
