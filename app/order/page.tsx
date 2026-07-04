@@ -891,9 +891,9 @@ export default function OrderPage() {
             {!loading && !loadError && (
               <div className="mt-1.5 px-1 text-[12px]" style={{ color: '#9a9a9a' }}>
                 {search || selectedCat ? (
-                  <span>{filteredProducts.length} {lang === 'uz' ? 'ta mahsulot topildi' : 'товаров найдено'}</span>
+                  <span>{filteredProducts.filter(p => p.stock > 0).length} {lang === 'uz' ? 'ta mavjud mahsulot topildi' : 'доступных товаров найдено'}</span>
                 ) : (
-                  <span>{lang === 'uz' ? `Jami ${products.length} xil mahsulot` : `Всего ${products.length} наименований`}</span>
+                  <span>{lang === 'uz' ? `Mavjud: ${products.filter(p => p.stock > 0).length} xil mahsulot` : `Доступно: ${products.filter(p => p.stock > 0).length} наименований`}</span>
                 )}
               </div>
             )}
