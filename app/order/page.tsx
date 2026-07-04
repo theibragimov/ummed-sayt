@@ -870,7 +870,7 @@ export default function OrderPage() {
           </div>
 
           {/* Search bar */}
-          <div className="px-4 pb-3 max-w-5xl mx-auto">
+          <div className="px-4 pb-2 max-w-5xl mx-auto">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -887,6 +887,16 @@ export default function OrderPage() {
                 </button>
               )}
             </div>
+            {/* Product count */}
+            {!loading && !loadError && (
+              <div className="mt-1.5 px-1 text-[12px]" style={{ color: '#9a9a9a' }}>
+                {search || selectedCat ? (
+                  <span>{filteredProducts.length} {lang === 'uz' ? 'ta mahsulot topildi' : 'товаров найдено'}</span>
+                ) : (
+                  <span>{lang === 'uz' ? `Jami ${products.length} xil mahsulot` : `Всего ${products.length} наименований`}</span>
+                )}
+              </div>
+            )}
           </div>
         </header>
 
