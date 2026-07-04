@@ -14,6 +14,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.sanity.io' },
       { protocol: 'https', hostname: '*.supabase.co' },
       { protocol: 'https', hostname: '*.supabase.in' },
+      { protocol: 'https', hostname: 'miniature-prod.moysklad.ru' },
+      { protocol: 'https', hostname: '*.moysklad.ru' },
     ],
   },
 
