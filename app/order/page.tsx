@@ -40,7 +40,7 @@ interface CartItem {
   quantity: number;
 }
 
-type View = 'catalog' | 'cart' | 'checkout' | 'success';
+type View = 'landing' | 'catalog' | 'cart' | 'checkout' | 'success';
 type Lang = 'uz' | 'ru';
 
 // ─── Translations ─────────────────────────────────────────────────────────────
@@ -496,7 +496,7 @@ export default function OrderPage() {
   const [lang, setLang] = useState<Lang>('ru');
   const t = T[lang];
 
-  const [view, setView] = useState<View>('catalog');
+  const [view, setView] = useState<View>('landing');
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [priceTypes, setPriceTypes] = useState<PriceType[]>([]);
@@ -537,6 +537,23 @@ export default function OrderPage() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
+  // Restore form from localStorage
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('order-form') || '{}');
+      if (saved.name) setFormName(saved.name);
+      if (saved.company) setFormCompany(saved.company);
+      if (saved.phone) setFormPhone(saved.phone);
+    } catch {}
+  }, []);
+
+  // Save form to localStorage on change
+  useEffect(() => {
+    try {
+      localStorage.setItem('order-form', JSON.stringify({ name: formName, company: formCompany, phone: formPhone }));
+    } catch {}
+  }, [formName, formCompany, formPhone]);
+
   const loadCatalog = useCallback(async (ptId = '') => {
     setLoading(true);
     setLoadError('');
@@ -568,7 +585,7 @@ export default function OrderPage() {
     storeCart(cart);
   }, [cart, cartHydrated]);
 
-  useEffect(() => { loadCatalog(); }, []);
+  // loadCatalog is called when user taps CTA on landing screen (not on mount)
   useEffect(() => { window.scrollTo({ top: 0 }); }, [view]);
   useEffect(() => {
     setVisibleCount(INITIAL_PRODUCT_LIMIT);
@@ -644,12 +661,92 @@ export default function OrderPage() {
       setSuccessOrderName(json.orderName || '');
       setCart({});
       setFormName(''); setFormCompany(''); setFormPhone('');
+      try { localStorage.removeItem('order-form'); } catch {}
       setView('success');
     } catch (e: any) {
       setFormErrors({ submit: e.message });
     } finally {
       setSubmitting(false);
     }
+  }
+
+  // ─── LANDING VIEW ─────────────────────────────────────────────────────────
+
+  if (view === 'landing') {
+    const cartCount2 = Object.values(cart).reduce((s, i) => s + i.quantity, 0);
+    return (
+      <div className="fixed inset-0 flex flex-col" style={{ background: 'linear-gradient(160deg,#fff 0%,#FFF5F0 60%,#FFE8DC 100%)' }}>
+        {/* Header */}
+        <div className="flex items-center gap-3 px-5 py-4">
+          <img src="/logo.webp" alt="Logo" style={{ width: 38, height: 38, objectFit: 'contain' }} />
+          <span className="font-bold text-gray-900 text-[15px]">Умmed</span>
+          <div className="flex-1" />
+          <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
+            className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold border"
+            style={{ borderColor: '#E5E5E5', color: '#666', background: '#fff' }}>
+            {lang === 'uz' ? 'RU' : 'UZ'}
+          </button>
+          {cartCount2 > 0 && (
+            <button onClick={() => setView('cart')}
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[13px] text-white ml-1"
+              style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
+              <ShoppingCart size={15} />
+              <span>{cartCount2}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-10">
+          {/* Icon */}
+          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-8 shadow-lg"
+            style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 16px 48px rgba(255,107,53,0.35)' }}>
+            <ShoppingCart size={36} color="#fff" />
+          </div>
+
+          {/* Title */}
+          <h1 className="text-center font-extrabold text-gray-900 mb-3 leading-tight"
+            style={{ fontSize: 'clamp(22px,5vw,30px)', letterSpacing: '-0.5px' }}>
+            {lang === 'uz'
+              ? 'Buyurtma berish uchun\nmahsulotlar ro\'yxati'
+              : 'Список товаров\nдля заказа'}
+          </h1>
+
+          {/* Description */}
+          <p className="text-center text-gray-500 mb-3 max-w-xs leading-relaxed" style={{ fontSize: 15 }}>
+            {lang === 'uz'
+              ? 'Buyurtmani oson va qulay usulda bering — operatorimiz siz bilan tez orada bog\'lanadi.'
+              : 'Оформите заказ быстро и удобно — наш оператор свяжется с вами в ближайшее время.'}
+          </p>
+
+          {/* Features */}
+          <div className="flex flex-col gap-2.5 mb-10 w-full max-w-xs">
+            {[
+              lang === 'uz' ? '✓  Keng mahsulotlar assortimenti' : '✓  Широкий ассортимент товаров',
+              lang === 'uz' ? '✓  Qulay narxlar va chegirmalar' : '✓  Удобные цены и скидки',
+              lang === 'uz' ? '✓  Tezkor yetkazib berish' : '✓  Быстрая доставка',
+            ].map((f, i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+                style={{ background: 'rgba(255,107,53,0.08)', color: '#FF6B35', fontSize: 13, fontWeight: 600 }}>
+                {f}
+              </div>
+            ))}
+          </div>
+
+          {/* Main CTA button */}
+          <button
+            onClick={() => { setView('catalog'); loadCatalog(); }}
+            className="w-full max-w-xs py-4 rounded-2xl text-white font-bold text-[16px] shadow-lg"
+            style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 12px 36px rgba(255,107,53,0.4)', letterSpacing: '-0.2px' }}>
+            {lang === 'uz' ? '100% to\'lov uchun mahsulotlar ro\'yxati' : 'Список товаров для 100% оплаты'}
+          </button>
+
+          <p className="text-center text-gray-400 mt-4 text-[12px]">
+            {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // ─── CATALOG VIEW ─────────────────────────────────────────────────────────
