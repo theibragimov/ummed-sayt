@@ -703,7 +703,7 @@ export default function OrderPage() {
         </header>
 
         {/* ── Main ── */}
-        <main className="flex-1 flex flex-col items-center justify-center px-5 py-16 max-w-lg mx-auto w-full">
+        <main className="flex-1 flex flex-col items-center px-5 max-w-lg mx-auto w-full" style={{ paddingTop: '6vh', paddingBottom: '4vh' }}>
 
           {/* Section label */}
           <div className="flex items-center gap-2.5 mb-8">
