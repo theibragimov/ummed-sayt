@@ -18,7 +18,7 @@ async function proxyUrl(url: string): Promise<NextResponse> {
   return new NextResponse(buf, {
     headers: {
       'Content-Type': res.headers.get('content-type') || 'image/jpeg',
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
     },
   });
 }

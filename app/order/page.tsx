@@ -263,6 +263,7 @@ function ProductRow({
             className="w-full h-full object-cover"
             onError={() => setImgErr(true)}
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -410,6 +411,7 @@ function ProductCard({
             className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
             onError={handleImgError}
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
