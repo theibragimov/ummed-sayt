@@ -10,7 +10,7 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     nom: '', nomRu: '', slug: '', narx: '', narxBirligi: "so'm",
     brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '',
     toliqTavsif: '', toliqTavsifRu: '',
-    mavjudligi: true, featured: false, kategoriyaId: '',
+    mavjudligi: true, featured: false, belgi: '', kategoriyaId: '',
     asosiyRasmUrl: '', turi: 'katalog', ...boshlangich,
   })
   const [kategoriyalar, setKategoriyalar] = useState([])
@@ -30,7 +30,7 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
 
   async function yuborish(e) {
     e.preventDefault(); setSaqlash(true); setXato('')
-    const payload = { ...form, narx: form.narx ? parseFloat(form.narx) : null, kategoriyaId: form.kategoriyaId ? parseInt(form.kategoriyaId) : null }
+    const payload = { ...form, narx: form.narx ? parseFloat(form.narx) : null, kategoriyaId: form.kategoriyaId ? parseInt(form.kategoriyaId) : null, belgi: form.belgi || null }
     const res = await fetch(mahsulotId ? `/api/mahsulotlar/${mahsulotId}` : '/api/mahsulotlar', {
       method: mahsulotId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -82,7 +82,14 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
               <option value="ummed-brend">⭐ Ummed brendi</option>
             </select>
           </div>
-          <div style={{ paddingTop: '8px' }}>
+          <div style={{ marginBottom: '16px' }}><label style={A.label}>Belgi (katalogdagi lentacha)</label>
+            <select value={form.belgi || ''} onChange={e => oz('belgi', e.target.value)} style={A.select}>
+              <option value="">— Yo'q —</option>
+              <option value="yangi">🆕 Yangi</option>
+              <option value="tez_orada">⏳ Tez orada</option>
+            </select>
+          </div>
+          <div style={{ paddingTop: '8px', gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', gap: '20px', marginTop: '6px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
                 <input type="checkbox" checked={form.mavjudligi} onChange={e => oz('mavjudligi', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#3DB851' }} />
@@ -90,7 +97,7 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: '#374151' }}>
                 <input type="checkbox" checked={form.featured} onChange={e => oz('featured', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#f59e0b' }} />
-                ★ Featured
+                ★ Хит Продаж (bestseller)
               </label>
             </div>
           </div>

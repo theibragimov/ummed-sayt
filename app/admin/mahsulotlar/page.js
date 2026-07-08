@@ -169,7 +169,11 @@ export default function MahsulotlarPage() {
                 }
               </div>
               <div>
-                <span style={{ fontWeight: 600, fontSize: '13px', color: '#0a0a0a' }}>{m.nom}</span>
+                <span style={{ fontWeight: 600, fontSize: '13px', color: '#0a0a0a' }}>
+                  {m.belgi === 'yangi' && '🆕 '}
+                  {m.belgi === 'tez_orada' && '⏳ '}
+                  {m.nom}
+                </span>
                 {m.brend && <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{m.brend}</div>}
               </div>
             </div>

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import RasmYuklash from '@/components/admin/RasmYuklash'
 import { A } from '@/components/admin/AdminStyles'
 
-const INIT = { nom: '', nomRu: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '' }
+const INIT = { nom: '', nomRu: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '', rangKodi: '#E8491D' }
 
 export default function KategoriyalarPage() {
   const [kategoriyalar, setKategoriyalar] = useState([])
@@ -17,7 +17,7 @@ export default function KategoriyalarPage() {
 
   function ochModal(k = null) {
     setTahrirlash(k)
-    setForm(k ? { nom: k.nom, nomRu: k.nomRu || '', tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '' } : INIT)
+    setForm(k ? { nom: k.nom, nomRu: k.nomRu || '', tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '', rangKodi: k.rangKodi || '#E8491D' } : INIT)
     setModal(true)
   }
 
@@ -44,14 +44,14 @@ export default function KategoriyalarPage() {
       </div>
 
       <div style={A.card}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 80px 80px 100px', gap: '12px', padding: '10px 20px', background: '#f9faf8', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-          {['Kategoriya', 'Asosiy', 'Tartib', 'Mahsulot', 'Amallar'].map(h => <span key={h} style={A.th}>{h}</span>)}
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 60px 80px 80px 100px', gap: '12px', padding: '10px 20px', background: '#f9faf8', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+          {['Kategoriya', 'Asosiy', 'Rang', 'Tartib', 'Mahsulot', 'Amallar'].map(h => <span key={h} style={A.th}>{h}</span>)}
         </div>
         {kategoriyalar.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: '#d1d5db', fontSize: '14px' }}>Kategoriyalar yo'q</div>
         ) : kategoriyalar.map((k, i) => (
           <div key={k.id} style={{
-            display: 'grid', gridTemplateColumns: '2fr 1fr 80px 80px 100px', gap: '12px',
+            display: 'grid', gridTemplateColumns: '2fr 1fr 60px 80px 80px 100px', gap: '12px',
             padding: '12px 20px', borderBottom: i < kategoriyalar.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
             alignItems: 'center',
           }}>
@@ -68,6 +68,9 @@ export default function KategoriyalarPage() {
               </div>
             </div>
             <span style={{ fontSize: '13px', color: '#9ca3af' }}>{k.parent?.nom || '—'}</span>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <span title={k.rangKodi || '#E8491D'} style={{ width: '20px', height: '20px', borderRadius: '50%', background: k.rangKodi || '#E8491D', border: '1px solid rgba(0,0,0,0.1)', display: 'inline-block' }} />
+            </div>
             <span style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center' }}>{k.tartibRaqami}</span>
             <div style={{ textAlign: 'center' }}>
               <span style={A.badge('rgba(99,102,241,0.08)', '#6366f1')}>{k._count?.mahsulotlar ?? 0}</span>
@@ -109,6 +112,14 @@ export default function KategoriyalarPage() {
               <div>
                 <label style={A.label}>Tavsif</label>
                 <input value={form.tavsif} onChange={e => setForm({ ...form, tavsif: e.target.value })} style={A.input} />
+              </div>
+            </div>
+            <div style={{ marginBottom: '14px' }}>
+              <label style={A.label}>Aksent rang (katalogdagi pill-belgi rangi)</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input type="color" value={form.rangKodi || '#E8491D'} onChange={e => setForm({ ...form, rangKodi: e.target.value })}
+                  style={{ width: '44px', height: '36px', padding: '2px', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8px', cursor: 'pointer', background: 'none' }} />
+                <input value={form.rangKodi} onChange={e => setForm({ ...form, rangKodi: e.target.value })} style={{ ...A.input, flex: 1 }} placeholder="#E8491D" />
               </div>
             </div>
             <div style={{ marginBottom: '20px' }}>

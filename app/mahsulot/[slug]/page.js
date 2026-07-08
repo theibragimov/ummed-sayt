@@ -126,12 +126,30 @@ export default function MahsulotDetailPage({ params }) {
 
             {/* O'ng: Ma'lumot */}
             <div className="flex flex-col">
-              {/* Kategoriya label */}
-              {kategoriyaNom && (
-                <span className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#E8491D" }}>
-                  {kategoriyaNom}
-                </span>
-              )}
+              {/* Kategoriya label + belgilar */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {kategoriyaNom && (
+                  <span className="inline-block text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white"
+                    style={{ backgroundColor: product.kategoriya?.rangKodi || "#E8491D" }}>
+                    {kategoriyaNom}
+                  </span>
+                )}
+                {product.featured && (
+                  <span className="inline-block text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: "#E8491D" }}>
+                    {L("Хит Продаж", "Хит Продаж", "Bestseller")}
+                  </span>
+                )}
+                {product.belgi === 'yangi' && (
+                  <span className="inline-block text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: "#3DB851" }}>
+                    {L("Yangi", "Новый", "New")}
+                  </span>
+                )}
+                {product.belgi === 'tez_orada' && (
+                  <span className="inline-block text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: "#6b7280" }}>
+                    {L("Tez orada", "Скоро", "Coming soon")}
+                  </span>
+                )}
+              </div>
 
               {/* Nom */}
               <h1 className="text-2xl md:text-3xl font-medium leading-[1.1] tracking-tight mb-4"
@@ -153,10 +171,33 @@ export default function MahsulotDetailPage({ params }) {
                   <span className="text-sm font-light" style={{ color: product.mavjudligi ? "#16a34a" : "#9ca3af" }}>
                     {product.mavjudligi
                       ? L("Mavjud", "В наличии", "In Stock")
+                      : product.belgi === 'tez_orada'
+                      ? L("Tez orada", "Скоро", "Coming soon")
                       : L("Tugagan", "Нет в наличии", "Out of Stock")}
                   </span>
                 </div>
               </div>
+
+              {/* Tavsif */}
+              {(() => {
+                const qisqa = ru ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif;
+                const toliq = ru ? (product.toliqTavsifRu || product.toliqTavsif) : product.toliqTavsif;
+                if (!qisqa && !toliq) return null;
+                return (
+                  <div className="mb-6">
+                    {qisqa && (
+                      <p className="text-sm font-medium leading-relaxed mb-3" style={{ color: "var(--text)" }}>
+                        {qisqa}
+                      </p>
+                    )}
+                    {toliq && (
+                      <div className="text-sm font-light leading-relaxed prose-sm max-w-none"
+                        style={{ color: "var(--text-muted, #888)" }}
+                        dangerouslySetInnerHTML={{ __html: toliq }} />
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Variantlar (modifikatsiyalar) */}
               {Object.keys(variantGuruhlar).length > 0 && (

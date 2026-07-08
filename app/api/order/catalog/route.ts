@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
         ? ((row.product?.meta?.href || '').split('?')[0].split('/').pop() || '')
         : '';
       stockMap[productId] = {
-        stock: Math.floor(Number(row.stock) || Number(row.quantity) || 0),
+        stock: Math.floor(Number(row.quantity) || 0),
         imageHref: miniatureHref,
         name: row.name || '',
         code: row.code || '',

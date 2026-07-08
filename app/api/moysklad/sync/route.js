@@ -4,6 +4,7 @@ export const maxDuration = 300
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { prisma } from '@/lib/prisma'
+import { tarjimaQil } from '@/lib/translate'
 import {
   msKategoriyalarOl,
   msMahsulotlarOl,
@@ -104,23 +105,31 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
 
   for (const msKat of msKategoriyalar) {
     const msId = msKat.id || msIdOl(msKat.meta.href)
-    const nom = msKat.name
+    const nomRu = msKat.name // MoySklad'dagi nom har doim ruscha
     const parentMsId = msKat.productFolder ? (msKat.productFolder.id || msIdOl(msKat.productFolder.meta.href)) : null
     const parentId = parentMsId ? (msKatIdMap.get(parentMsId) ?? katMsMap.get(parentMsId)?.id ?? null) : null
 
     const mavjud = katMsMap.get(msId)
     if (mavjud) {
-      await prisma.kategoriya.update({ where: { id: mavjud.id }, data: { nom, ...(parentId ? { parentId } : {}) } })
+      // Mavjud kategoriya endi admin tomonidan boshqariladi — faqat struktura (parentId) yangilanadi,
+      // nom/nomRu/nomEn/rangKodi admin panelda kiritilgandek saqlanib qoladi.
+      if (parentId) {
+        await prisma.kategoriya.update({ where: { id: mavjud.id }, data: { parentId } })
+      }
       msKatIdMap.set(msId, mavjud.id)
       natija.kategoriyalar.yangilandi++
     } else {
-      const slugBase = slugYarat(nom)
+      const [nomUz, nomEn] = await Promise.all([
+        tarjimaQil(nomRu, 'uz'),
+        tarjimaQil(nomRu, 'en'),
+      ])
+      const slugBase = slugYarat(nomRu)
       const dbKatSluglar = new Set((await prisma.kategoriya.findMany({ select: { slug: true } })).map(k => k.slug))
       let slug = slugBase, n = 0
       while (dbKatSluglar.has(slug)) { n++; slug = `${slugBase}-${n}` }
-      const yangi = await prisma.kategoriya.create({ data: { nom, slug, moyskladId: msId, parentId } })
+      const yangi = await prisma.kategoriya.create({ data: { nom: nomUz, nomRu, nomEn, slug, moyskladId: msId, parentId } })
       msKatIdMap.set(msId, yangi.id)
-      katMsMap.set(msId, { id: yangi.id, moyskladId: msId })
+      katMsMap.set(msId, { id: yangi.id, moyskladId: msId, nomRu })
       natija.kategoriyalar.qoshildi++
     }
   }
@@ -137,7 +146,7 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
 
   for (const msProd of msMahsulotlar) {
     const msId = msProd.id || msIdOl(msProd.meta.href)
-    const nom = msProd.name
+    const nomRu = msProd.name // MoySklad'dagi nom har doim ruscha
     const variantsCount = msProd.variantsCount || 0
     // Faqat reportda ANIQ <= 0 bo'lsa yashir.
     // Reportda yo'q (hech qachon stock kelmagan) → ko'rsat.
@@ -151,29 +160,30 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     } else {
       mavjudligi = true // Reportda yo'q = stock hisobi yo'q, lekin mahsulot mavjud
     }
-    const kategoriyaMsId = msProd.productFolder ? (msProd.productFolder.id || msIdOl(msProd.productFolder.meta.href)) : null
-    const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
     const msUpdated = new Date(msProd.updated)
-
-    const dataBase = {
-      nom,
-      mavjudligi,
-      narx: null, // Narx ko'rsatilmaydi
-      qisqaTavsif: null, // Tavsif ko'rsatilmaydi
-      toliqTavsif: null,
-      kategoriyaId,
-      modelRaqami: msProd.article || msProd.code || null,
-      moyskladId: msId,
-      moyskladUpdated: msUpdated,
-    }
-
     const mavjud = prodMsMap.get(msId)
+
     if (mavjud) {
+      // Mavjud mahsulot endi admin tomonidan boshqariladi (nom, kategoriya, tavsif, narx —
+      // hech biriga tegilmaydi). Sync faqat haqiqiy zaxira holatini yangilab turadi.
       const rasmYangilash = !mavjud.moyskladUpdated || msUpdated > mavjud.moyskladUpdated || !mavjud.asosiyRasmUrl
-      yangilash.push({ id: mavjud.id, ...dataBase, rasmYangilash, variantsCount })
+      yangilash.push({ id: mavjud.id, moyskladId: msId, mavjudligi, moyskladUpdated: msUpdated, rasmYangilash, variantsCount })
     } else {
-      const slug = noyobSlug(slugYarat(nom), usedSlugs)
-      yangilar.push({ ...dataBase, slug, turi: 'katalog', variantsCount })
+      // Yangi mahsulot — MoySklad'da topilgan, DB'da hali yo'q. Draft sifatida yaratiladi:
+      // admin uni admin panelda topib, tavsif/rang/belgi qo'shib "nashr" qiladi.
+      const kategoriyaMsId = msProd.productFolder ? (msProd.productFolder.id || msIdOl(msProd.productFolder.meta.href)) : null
+      const kategoriyaId = kategoriyaMsId ? (msKatIdMap.get(kategoriyaMsId) ?? katMsMap.get(kategoriyaMsId)?.id ?? null) : null
+      const [nomUz, nomEn] = await Promise.all([
+        tarjimaQil(nomRu, 'uz'),
+        tarjimaQil(nomRu, 'en'),
+      ])
+      const slug = noyobSlug(slugYarat(nomRu), usedSlugs)
+      yangilar.push({
+        nom: nomUz, nomRu, nomEn, mavjudligi, kategoriyaId,
+        modelRaqami: msProd.article || msProd.code || null,
+        moyskladId: msId, moyskladUpdated: msUpdated,
+        slug, turi: 'katalog', variantsCount,
+      })
     }
   }
 
@@ -195,13 +205,13 @@ async function syncQil({ tolik = false, rasmYuklama = true } = {}) {
     if (variantsCount > 0) await variantlarniYangilash(created.moyskladId, created.id, variantMap, natija)
   }
 
-  // Yangilanganlarni update
+  // Yangilanganlarni update — faqat mavjudligi/moyskladUpdated (admin ma'lumotlariga tegilmaydi)
   for (const m of yangilash) {
-    const { id, rasmYangilash, variantsCount, ...data } = m
+    const { id, moyskladId, rasmYangilash, variantsCount, ...data } = m
     await prisma.mahsulot.update({ where: { id }, data })
     natija.mahsulotlar.yangilandi++
-    if (rasmYuklama && rasmYangilash) await rasmlarniYangilash(supabase, data.moyskladId, id, natija)
-    if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(data.moyskladId, id, variantMap, natija)
+    if (rasmYuklama && rasmYangilash) await rasmlarniYangilash(supabase, moyskladId, id, natija)
+    if ((rasmYangilash || tolik) && variantsCount > 0) await variantlarniYangilash(moyskladId, id, variantMap, natija)
   }
 
   // ─── 3. Arxivlangan/aniq stoksizlarni yashirish ─────────────────────────────
