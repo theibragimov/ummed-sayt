@@ -55,7 +55,7 @@ function mahsulotBelgisi(product, cat) {
   return null;
 }
 
-function MahsulotRasm({ product, nom, className }) {
+function MahsulotRasm({ product, nom, belgi, className }) {
   return (
     <div className={`relative flex items-center justify-center overflow-hidden w-full rounded-xl ${className || ""}`}
       style={{ aspectRatio: "1 / 1", backgroundColor: "#fff", border: "1px solid var(--border-strong, #e5e5e5)" }}>
@@ -64,11 +64,17 @@ function MahsulotRasm({ product, nom, className }) {
       ) : (
         <span className="text-6xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
       )}
+      {belgi && (
+        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1.5 rounded-full text-white whitespace-nowrap z-10"
+          style={{ backgroundColor: belgi.color }}>
+          {belgi.label}
+        </span>
+      )}
     </div>
   );
 }
 
-// Boyitilgan mahsulotlar uchun: rasm chapda (belgisi tagida), rangli pill-sarlavhali tavsif kartasi o'ngda
+// Boyitilgan mahsulotlar uchun: rasm chapda (belgisi rasm ichida, pastda), rangli pill-sarlavhali tavsif kartasi o'ngda
 function HeroRow({ item, lang, cat }) {
   const product = item.type === "group" ? item.group[0] : item.product;
   const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
@@ -79,13 +85,8 @@ function HeroRow({ item, lang, cat }) {
   return (
     <Link href={`/mahsulot/${product.slug}`}
       className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6" style={{ textDecoration: "none" }}>
-      <div className="flex flex-col items-center flex-shrink-0 w-full sm:w-44">
-        <MahsulotRasm product={product} nom={nom} />
-        {belgi && (
-          <span className="mt-3 text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: belgi.color }}>
-            {belgi.label}
-          </span>
-        )}
+      <div className="flex-shrink-0 w-full sm:w-44">
+        <MahsulotRasm product={product} nom={nom} belgi={belgi} />
       </div>
       <div className="flex-1 min-w-0 rounded-2xl p-5 sm:p-6" style={{ backgroundColor: "var(--bg-card-outer, #f6f5f3)" }}>
         <span className="inline-block text-sm font-semibold px-4 py-2 mb-3 rounded-full text-white" style={{ backgroundColor: rangKodi }}>
@@ -111,12 +112,7 @@ function GridCard({ item, lang, cat }) {
   return (
     <Link href={`/mahsulot/${product.slug}`}
       className="flex flex-col items-center gap-3" style={{ textDecoration: "none" }}>
-      <MahsulotRasm product={product} nom={nom} />
-      {belgi && (
-        <span className="text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: belgi.color }}>
-          {belgi.label}
-        </span>
-      )}
+      <MahsulotRasm product={product} nom={nom} belgi={belgi} />
       <span className="inline-block w-full text-center text-xs sm:text-sm font-semibold px-3 py-2 rounded-full text-white" style={{ backgroundColor: rangKodi }}>
         {nom}
       </span>
