@@ -207,7 +207,6 @@ export default function KatalogPage() {
   const cat = t.catalog;
 
   const [mahsulotlar, setMahsulotlar] = useState([]);
-  const [kategoriyalar, setKategoriyalar] = useState([]);
   const [yuklanmoqda, setYuklanmoqda] = useState(true);
   const [category, setCategory] = useState("hammasi");
   const [search, setSearch] = useState("");
@@ -216,19 +215,26 @@ export default function KatalogPage() {
   useEffect(() => {
     async function yuklash() {
       setYuklanmoqda(true);
-      const [mRes, kRes] = await Promise.all([
-        fetch("/api/mahsulotlar"),
-        fetch("/api/kategoriyalar"),
-      ]);
-      const [m, k] = await Promise.all([mRes.json(), kRes.json()]);
+      const mRes = await fetch("/api/mahsulotlar");
+      const m = await mRes.json();
       // Faqat kategoriyali mahsulotlar
       const faqatKategoriyali = Array.isArray(m) ? m.filter(p => p.kategoriya) : [];
       setMahsulotlar(faqatKategoriyali);
-      setKategoriyalar(Array.isArray(k) ? k : []);
       setYuklanmoqda(false);
     }
     yuklash();
   }, []);
+
+  // Navigatsiya faqat haqiqatda ko'rsatilayotgan mahsulotlari bor kategoriyalarni ro'yxatlaydi
+  // (MoySklad'dan qolgan bo'sh kategoriyalar ro'yxatda ko'rinmaydi)
+  const kategoriyalar = useMemo(() => {
+    const map = new Map();
+    for (const p of mahsulotlar) {
+      if (!p.kategoriyaId || map.has(p.kategoriyaId)) continue;
+      map.set(p.kategoriyaId, { id: p.kategoriyaId, ...p.kategoriya });
+    }
+    return [...map.values()].sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
+  }, [mahsulotlar]);
 
   const filtered = useMemo(() => {
     let list = [...mahsulotlar];
