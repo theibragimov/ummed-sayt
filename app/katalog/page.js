@@ -46,57 +46,49 @@ function boyitilganmi(p) {
   return Boolean(p.qisqaTavsif || p.qisqaTavsifRu || p.featured || p.belgi);
 }
 
-function StatusBadges({ product, cat }) {
-  const isTezOrada = product.belgi === "tez_orada";
-  const isYangi = product.belgi === "yangi";
+// Mahsulotning bitta ustuvor belgisini aniqlaydi (rasm ostida alohida pill sifatida ko'rsatiladi)
+function mahsulotBelgisi(product, cat) {
+  if (product.featured) return { label: cat.badges.hit, color: "#E8491D" };
+  if (product.belgi === "yangi") return { label: cat.badges.Yangi, color: "#3DB851" };
+  if (product.belgi === "tez_orada") return { label: cat.badges.tezOrada, color: "#6b7280" };
+  if (!product.mavjudligi) return { label: cat.badges.tugagan, color: "#9ca3af" };
+  return null;
+}
+
+function MahsulotRasm({ product, nom, className }) {
   return (
-    <>
-      {(product.featured || isYangi) && (
-        <span
-          className="absolute top-3 left-3 text-[10px] sm:text-xs font-bold px-2.5 py-1 text-white z-10 rounded-md"
-          style={{ backgroundColor: product.featured ? "#E8491D" : "#3DB851" }}
-        >
-          {product.featured ? cat.badges.hit : cat.badges.Yangi}
-        </span>
-      )}
-      {isTezOrada ? (
-        <span className="absolute top-3 right-3 text-[10px] sm:text-xs font-medium px-2.5 py-1 text-white z-10 rounded-md" style={{ backgroundColor: "#6b7280" }}>
-          {cat.badges.tezOrada}
-        </span>
+    <div className={`relative flex items-center justify-center overflow-hidden w-full rounded-xl ${className || ""}`}
+      style={{ aspectRatio: "1 / 1", backgroundColor: "#fff", border: "1px solid var(--border-strong, #e5e5e5)" }}>
+      {product.asosiyRasmUrl ? (
+        <Image src={product.asosiyRasmUrl} alt={nom} fill style={{ objectFit: "contain" }} />
       ) : (
-        !product.mavjudligi && (
-          <span className="absolute top-3 right-3 text-[10px] sm:text-xs font-medium px-2.5 py-1 text-white z-10 rounded-md" style={{ backgroundColor: "#9ca3af" }}>
-            {cat.badges.tugagan}
-          </span>
-        )
+        <span className="text-6xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
       )}
-    </>
+    </div>
   );
 }
 
-// Boyitilgan mahsulotlar uchun: rasm chapda, rangli pill-sarlavhali tavsif kartasi o'ngda
+// Boyitilgan mahsulotlar uchun: rasm chapda (belgisi tagida), rangli pill-sarlavhali tavsif kartasi o'ngda
 function HeroRow({ item, lang, cat }) {
   const product = item.type === "group" ? item.group[0] : item.product;
   const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
   const tavsif = lang === "ru" ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif;
   const rangKodi = product.kategoriya?.rangKodi || "#E8491D";
+  const belgi = mahsulotBelgisi(product, cat);
 
   return (
     <Link href={`/mahsulot/${product.slug}`}
-      className="flex flex-col sm:flex-row gap-5 sm:gap-8 p-4 sm:p-6 transition-colors hover:opacity-95"
-      style={{ border: "1px solid var(--border-strong, #e5e5e5)", textDecoration: "none" }}>
-      <div className="relative flex items-center justify-center overflow-hidden flex-shrink-0 w-full sm:w-48"
-        style={{ aspectRatio: "1 / 1", backgroundColor: "var(--card-bg, #f9f9f7)" }}>
-        <StatusBadges product={product} cat={cat} />
-        {product.asosiyRasmUrl ? (
-          <Image src={product.asosiyRasmUrl} alt={nom} fill style={{ objectFit: "contain", background: "#fff" }} />
-        ) : (
-          <span className="text-6xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
+      className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6" style={{ textDecoration: "none" }}>
+      <div className="flex flex-col items-center flex-shrink-0 w-full sm:w-44">
+        <MahsulotRasm product={product} nom={nom} />
+        {belgi && (
+          <span className="mt-3 text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: belgi.color }}>
+            {belgi.label}
+          </span>
         )}
       </div>
-      <div className="flex flex-col justify-center min-w-0">
-        <span className="inline-block self-start text-xs sm:text-sm font-semibold px-3 py-1.5 mb-3 rounded-full text-white"
-          style={{ backgroundColor: rangKodi }}>
+      <div className="flex-1 min-w-0 rounded-2xl p-5 sm:p-6" style={{ backgroundColor: "var(--bg-card-outer, #f6f5f3)" }}>
+        <span className="inline-block text-sm font-semibold px-4 py-2 mb-3 rounded-full text-white" style={{ backgroundColor: rangKodi }}>
           {nom}
         </span>
         {tavsif && (
@@ -114,33 +106,20 @@ function GridCard({ item, lang, cat }) {
   const product = item.type === "group" ? item.group[0] : item.product;
   const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
   const rangKodi = product.kategoriya?.rangKodi || "#E8491D";
-  const katNom = lang === "ru" ? (product.kategoriya?.nomRu || product.kategoriya?.nom) : lang === "en" ? (product.kategoriya?.nomEn || product.kategoriya?.nom) : product.kategoriya?.nom;
+  const belgi = mahsulotBelgisi(product, cat);
 
   return (
     <Link href={`/mahsulot/${product.slug}`}
-      className="flex flex-col overflow-hidden group"
-      style={{ backgroundColor: "var(--bg)", borderRight: "1px solid var(--border-strong, #e5e5e5)", borderBottom: "1px solid var(--border-strong, #e5e5e5)", textDecoration: "none" }}>
-      <div className="relative flex items-center justify-center overflow-hidden w-full" style={{ aspectRatio: "1 / 1" }}>
-        <StatusBadges product={product} cat={cat} />
-        {product.asosiyRasmUrl ? (
-          <Image src={product.asosiyRasmUrl} alt={nom} fill
-            style={{ objectFit: "contain", background: "#fff", transition: "transform 0.4s ease" }}
-            className="group-hover:scale-[1.04]" />
-        ) : (
-          <span className="text-7xl select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
-        )}
-      </div>
-      <div className="p-3 sm:p-4 flex flex-col flex-1">
-        {katNom && (
-          <span className="inline-block self-start text-[9px] sm:text-[10px] font-bold uppercase tracking-wide px-2 py-1 mb-2 rounded-full text-white"
-            style={{ backgroundColor: rangKodi }}>
-            {katNom}
-          </span>
-        )}
-        <h3 className="text-xs sm:text-sm font-medium leading-snug" style={{ color: "var(--text)" }}>
-          {nom}
-        </h3>
-      </div>
+      className="flex flex-col items-center gap-3" style={{ textDecoration: "none" }}>
+      <MahsulotRasm product={product} nom={nom} />
+      {belgi && (
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: belgi.color }}>
+          {belgi.label}
+        </span>
+      )}
+      <span className="inline-block w-full text-center text-xs sm:text-sm font-semibold px-3 py-2 rounded-full text-white" style={{ backgroundColor: rangKodi }}>
+        {nom}
+      </span>
     </Link>
   );
 }
@@ -296,7 +275,14 @@ export default function KatalogPage() {
           )}
 
           <div className="flex gap-12">
-            {/* Kontent — chapda */}
+            {/* Kategoriya navigatsiyasi — chapda */}
+            <aside className="hidden md:block w-56 flex-shrink-0">
+              <div className="sticky top-28 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
+                <CategoryNav cat={cat} category={category} kategoriyalar={kategoriyalar} lang={lang}
+                  search={search} setCategory={setCategory} setSearch={setSearch} count={filtered.length} />
+              </div>
+            </aside>
+
             <div className="flex-1 min-w-0">
               {yuklanmoqda ? (
                 <div className="flex items-center justify-center py-24" style={{ color: "var(--text-muted, #888)" }}>
@@ -331,8 +317,7 @@ export default function KatalogPage() {
                         )}
 
                         {rest.length > 0 && (
-                          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-px"
-                            style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}>
+                          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                             {rest.map((item) => (
                               <GridCard key={item.type === "group" ? item.group[0].id : item.product.id} item={item} lang={lang} cat={cat} />
                             ))}
@@ -344,14 +329,6 @@ export default function KatalogPage() {
                 </div>
               )}
             </div>
-
-            {/* Kategoriya navigatsiyasi — o'ngda */}
-            <aside className="hidden md:block w-64 flex-shrink-0">
-              <div className="sticky top-28 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
-                <CategoryNav cat={cat} category={category} kategoriyalar={kategoriyalar} lang={lang}
-                  search={search} setCategory={setCategory} setSearch={setSearch} count={filtered.length} />
-              </div>
-            </aside>
           </div>
         </div>
       </main>
