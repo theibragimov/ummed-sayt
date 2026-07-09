@@ -947,40 +947,44 @@ export default function OrderPage() {
         {/* Header */}
         <header className="sticky top-0 z-40 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
-          <div className="flex items-center gap-3 px-4 h-14 max-w-5xl mx-auto">
-            <img src="/logo.webp" alt="Logo" className="flex-shrink-0" style={{ width: 36, height: 36, objectFit: 'contain' }} />
-            <span className="font-bold text-gray-900 text-[15px]">{t.storeName}</span>
+          <div className="flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 h-14 max-w-5xl mx-auto">
+            <img src="/logo.webp" alt="Logo" className="flex-shrink-0" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+            <span className="flex-shrink-0 px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold whitespace-nowrap"
+              style={{ background: '#2563EB' }}>
+              TEST
+            </span>
+            <span className="hidden sm:inline font-bold text-gray-900 text-[15px] whitespace-nowrap flex-shrink-0">{t.storeName}</span>
 
             {/* Mobile: category button */}
             <button
               onClick={() => setMobileCatOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold ml-1"
+              className="lg:hidden flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold ml-0.5 min-w-0"
               style={{ background: '#F5F5F5', color: selectedCat ? '#FF6B35' : '#666', border: selectedCat ? '1px solid rgba(255,107,53,0.3)' : '1px solid transparent' }}>
-              <Menu size={13} />
-              <span className="max-w-[90px] truncate">{displayCatName}</span>
+              <Menu size={12} className="flex-shrink-0" />
+              <span className="max-w-[64px] truncate">{displayCatName}</span>
             </button>
 
             <div className="flex-1" />
 
             {cartCount > 0 && (
               <button onClick={() => setView('cart')}
-                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[13px] text-white"
+                className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-[13px] text-white flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
-                <ShoppingCart size={15} />
-                <span>{cartCount}</span>
+                <ShoppingCart size={15} className="flex-shrink-0" />
+                <span>{cartCount > 99 ? '99+' : cartCount}</span>
               </button>
             )}
             {/* View toggle */}
             <button
               onClick={() => setDisplayMode(m => { const next = m === 'list' ? 'grid' : 'list'; localStorage.setItem('order-display-mode', next); return next; })}
-              className="w-8 h-8 rounded-xl flex items-center justify-center border ml-1"
+              className="w-8 h-8 rounded-xl flex items-center justify-center border ml-1 flex-shrink-0"
               style={{ borderColor: '#E5E5E5', background: displayMode === 'grid' ? '#FFF0EB' : '#fff', color: displayMode === 'grid' ? '#FF6B35' : '#666' }}
               title={displayMode === 'list' ? 'Galereya ko\'rinish' : 'Ro\'yat ko\'rinish'}>
               {displayMode === 'list' ? <LayoutGrid size={15} /> : <LayoutList size={15} />}
             </button>
 
             <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
-              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold border ml-1"
+              className="px-2 sm:px-2.5 py-1.5 rounded-xl text-[11px] font-bold border ml-1 flex-shrink-0"
               style={{ borderColor: '#E5E5E5', color: '#666' }}>
               {lang === 'uz' ? 'RU' : 'UZ'}
             </button>
