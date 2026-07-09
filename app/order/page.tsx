@@ -949,11 +949,11 @@ export default function OrderPage() {
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <div className="flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 h-14 max-w-5xl mx-auto">
             <img src="/logo.webp" alt="Logo" className="flex-shrink-0" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+            <span className="hidden sm:inline font-bold text-gray-900 text-[15px] whitespace-nowrap flex-shrink-0">{t.storeName}</span>
             <span className="flex-shrink-0 px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold whitespace-nowrap"
               style={{ background: '#2563EB' }}>
               TEST
             </span>
-            <span className="hidden sm:inline font-bold text-gray-900 text-[15px] whitespace-nowrap flex-shrink-0">{t.storeName}</span>
 
             {/* Mobile: category button */}
             <button
