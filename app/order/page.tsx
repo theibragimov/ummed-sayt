@@ -138,6 +138,11 @@ const CATALOG_CACHE_PREFIX = 'moysklad-order-catalog-v1';
 const INITIAL_PRODUCT_LIMIT = 160;
 const PRODUCT_LIMIT_STEP = 160;
 const TOP50_CAT_ID = '__top50__';
+const NEW_ARRIVAL_CATEGORY_MARKER = 'Новинки';
+
+function isNewArrivalProduct(p: Product): boolean {
+  return p.categoryName.includes(NEW_ARRIVAL_CATEGORY_MARKER) || p.rootCategoryName.includes(NEW_ARRIVAL_CATEGORY_MARKER);
+}
 
 interface CatalogCache {
   products: Product[];
@@ -263,7 +268,7 @@ function Lightbox({ product, onClose }: { product: Product; onClose: () => void 
 // ─── Product Row ──────────────────────────────────────────────────────────────
 
 function ProductRow({
-  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50,
+  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50, isNewArrival,
 }: {
   product: Product;
   cartQty: number;
@@ -272,6 +277,7 @@ function ProductRow({
   onImageClick: () => void;
   lang: Lang;
   isTop50: boolean;
+  isNewArrival: boolean;
 }) {
   const t = T[lang];
   const { base: baseName, variant } = parseVariant(product.name);
@@ -307,6 +313,12 @@ function ProductRow({
       {/* Name + code */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
+          {isNewArrival && (
+            <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
+              style={{ background: '#3DB851' }}>
+              Новинка
+            </span>
+          )}
           {isTop50 && (
             <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
               style={{ background: '#2563EB' }}>
@@ -399,7 +411,7 @@ function parseVariant(name: string): { base: string; variant: string | null } {
 // ─── Product Card (Grid View) ─────────────────────────────────────────────────
 
 function ProductCard({
-  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50,
+  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50, isNewArrival,
 }: {
   product: Product;
   cartQty: number;
@@ -408,6 +420,7 @@ function ProductCard({
   onImageClick: () => void;
   lang: Lang;
   isTop50: boolean;
+  isNewArrival: boolean;
 }) {
   const t = T[lang];
   const { base: baseName, variant } = parseVariant(product.name);
@@ -449,10 +462,20 @@ function ProductCard({
             <Package size={32} color="#D1D5DB" />
           </div>
         )}
-        {isTop50 && (
-          <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
-            style={{ background: '#2563EB', letterSpacing: '0.03em' }}>
-            TOP 50
+        {(isNewArrival || isTop50) && (
+          <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+            {isNewArrival && (
+              <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
+                style={{ background: '#3DB851', letterSpacing: '0.03em' }}>
+                Новинка
+              </div>
+            )}
+            {isTop50 && (
+              <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
+                style={{ background: '#2563EB', letterSpacing: '0.03em' }}>
+                TOP 50
+              </div>
+            )}
           </div>
         )}
         {cartQty > 0 && (
@@ -1120,6 +1143,7 @@ export default function OrderPage() {
                     onImageClick={() => setLightboxProduct(p)}
                     lang={lang}
                     isTop50={top50DisplaySet.has(p.id)}
+                    isNewArrival={isNewArrivalProduct(p)}
                   />
                 ))}
               </div>
@@ -1139,6 +1163,7 @@ export default function OrderPage() {
                       onImageClick={() => setLightboxProduct(p)}
                       lang={lang}
                       isTop50={top50DisplaySet.has(p.id)}
+                      isNewArrival={isNewArrivalProduct(p)}
                     />
                   ))}
                 </div>
