@@ -177,8 +177,7 @@ export async function GET(req: NextRequest) {
           parentProductId: variantToProduct[id] || '',
         };
       })
-      .filter(p => p.stock > 0)
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .filter(p => p.stock > 0);
 
     // 6. Build category tree: top-level categories with subcategories
     // Only include categories that have products (direct or in subcategories)
@@ -207,6 +206,22 @@ export async function GET(req: NextRequest) {
         descendantIds: getDescendants(id),
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
+
+    // Order products by category (matching the sidebar order), then alphabetically within each category
+    const categoryRank: Record<string, number> = {};
+    let rank = 0;
+    for (const cat of categories) {
+      categoryRank[cat.id] = rank++;
+      for (const child of cat.children) {
+        categoryRank[child.id] = rank++;
+      }
+    }
+    products.sort((a, b) => {
+      const ra = (a.categoryId && categoryRank[a.categoryId]) ?? Number.MAX_SAFE_INTEGER;
+      const rb = (b.categoryId && categoryRank[b.categoryId]) ?? Number.MAX_SAFE_INTEGER;
+      if (ra !== rb) return ra - rb;
+      return a.name.localeCompare(b.name);
+    });
 
     return { priceTypes, selectedPriceType, categories, products };
     });
