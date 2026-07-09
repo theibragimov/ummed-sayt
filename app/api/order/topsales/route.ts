@@ -16,6 +16,6 @@ export async function GET() {
     await topSotuvlarniSaqlash(prisma, natija);
     return NextResponse.json(natija);
   } catch (e: any) {
-    return NextResponse.json({ top50: [], top50Ranked: [], error: e.message });
+    return NextResponse.json({ top50Ranked: [], error: e.message });
   }
 }

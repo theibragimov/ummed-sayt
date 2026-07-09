@@ -550,12 +550,15 @@ export default function OrderPage() {
     if (saved) setDisplayMode(saved);
   }, []);
 
+  // Sotilgan miqdori bo'yicha TO'LIQ tartiblangan ro'yxat (50 tadan ancha katta bo'lishi mumkin) —
+  // ba'zi ko'p sotilgan mahsulotlar omborda vaqtincha tugab qolgan bo'lishi mumkin, shuning uchun
+  // pastda shulardan HOZIR SOTUVDA BOR birinchi 50 tasi tanlab olinadi (top50DisplayList).
   const [top50Ranked, setTop50Ranked] = useState<string[]>([]);
   useEffect(() => {
     fetch('/api/order/topsales', { cache: 'no-store' })
       .then(r => r.json())
       .then(d => {
-        setTop50Ranked(d.top50Ranked ?? d.top50 ?? []);
+        setTop50Ranked(d.top50Ranked ?? []);
       })
       .catch(() => {});
   }, []);
@@ -563,6 +566,16 @@ export default function OrderPage() {
   const top50RankMap = useMemo(
     () => new Map(top50Ranked.map((id, i) => [id, i])),
     [top50Ranked]
+  );
+  // Hozir sotuvda bor (katalogda mavjud) mahsulotlardan eng ko'p sotilgan 50 tasi, ketma-ket tartibda
+  const top50DisplayList = useMemo(() => {
+    const matched = products.filter(p => top50RankMap.has(p.id));
+    matched.sort((a, b) => top50RankMap.get(a.id)! - top50RankMap.get(b.id)!);
+    return matched.slice(0, 50);
+  }, [products, top50RankMap]);
+  const top50DisplaySet = useMemo(
+    () => new Set(top50DisplayList.map(p => p.id)),
+    [top50DisplayList]
   );
 
   const [formName, setFormName] = useState('');
@@ -690,22 +703,17 @@ export default function OrderPage() {
 
   const filteredProducts = useMemo(() => {
     const isTop50View = selectedCat === TOP50_CAT_ID;
-    const list = products.filter(p => {
+    // TOP 50 ko'rinishida — allaqachon eng ko'p sotilgandan kamayib boruvchi ketma-ket
+    // tartibda tanlangan 50 ta mavjud mahsulot ustida qidiruv qilinadi
+    const base = isTop50View ? top50DisplayList : products;
+    return base.filter(p => {
       const matchCat = isTop50View
-        ? top50RankMap.has(p.id)
-        : (!selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId)));
+        || !selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId));
       const q = search.toLowerCase();
       const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
-    if (!isTop50View) return list;
-    // TOP 50 ko'rinishida — eng ko'p sotilgandan kamayib boruvchi ketma-ket tartib
-    return [...list].sort((a, b) => {
-      const ra = top50RankMap.get(a.id) ?? Number.MAX_SAFE_INTEGER;
-      const rb = top50RankMap.get(b.id) ?? Number.MAX_SAFE_INTEGER;
-      return ra - rb;
-    });
-  }, [products, selectedCat, selectedCatDescendants, search, top50RankMap]);
+  }, [products, selectedCat, selectedCatDescendants, search, top50DisplayList]);
   const visibleProducts = useMemo(
     () => filteredProducts.slice(0, visibleCount),
     [filteredProducts, visibleCount]
@@ -1111,7 +1119,7 @@ export default function OrderPage() {
                     onQtyChange={qty => setQty(p.id, qty)}
                     onImageClick={() => setLightboxProduct(p)}
                     lang={lang}
-                    isTop50={top50RankMap.has(p.id)}
+                    isTop50={top50DisplaySet.has(p.id)}
                   />
                 ))}
               </div>
@@ -1130,7 +1138,7 @@ export default function OrderPage() {
                       onQtyChange={qty => setQty(p.id, qty)}
                       onImageClick={() => setLightboxProduct(p)}
                       lang={lang}
-                      isTop50={top50RankMap.has(p.id)}
+                      isTop50={top50DisplaySet.has(p.id)}
                     />
                   ))}
                 </div>

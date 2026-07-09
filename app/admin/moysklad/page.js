@@ -181,11 +181,11 @@ export default function MoySkladPage() {
           🏆 TOP 50 mahsulotlar
         </div>
         <div style={{ ...A.sub, marginBottom: '16px', fontSize: '13px' }}>
-          So'nggi 30 kunlik sotuvlar bo'yicha, MoySkladdagi "Прибыльность → По товарам" hisobotidagi kabi har bir aniq mahsulot/modifikatsiya alohida hisoblanadi. Har 2 haftada (1- va 15-sanalarda) avtomatik yangilanadi.
+          So'nggi 30 kunlik sotuvlar bo'yicha, MoySkladdagi "Прибыльность → По товарам" hisobotidagi kabi har bir aniq mahsulot/modifikatsiya alohida hisoblanadi. Saytda shulardan hozir omborda bor birinchi 50 tasi ko'rsatiladi — tugab qolganlari o'tkazib yuboriladi. Har 2 haftada (1- va 15-sanalarda) avtomatik yangilanadi.
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <Stat label="Oxirgi hisoblangan" value={topStatus ? vaqtFormat(topStatus.hisoblanganVaqt) : '...'} />
-          <Stat label="TOP 50" value={topStatus ? `${topStatus.top50?.length ?? 0} ta` : '...'} />
+          <Stat label="Sotilgan mahsulotlar (davr uchun)" value={topStatus ? `${topStatus.top50Ranked?.length ?? 0} ta` : '...'} />
         </div>
         <button
           onClick={topSotuvlarniQaytaHisoblash}

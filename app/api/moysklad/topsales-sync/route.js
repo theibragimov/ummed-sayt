@@ -33,7 +33,7 @@ async function qaytaHisobla() {
     await topSotuvlarniSaqlash(prisma, natija)
     return NextResponse.json({
       ok: true,
-      top50Soni: natija.top50.length,
+      sotilganMahsulotlarSoni: natija.top50Ranked.length,
       hisoblanganVaqt: natija.hisoblanganVaqt,
     })
   } catch (e) {

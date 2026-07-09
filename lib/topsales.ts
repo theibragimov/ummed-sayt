@@ -1,25 +1,28 @@
 import { fetchMS } from './ms-api';
 
 export interface TopSalesResult {
-  /** Eng ko'p sotilgandan kamayib boruvchi tartibda — MoySklad "Прибыльность → По товарам"
-   *  hisobotidagi qatorlar bilan bir xil darajada (har bir aniq mahsulot/modifikatsiya alohida) */
+  /**
+   * Sotilgan miqdori bo'yicha kamayib boruvchi TO'LIQ tartiblangan ro'yxat — MoySklad
+   * "Прибыльность → По товарам" hisobotidagi qatorlar bilan bir xil darajada (har bir
+   * aniq mahsulot/modifikatsiya alohida). Atayin 50 tadan KATTA ro'yxat sifatida
+   * saqlanadi: ba'zi ko'p sotilgan mahsulotlar vaqtincha omborda tugab qolishi mumkin,
+   * shuning uchun saytda ko'rsatilganda shulardan HOZIR SOTUVDA BOR birinchi 50 tasi
+   * tanlab olinadi (qarang: app/order/page.tsx dagi top50DisplayList).
+   */
   top50Ranked: string[];
-  /** top50Ranked bilan bir xil, faqat tez qidirish (badge) uchun Set sifatida saqlanadi */
-  top50: string[];
   hisoblanganVaqt: string;
 }
 
 const SOZLAMA_KALITI = 'order_top_sotuvlar';
 
 /**
- * So'nggi `kunlar` kunlik sotuvlar bo'yicha TOP 50 mahsulotlarni hisoblaydi.
+ * So'nggi `kunlar` kunlik sotuvlar bo'yicha mahsulotlarni sotilgan miqdoriga qarab tartiblaydi.
  *
- * MoySkladning o'zidagi "Прибыльность → По товарам" hisobotiga mos kelishi uchun,
- * har bir aniq assortiment qatori (mahsulot yoki uning bitta aniq modifikatsiyasi)
+ * Har bir aniq assortiment qatori (mahsulot yoki uning bitta aniq modifikatsiyasi)
  * o'zining sotilgan miqdori bo'yicha ALOHIDA hisoblanadi — boshqa modifikatsiyalar
  * bilan qo'shib yig'ilmaydi. Shu sababli, agar bitta mahsulotning faqat bitta o'lchami
- * (masalan, 20-80mm) ko'p sotilgan bo'lsa, faqat o'sha aniq o'lcham TOP 50ga tushadi —
- * sotilmagan boshqa o'lchamlari/rangdagi modifikatsiyalari emas.
+ * ko'p sotilgan bo'lsa, faqat o'sha aniq o'lcham yuqori o'ringa chiqadi — sotilmagan
+ * boshqa o'lchamlari/rangdagi modifikatsiyalari emas.
  */
 export async function hisoblaTopSotuvlar(kunlar = 30): Promise<TopSalesResult> {
   const now = new Date();
@@ -50,10 +53,9 @@ export async function hisoblaTopSotuvlar(kunlar = 30): Promise<TopSalesResult> {
 
   const top50Ranked = Object.entries(qtyById)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 50)
     .map(([id]) => id);
 
-  return { top50Ranked, top50: top50Ranked, hisoblanganVaqt: new Date().toISOString() };
+  return { top50Ranked, hisoblanganVaqt: new Date().toISOString() };
 }
 
 export async function topSotuvlarniSaqlash(prisma: any, natija: TopSalesResult) {
@@ -69,7 +71,7 @@ export async function keshlanganTopSotuvlarniOlish(prisma: any): Promise<TopSale
   if (!sozlama?.qiymat) return null;
   try {
     const parsed = JSON.parse(sozlama.qiymat);
-    if (Array.isArray(parsed?.top50) && Array.isArray(parsed?.top50Ranked)) return parsed;
+    if (Array.isArray(parsed?.top50Ranked)) return parsed;
   } catch {}
   return null;
 }
