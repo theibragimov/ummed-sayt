@@ -2,8 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchMS } from '@/lib/ms-api';
 import { getCached } from '@/lib/server-cache';
 
-async function safe(path: string) {
-  try { return await fetchMS(path); } catch { return null; }
+export const maxDuration = 60;
+
+// Vaqtinchalik tarmoq xatoliklarida (masalan MoySklad bir zumga javob bermay qolsa)
+// so'rovni qayta urinib ko'radi. Agar hammasi muvaffaqiyatsiz bo'lsa, xatoni yuqoriga
+// uzatadi — pastdagi pagination tsikllari uni jimgina "ma'lumot tugadi" deb noto'g'ri
+// tushunib, natijani chala qoldirmasligi uchun (avvalgi xatti-harakat shunday edi).
+async function safe(path: string, urinishlar = 2): Promise<any> {
+  let oxirgiXato: unknown;
+  for (let i = 0; i <= urinishlar; i++) {
+    try {
+      return await fetchMS(path);
+    } catch (e) {
+      oxirgiXato = e;
+      if (i < urinishlar) await new Promise(r => setTimeout(r, 300 * (i + 1)));
+    }
+  }
+  throw oxirgiXato;
 }
 
 export async function GET(req: NextRequest) {
@@ -124,7 +139,7 @@ export async function GET(req: NextRequest) {
       let vOffset = 0;
       while (true) {
         const expand = useCustomPrice && selectedPriceType ? '&expand=salePrices' : '';
-        const data = await safe(`/entity/variant?limit=100&offset=${vOffset}${expand}`);
+        const data = await safe(`/entity/variant?limit=1000&offset=${vOffset}${expand}`);
         if (!data?.rows?.length) break;
         for (const v of data.rows) {
           if (!stockMap[v.id]) continue;
@@ -135,23 +150,23 @@ export async function GET(req: NextRequest) {
             if (sp && Number(sp.value) > 0) priceMap[v.id] = Number(sp.value);
           }
         }
-        if (data.rows.length < 100 || vOffset >= 9000) break;
-        vOffset += 100;
+        if (data.rows.length < 1000 || vOffset >= 9000) break;
+        vOffset += 1000;
       }
     }
 
     if (useCustomPrice && selectedPriceType) {
       let pOffset = 0;
       while (true) {
-        const data = await safe(`/entity/product?expand=salePrices&limit=100&offset=${pOffset}`);
+        const data = await safe(`/entity/product?expand=salePrices&limit=1000&offset=${pOffset}`);
         if (!data?.rows?.length) break;
         for (const p of data.rows) {
           if (!stockMap[p.id]) continue;
           const sp = (p.salePrices || []).find((s: any) => s.priceType?.id === selectedPriceType.id);
           if (sp && Number(sp.value) > 0) priceMap[p.id] = Number(sp.value);
         }
-        if (data.rows.length < 100 || pOffset >= 9000) break;
-        pOffset += 100;
+        if (data.rows.length < 1000 || pOffset >= 9000) break;
+        pOffset += 1000;
       }
     }
 
