@@ -959,9 +959,10 @@ export default function OrderPage() {
             <button
               onClick={() => setMobileCatOpen(true)}
               className="lg:hidden flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold ml-0.5 min-w-0"
-              style={{ background: '#F5F5F5', color: selectedCat ? '#FF6B35' : '#666', border: selectedCat ? '1px solid rgba(255,107,53,0.3)' : '1px solid transparent' }}>
+              style={{ background: '#F5F5F5', color: selectedCat ? '#FF6B35' : '#666', border: selectedCat ? '1px solid rgba(255,107,53,0.3)' : '1px solid #E0E0E0' }}>
               <Menu size={12} className="flex-shrink-0" />
               <span className="max-w-[64px] truncate">{displayCatName}</span>
+              <ChevronDown size={12} className="flex-shrink-0" />
             </button>
 
             <div className="flex-1" />
