@@ -34,12 +34,12 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 site-header anim-fade-down">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-20 flex items-center justify-between gap-6">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between gap-2 sm:gap-6">
         {/* Logo */}
         <Logo size="md" variant="light" />
 
         {/* O'ng tomon: nav + til + Bog'lanish */}
-        <div className="flex items-center gap-6 lg:gap-8">
+        <div className="flex items-center gap-2 sm:gap-6 lg:gap-8 min-w-0">
           {/* Navigatsiya o'ng tomonda */}
           <nav className="hidden md:flex items-center gap-8 lg:gap-10">
             {navItems.map((item) => {
@@ -57,11 +57,11 @@ export default function SiteHeader() {
             })}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="theme-btn w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300"
+            className="theme-btn w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full transition-all duration-300 flex-shrink-0"
             aria-label="Tema almashtirish"
           >
             {theme === "dark" ? (
@@ -77,11 +77,11 @@ export default function SiteHeader() {
           </button>
 
           {/* Til dropdown */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <button
               onClick={() => setLangOpen((v) => !v)}
               onBlur={() => setTimeout(() => setLangOpen(false), 180)}
-              className="flex items-center gap-2 text-sm font-semibold lang-btn rounded-full px-3 py-2 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 text-sm font-semibold lang-btn rounded-full px-2 sm:px-3 py-2 transition-colors"
             >
               <span className="text-base leading-none">{current.flag}</span>
               <span>{current.label}</span>
@@ -123,7 +123,7 @@ export default function SiteHeader() {
           {/* Mobile burger */}
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-full theme-btn transition-colors"
+            className="md:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full theme-btn transition-colors flex-shrink-0"
             aria-label="Menu"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">

@@ -288,6 +288,11 @@ html[data-theme="dark"] {
   --secondary: #3DB851;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
