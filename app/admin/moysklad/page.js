@@ -9,8 +9,33 @@ export default function MoySkladPage() {
   const [xato, setXato] = useState('')
   const [rasmNatija, setRasmNatija] = useState(null)
   const [rasmXato, setRasmXato] = useState('')
+  const [topStatus, setTopStatus] = useState(null)
+  const [topJarayon, setTopJarayon] = useState(false)
+  const [topXato, setTopXato] = useState('')
 
-  useEffect(() => { statusniYuklash() }, [])
+  useEffect(() => { statusniYuklash(); topStatusniYuklash() }, [])
+
+  async function topStatusniYuklash() {
+    try {
+      const res = await fetch('/api/order/topsales')
+      setTopStatus(await res.json())
+    } catch {}
+  }
+
+  async function topSotuvlarniQaytaHisoblash() {
+    setTopJarayon(true)
+    setTopXato('')
+    try {
+      const res = await fetch('/api/moysklad/topsales-sync?secret=ummed-cron-secret-2024')
+      const data = await res.json()
+      if (res.ok) await topStatusniYuklash()
+      else setTopXato(data.xato || 'Xatolik yuz berdi')
+    } catch (e) {
+      setTopXato(e.message)
+    } finally {
+      setTopJarayon(false)
+    }
+  }
 
   async function statusniYuklash() {
     try {
@@ -146,6 +171,34 @@ export default function MoySkladPage() {
             ✅ Yuklandi: <b>{rasmNatija.yuklandi}</b> ta &nbsp;•&nbsp; Xato: <b>{rasmNatija.xato}</b> ta &nbsp;•&nbsp;
             Qolgan rasmsiz: <b>{rasmNatija.qolgan}</b> ta
             {rasmNatija.qolgan > 0 && <span style={{ color: '#E8491D', marginLeft: 8 }}>← Yana bosing</span>}
+          </div>
+        )}
+      </div>
+
+      {/* TOP mahsulotlar */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '8px' }}>
+          🏆 TOP 10 / TOP 50 mahsulotlar
+        </div>
+        <div style={{ ...A.sub, marginBottom: '16px', fontSize: '13px' }}>
+          So'nggi 30 kunlik sotuvlar bo'yicha hisoblanadi va har 2 haftada (1- va 15-sanalarda) avtomatik yangilanadi.
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <Stat label="Oxirgi hisoblangan" value={topStatus ? vaqtFormat(topStatus.hisoblanganVaqt) : '...'} />
+          <Stat label="TOP 10" value={topStatus ? `${topStatus.top10?.length ?? 0} ta` : '...'} />
+          <Stat label="TOP 50" value={topStatus ? `${topStatus.top50?.length ?? 0} ta` : '...'} />
+        </div>
+        <button
+          onClick={topSotuvlarniQaytaHisoblash}
+          disabled={topJarayon}
+          style={{ padding: '10px 20px', borderRadius: '8px', fontWeight: 600, fontSize: '14px',
+            border: '1px solid #d1d5db', background: '#fff', color: '#374151',
+            opacity: topJarayon ? 0.6 : 1, cursor: topJarayon ? 'wait' : 'pointer' }}>
+          {topJarayon ? '⏳ Hisoblanmoqda...' : '🔄 Hozir qayta hisoblash'}
+        </button>
+        {topXato && (
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', fontSize: '13px' }}>
+            ❌ {topXato}
           </div>
         )}
       </div>

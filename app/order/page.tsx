@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
-  Menu, ChevronRight, LayoutList, LayoutGrid,
+  Menu, ChevronRight, LayoutList, LayoutGrid, Trophy,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -83,6 +83,7 @@ const T = {
     categories: "Kategoriyalar",
     close: "Yopish",
     showMore: "Yana ko'rsatish",
+    top50Cat: "TOP 50 mahsulotlar",
   },
   ru: {
     storeName: "Онлайн Заказ",
@@ -121,6 +122,7 @@ const T = {
     categories: "Категории",
     close: "Закрыть",
     showMore: "Показать ещё",
+    top50Cat: "ТОП 50 товаров",
   },
 };
 
@@ -132,8 +134,39 @@ function fmtPrice(val: number): string {
 }
 
 const CART_STORAGE_KEY = 'moysklad-order-cart-v1';
+const CATALOG_CACHE_PREFIX = 'moysklad-order-catalog-v1';
 const INITIAL_PRODUCT_LIMIT = 160;
 const PRODUCT_LIMIT_STEP = 160;
+const TOP50_CAT_ID = '__top50__';
+
+interface CatalogCache {
+  products: Product[];
+  categories: Category[];
+  priceTypes: PriceType[];
+  selectedPriceType: PriceType | null;
+}
+
+function catalogCacheKey(ptId: string) {
+  return `${CATALOG_CACHE_PREFIX}:${ptId || 'default'}`;
+}
+
+function readCatalogCache(ptId: string): CatalogCache | null {
+  try {
+    const raw = window.localStorage.getItem(catalogCacheKey(ptId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.products) || !Array.isArray(parsed.categories)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeCatalogCache(ptId: string, data: CatalogCache) {
+  try {
+    window.localStorage.setItem(catalogCacheKey(ptId), JSON.stringify(data));
+  } catch {}
+}
 
 function parseStoredCart(): Record<string, CartItem> {
   try {
@@ -521,15 +554,22 @@ export default function OrderPage() {
 
   const [top10, setTop10] = useState<Set<string>>(new Set());
   const [top50, setTop50] = useState<Set<string>>(new Set());
+  const [top50Ranked, setTop50Ranked] = useState<string[]>([]);
   useEffect(() => {
     fetch('/api/order/topsales', { cache: 'no-store' })
       .then(r => r.json())
       .then(d => {
         setTop10(new Set(d.top10 ?? []));
         setTop50(new Set(d.top50 ?? []));
+        setTop50Ranked(d.top50Ranked ?? []);
       })
       .catch(() => {});
   }, []);
+  // Rank of each product's family (parent id, yoki o'zi agar variant bo'lmasa) — kichikroq raqam = ko'proq sotilgan
+  const top50RankMap = useMemo(
+    () => new Map(top50Ranked.map((id, i) => [id, i])),
+    [top50Ranked]
+  );
 
   const [formName, setFormName] = useState('');
   const [formCompany, setFormCompany] = useState('');
@@ -554,26 +594,57 @@ export default function OrderPage() {
     } catch {}
   }, [formName, formCompany, formPhone]);
 
-  const loadCatalog = useCallback(async (ptId = '') => {
-    setLoading(true);
-    setLoadError('');
+  const loadCatalog = useCallback(async (ptId = '', opts: { background?: boolean } = {}) => {
+    if (!opts.background) {
+      setLoading(true);
+      setLoadError('');
+    }
     try {
       const url = ptId ? `/api/order/catalog?priceTypeId=${ptId}` : '/api/order/catalog';
       const res = await fetch(url, { cache: 'no-store' });
       const json = await res.json();
       if (json.error) throw new Error(json.error);
       const nextProducts = json.products || [];
+      const nextCategories = (json.categories || []).filter((c: Category) => c.name !== 'Прочее');
+      const nextPriceTypes = json.priceTypes || [];
+      const nextSelectedPriceType = json.selectedPriceType || null;
       setProducts(nextProducts);
       setCart(prev => reconcileCart(prev, nextProducts));
-      setCategories((json.categories || []).filter((c: Category) => c.name !== 'Прочее'));
-      setPriceTypes(json.priceTypes || []);
-      setSelectedPriceType(json.selectedPriceType || null);
+      setCategories(nextCategories);
+      setPriceTypes(nextPriceTypes);
+      setSelectedPriceType(nextSelectedPriceType);
+      writeCatalogCache(ptId, {
+        products: nextProducts,
+        categories: nextCategories,
+        priceTypes: nextPriceTypes,
+        selectedPriceType: nextSelectedPriceType,
+      });
     } catch (e: any) {
-      setLoadError(e.message);
+      // Fon rejimida (keshdan ko'rsatilgandan keyingi yangilanish) xatoni jim yutamiz —
+      // foydalanuvchi allaqachon eski (lekin ishlaydigan) ma'lumotni ko'rib turibdi.
+      if (!opts.background) setLoadError(e.message);
     } finally {
-      setLoading(false);
+      if (!opts.background) setLoading(false);
     }
   }, []);
+
+  // Katalogni ochish: keshda bo'lsa darhol ko'rsatamiz (qayta yuklanmaydi), fon rejimida yangilaymiz.
+  // Kesh bo'lmasa (birinchi tashrif) — oddiy yuklash spinneri bilan.
+  const openCatalog = useCallback(() => {
+    setView('catalog');
+    const cached = readCatalogCache('');
+    if (cached) {
+      setProducts(cached.products);
+      setCart(prev => reconcileCart(prev, cached.products));
+      setCategories(cached.categories);
+      setPriceTypes(cached.priceTypes);
+      setSelectedPriceType(cached.selectedPriceType);
+      setLoading(false);
+      loadCatalog('', { background: true });
+    } else {
+      loadCatalog('');
+    }
+  }, [loadCatalog]);
 
   useEffect(() => {
     setCart(parseStoredCart());
@@ -617,17 +688,30 @@ export default function OrderPage() {
 
   const selectedCatName = useMemo(() => {
     if (!selectedCat) return '';
+    if (selectedCat === TOP50_CAT_ID) return t.top50Cat;
     return categories.find(c => c.id === selectedCat)?.name
       || categories.flatMap(c => c.children).find(ch => ch.id === selectedCat)?.name
       || '';
-  }, [selectedCat, categories]);
+  }, [selectedCat, categories, t]);
 
-  const filteredProducts = useMemo(() => products.filter(p => {
-    const matchCat = !selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId));
-    const q = search.toLowerCase();
-    const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
-    return matchCat && matchSearch;
-  }), [products, selectedCat, selectedCatDescendants, search]);
+  const filteredProducts = useMemo(() => {
+    const isTop50View = selectedCat === TOP50_CAT_ID;
+    const list = products.filter(p => {
+      const matchCat = isTop50View
+        ? top50RankMap.has(p.parentProductId || p.id)
+        : (!selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId)));
+      const q = search.toLowerCase();
+      const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+      return matchCat && matchSearch;
+    });
+    if (!isTop50View) return list;
+    // TOP 50 ko'rinishida — eng ko'p sotilgandan kamayib boruvchi ketma-ket tartib
+    return [...list].sort((a, b) => {
+      const ra = top50RankMap.get(a.parentProductId || a.id) ?? Number.MAX_SAFE_INTEGER;
+      const rb = top50RankMap.get(b.parentProductId || b.id) ?? Number.MAX_SAFE_INTEGER;
+      return ra - rb;
+    });
+  }, [products, selectedCat, selectedCatDescendants, search, top50RankMap]);
   const visibleProducts = useMemo(
     () => filteredProducts.slice(0, visibleCount),
     [filteredProducts, visibleCount]
@@ -747,7 +831,7 @@ export default function OrderPage() {
 
           {/* CTA */}
           <button
-            onClick={() => { setView('catalog'); loadCatalog(); }}
+            onClick={openCatalog}
             className="w-full py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
             style={{ background: '#E8491D', letterSpacing: '-0.01em' }}
             onMouseEnter={e => (e.currentTarget.style.background = '#d43d16')}
@@ -797,6 +881,14 @@ export default function OrderPage() {
                   style={{ borderBottom: '1px solid #F8F8F8', color: !selectedCat ? '#FF6B35' : '#374151', fontWeight: !selectedCat ? 700 : 500, fontSize: 14 }}>
                   {t.allCategories}
                   {!selectedCat && <ChevronRight size={16} color="#FF6B35" />}
+                </button>
+                {/* TOP 50 mahsulotlar */}
+                <button
+                  onClick={() => { setSelectedCat(TOP50_CAT_ID); setMobileCatOpen(false); }}
+                  className="flex items-center justify-between w-full px-5 py-3.5 text-left"
+                  style={{ borderBottom: '1px solid #F8F8F8', color: selectedCat === TOP50_CAT_ID ? '#7C3AED' : '#374151', fontWeight: selectedCat === TOP50_CAT_ID ? 700 : 500, fontSize: 14 }}>
+                  <span className="flex items-center gap-1.5"><Trophy size={14} />{t.top50Cat}</span>
+                  {selectedCat === TOP50_CAT_ID && <ChevronRight size={16} color="#7C3AED" />}
                 </button>
                 {categories.map(c => {
                   const isParentActive = selectedCat === c.id;
@@ -915,6 +1007,19 @@ export default function OrderPage() {
                 background: !selectedCat ? 'rgba(255,107,53,0.08)' : 'transparent',
               }}>
               {t.allCategories}
+            </button>
+
+            {/* TOP 50 mahsulotlar */}
+            <button
+              onClick={() => setSelectedCat(TOP50_CAT_ID)}
+              className="flex items-center gap-1.5 w-full px-3 py-2.5 text-left text-[13px] rounded-xl transition-all mb-0.5"
+              style={{
+                color: selectedCat === TOP50_CAT_ID ? '#7C3AED' : '#555',
+                fontWeight: selectedCat === TOP50_CAT_ID ? 700 : 500,
+                background: selectedCat === TOP50_CAT_ID ? 'rgba(124,58,237,0.08)' : 'transparent',
+              }}>
+              <Trophy size={13} />
+              {t.top50Cat}
             </button>
 
             {categories.map(c => {
