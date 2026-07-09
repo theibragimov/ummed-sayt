@@ -35,6 +35,8 @@ async function qaytaHisobla() {
       ok: true,
       sotilganMahsulotlarSoni: natija.top50Ranked.length,
       hisoblanganVaqt: natija.hisoblanganVaqt,
+      davrBoshi: natija.davrBoshi,
+      davrOxiri: natija.davrOxiri,
     })
   } catch (e) {
     return NextResponse.json({ xato: e.message }, { status: 500 })
