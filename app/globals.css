@@ -288,9 +288,12 @@ html[data-theme="dark"] {
   --secondary: #3DB851;
 }
 
-html, body {
+html {
   max-width: 100%;
   overflow-x: hidden;
+}
+body {
+  max-width: 100%;
 }
 
 body {
