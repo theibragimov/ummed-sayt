@@ -878,7 +878,7 @@ export default function OrderPage() {
     const displayCatName = selectedCatName || t.allCategories;
 
     return (
-      <div className="fixed inset-0 overflow-auto z-10" style={{ background: '#FAFAFA' }}>
+      <div className="min-h-screen" style={{ background: '#FAFAFA' }}>
         {lightboxProduct && (
           <Lightbox product={lightboxProduct} onClose={() => setLightboxProduct(null)} />
         )}
@@ -1211,7 +1211,7 @@ export default function OrderPage() {
 
   if (view === 'cart') {
     return (
-      <div className="fixed inset-0 overflow-auto z-10 bg-white">
+      <div className="min-h-screen bg-white">
         <header className="sticky top-0 z-40 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <div className="flex items-center gap-3 px-4 h-14 max-w-2xl mx-auto">
@@ -1323,7 +1323,7 @@ export default function OrderPage() {
 
   if (view === 'checkout') {
     return (
-      <div className="fixed inset-0 overflow-auto z-10 bg-white">
+      <div className="min-h-screen bg-white">
         <header className="sticky top-0 z-40 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <div className="flex items-center gap-3 px-4 h-14 max-w-2xl mx-auto">
@@ -1433,7 +1433,7 @@ export default function OrderPage() {
   // ─── SUCCESS VIEW ─────────────────────────────────────────────────────────
 
   return (
-    <div className="fixed inset-0 overflow-auto z-10 bg-white flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
       <div className="text-center max-w-sm">
         <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
           style={{ background: 'rgba(16,185,129,0.1)', border: '2px solid rgba(16,185,129,0.2)' }}>
