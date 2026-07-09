@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
-  Menu, ChevronRight, LayoutList, LayoutGrid, Trophy,
+  Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -784,26 +784,55 @@ export default function OrderPage() {
   if (view === 'landing') {
     const cartCount2 = Object.values(cart).reduce((s, i) => s + i.quantity, 0);
     const features = lang === 'uz'
-      ? ['700+ mahsulot assortimenti', 'Qulay narxlar va chegirmalar', 'Tezkor yetkazib berish']
-      : ['Ассортимент 700+ товаров', 'Удобные цены и скидки', 'Быстрая доставка'];
+      ? [
+          { Icon: Package, label: '700+ mahsulot assortimenti', bg: '#E8491D' },
+          { Icon: BadgePercent, label: 'Qulay narxlar va chegirmalar', bg: '#3DB851' },
+          { Icon: Truck, label: 'Tezkor yetkazib berish', bg: '#E8491D' },
+        ]
+      : [
+          { Icon: Package, label: 'Ассортимент 700+ товаров', bg: '#E8491D' },
+          { Icon: BadgePercent, label: 'Удобные цены и скидки', bg: '#3DB851' },
+          { Icon: Truck, label: 'Быстрая доставка', bg: '#E8491D' },
+        ];
+    const mockItems = lang === 'uz'
+      ? [
+          { name: 'Shprits insulinovyi 1ml', qty: 2, bg: '#FFE7DD' },
+          { name: 'Tonometr mexanik', qty: 1, bg: '#DFF5E5' },
+          { name: "Test polosalari №50", qty: 3, bg: '#FFE7DD' },
+        ]
+      : [
+          { name: 'Шприц инсулиновый 1мл', qty: 2, bg: '#FFE7DD' },
+          { name: 'Тонометр механический', qty: 1, bg: '#DFF5E5' },
+          { name: 'Тест полоски №50', qty: 3, bg: '#FFE7DD' },
+        ];
     return (
-      <div className="min-h-screen flex flex-col bg-white"
+      <div className="min-h-screen relative overflow-hidden bg-white flex flex-col"
         style={{ fontFamily: '"Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
 
+        {/* Dot-grid texture, fading toward edges */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(10,10,10,0.08) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+            maskImage: 'radial-gradient(ellipse 70% 60% at 65% 35%, #000 20%, transparent 90%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 65% 35%, #000 20%, transparent 90%)',
+          }}
+        />
+
         {/* ── Header ── */}
-        <header className="flex items-center gap-3 px-5 py-3.5 border-b"
+        <header className="relative z-10 flex items-center gap-3 px-5 sm:px-8 py-4 border-b"
           style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
-          <img src="/logo.webp" alt="Умmed" style={{ width: 36, height: 36, objectFit: 'contain' }} />
+          <img src="/logo.webp" alt="Умmed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
           <span className="font-bold text-[15px]" style={{ color: '#0a0a0a' }}>Умmed</span>
           <div className="flex-1" />
           <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
             style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent', letterSpacing: '0.05em' }}>
             {lang === 'uz' ? 'RU' : 'UZ'}
           </button>
           {cartCount2 > 0 && (
             <button onClick={() => setView('cart')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold text-white ml-1"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold text-white ml-1 transition-transform active:scale-95"
               style={{ background: '#E8491D' }}>
               <ShoppingCart size={14} />
               <span>{cartCount2}</span>
@@ -812,61 +841,117 @@ export default function OrderPage() {
         </header>
 
         {/* ── Main ── */}
-        <main className="flex-1 flex flex-col items-center px-5 max-w-lg mx-auto w-full" style={{ paddingTop: '6vh', paddingBottom: '4vh' }}>
+        <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-16 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
 
-          {/* Section label */}
-          <div className="flex items-center gap-2.5 mb-8">
-            <span className="inline-block w-1.5 h-1.5 rounded-none flex-shrink-0" style={{ background: '#E8491D' }} />
-            <span className="text-[11px] font-medium tracking-widest uppercase" style={{ color: '#18181b', letterSpacing: '0.16em' }}>
-              {lang === 'uz' ? 'Online Buyurtma' : 'Онлайн Заказ'}
-            </span>
-          </div>
+          {/* Left: content */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+            {/* Section label */}
+            <div className="flex items-center gap-2.5 mb-7 anim-fade-up" style={{ animationDelay: '40ms' }}>
+              <span className="inline-block w-1.5 h-1.5 flex-shrink-0" style={{ background: '#E8491D' }} />
+              <span className="text-[11px] font-medium tracking-widest uppercase" style={{ color: '#18181b', letterSpacing: '0.16em' }}>
+                {lang === 'uz' ? 'Online Buyurtma' : 'Онлайн Заказ'}
+              </span>
+            </div>
 
-          {/* Title */}
-          <h1 className="text-center font-extrabold mb-4 leading-[1.1]"
-            style={{ fontSize: 'clamp(28px,6vw,42px)', color: '#0a0a0a', letterSpacing: '-0.03em' }}>
-            {lang === 'uz'
-              ? <>Buyurtma berish uchun<br />mahsulotlar ro&apos;yxati</>
-              : <>Список товаров<br />для заказа</>}
-          </h1>
+            {/* Title */}
+            <h1 className="font-extrabold mb-5 leading-[1.08] anim-fade-up"
+              style={{ fontSize: 'clamp(30px,4.2vw,48px)', color: '#0a0a0a', letterSpacing: '-0.03em', animationDelay: '120ms' }}>
+              {lang === 'uz'
+                ? <>Buyurtma berish uchun<br />mahsulotlar ro&apos;yxati</>
+                : <>Список товаров<br />для заказа</>}
+            </h1>
 
-          {/* Description */}
-          <p className="text-center mb-10 leading-relaxed max-w-sm"
-            style={{ fontSize: 16, color: '#7c7c80' }}>
-            {lang === 'uz'
-              ? "Buyurtmani oson va qulay usulda bering — operatorimiz siz bilan tez orada bog'lanadi."
-              : 'Оформите заказ быстро и удобно — наш оператор свяжется с вами в ближайшее время.'}
-          </p>
+            {/* Description */}
+            <p className="mb-9 leading-relaxed max-w-md anim-fade-up"
+              style={{ fontSize: 16, color: '#7c7c80', animationDelay: '200ms' }}>
+              {lang === 'uz'
+                ? "Buyurtmani oson va qulay usulda bering — operatorimiz siz bilan tez orada bog'lanadi."
+                : 'Оформите заказ быстро и удобно — наш оператор свяжется с вами в ближайшее время.'}
+            </p>
 
-          {/* Features */}
-          <div className="w-full flex flex-col gap-3 mb-10">
-            {features.map((f, i) => (
-              <div key={i} className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl"
-                style={{ border: '1px solid rgba(0,0,0,0.06)', background: '#fafafa' }}>
-                <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#E8491D' }}>
-                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                    <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+            {/* Features */}
+            <div className="w-full flex flex-col gap-2.5 mb-9">
+              {features.map(({ Icon, label, bg }, i) => (
+                <div key={i} className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl anim-fade-up"
+                  style={{ border: '1px solid rgba(0,0,0,0.06)', background: '#fafafa', animationDelay: `${260 + i * 80}ms` }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: bg }}>
+                    <Icon size={17} color="#fff" strokeWidth={2.2} />
+                  </div>
+                  <span className="text-[14px] font-medium" style={{ color: '#18181b' }}>{label}</span>
                 </div>
-                <span className="text-[14px] font-medium" style={{ color: '#18181b' }}>{f}</span>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="w-full anim-fade-up" style={{ animationDelay: '500ms' }}>
+              <button
+                onClick={openCatalog}
+                className="group w-full flex items-center justify-center gap-2 py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+                style={{ background: '#E8491D', letterSpacing: '-0.01em', boxShadow: '0 10px 30px -8px rgba(232,73,29,0.55)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#3DB851')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#E8491D')}>
+                {lang === 'uz' ? "100% to'lov uchun mahsulotlar ro'yxati" : 'Список товаров для 100% оплаты'}
+                <ChevronRight size={17} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </button>
+
+              <p className="text-center lg:text-left mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
+                {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
+              </p>
+            </div>
           </div>
 
-          {/* CTA */}
-          <button
-            onClick={openCatalog}
-            className="w-full py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
-            style={{ background: '#E8491D', letterSpacing: '-0.01em' }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#d43d16')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#E8491D')}>
-            {lang === 'uz' ? "100% to'lov uchun mahsulotlar ro'yxati" : 'Список товаров для 100% оплаты'}
-          </button>
+          {/* Right: decorative order-card mockup (desktop only) */}
+          <div className="hidden lg:flex relative justify-center items-center h-full min-h-[420px]">
+            {/* Back card for depth */}
+            <div className="absolute w-[320px] h-[380px] rounded-3xl anim-fade-in"
+              style={{ background: '#FFF3EC', transform: 'rotate(-7deg) translateY(10px)', animationDelay: '300ms' }} />
 
-          <p className="text-center mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
-            {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
-          </p>
+            {/* Main order card */}
+            <div className="relative w-[320px] rounded-3xl bg-white p-6 anim-fade-in"
+              style={{ boxShadow: '0 30px 60px -20px rgba(10,10,10,0.25)', transform: 'rotate(3deg)', animationDelay: '420ms' }}>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#a3a3a8', letterSpacing: '0.1em' }}>
+                    {lang === 'uz' ? 'Buyurtma' : 'Заказ'}
+                  </p>
+                  <p className="text-[15px] font-extrabold" style={{ color: '#0a0a0a' }}>№ 0234</p>
+                </div>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'rgba(61,184,81,0.12)' }}>
+                  <CheckCircle size={19} color="#3DB851" />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3.5 mb-5">
+                {mockItems.map((it, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: it.bg }}>
+                      <Package size={15} color="#E8491D" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12.5px] font-semibold truncate" style={{ color: '#18181b' }}>{it.name}</p>
+                    </div>
+                    <span className="text-[12px] font-bold flex-shrink-0" style={{ color: '#a3a3a8' }}>×{it.qty}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 flex items-center justify-between" style={{ borderTop: '1px dashed rgba(0,0,0,0.1)' }}>
+                <span className="text-[13px] font-semibold" style={{ color: '#7c7c80' }}>{lang === 'uz' ? 'Jami' : 'Итого'}</span>
+                <span className="text-[19px] font-extrabold" style={{ color: '#E8491D' }}>2 380 000 <span className="text-[12px] font-medium" style={{ color: '#a3a3a8' }}>{lang === 'uz' ? "so'm" : 'сум'}</span></span>
+              </div>
+            </div>
+
+            {/* Floating stat pill */}
+            <div className="absolute -bottom-3 -left-3 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white anim-fade-up"
+              style={{ boxShadow: '0 12px 28px -10px rgba(10,10,10,0.2)', animationDelay: '600ms' }}>
+              <span className="text-[17px] font-extrabold" style={{ color: '#3DB851' }}>700+</span>
+              <span className="text-[11px] font-medium leading-tight" style={{ color: '#7c7c80', maxWidth: 64 }}>
+                {lang === 'uz' ? "mahsulot turi" : 'товаров'}
+              </span>
+            </div>
+          </div>
         </main>
       </div>
     );
