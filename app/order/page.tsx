@@ -263,7 +263,7 @@ function Lightbox({ product, onClose }: { product: Product; onClose: () => void 
 // ─── Product Row ──────────────────────────────────────────────────────────────
 
 function ProductRow({
-  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop10, isTop50,
+  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50,
 }: {
   product: Product;
   cartQty: number;
@@ -271,7 +271,6 @@ function ProductRow({
   onQtyChange: (qty: number) => void;
   onImageClick: () => void;
   lang: Lang;
-  isTop10: boolean;
   isTop50: boolean;
 }) {
   const t = T[lang];
@@ -308,10 +307,10 @@ function ProductRow({
       {/* Name + code */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
-          {(isTop10 || isTop50) && (
+          {isTop50 && (
             <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
-              style={{ background: isTop10 ? '#FF6B35' : '#7C3AED' }}>
-              {isTop10 ? 'TOP 10' : 'TOP 50'}
+              style={{ background: '#2563EB' }}>
+              TOP 50
             </span>
           )}
         </div>
@@ -400,7 +399,7 @@ function parseVariant(name: string): { base: string; variant: string | null } {
 // ─── Product Card (Grid View) ─────────────────────────────────────────────────
 
 function ProductCard({
-  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop10, isTop50,
+  product, cartQty, onAdd, onQtyChange, onImageClick, lang, isTop50,
 }: {
   product: Product;
   cartQty: number;
@@ -408,7 +407,6 @@ function ProductCard({
   onQtyChange: (qty: number) => void;
   onImageClick: () => void;
   lang: Lang;
-  isTop10: boolean;
   isTop50: boolean;
 }) {
   const t = T[lang];
@@ -451,10 +449,10 @@ function ProductCard({
             <Package size={32} color="#D1D5DB" />
           </div>
         )}
-        {(isTop10 || isTop50) && (
+        {isTop50 && (
           <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
-            style={{ background: isTop10 ? '#FF6B35' : '#7C3AED', letterSpacing: '0.03em' }}>
-            {isTop10 ? 'TOP 10' : 'TOP 50'}
+            style={{ background: '#2563EB', letterSpacing: '0.03em' }}>
+            TOP 50
           </div>
         )}
         {cartQty > 0 && (
@@ -552,20 +550,16 @@ export default function OrderPage() {
     if (saved) setDisplayMode(saved);
   }, []);
 
-  const [top10, setTop10] = useState<Set<string>>(new Set());
-  const [top50, setTop50] = useState<Set<string>>(new Set());
   const [top50Ranked, setTop50Ranked] = useState<string[]>([]);
   useEffect(() => {
     fetch('/api/order/topsales', { cache: 'no-store' })
       .then(r => r.json())
       .then(d => {
-        setTop10(new Set(d.top10 ?? []));
-        setTop50(new Set(d.top50 ?? []));
-        setTop50Ranked(d.top50Ranked ?? []);
+        setTop50Ranked(d.top50Ranked ?? d.top50 ?? []);
       })
       .catch(() => {});
   }, []);
-  // Rank of each product's family (parent id, yoki o'zi agar variant bo'lmasa) — kichikroq raqam = ko'proq sotilgan
+  // Har bir aniq mahsulot/modifikatsiyaning o'rni — kichikroq raqam = ko'proq sotilgan
   const top50RankMap = useMemo(
     () => new Map(top50Ranked.map((id, i) => [id, i])),
     [top50Ranked]
@@ -698,7 +692,7 @@ export default function OrderPage() {
     const isTop50View = selectedCat === TOP50_CAT_ID;
     const list = products.filter(p => {
       const matchCat = isTop50View
-        ? top50RankMap.has(p.parentProductId || p.id)
+        ? top50RankMap.has(p.id)
         : (!selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId)));
       const q = search.toLowerCase();
       const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
@@ -707,8 +701,8 @@ export default function OrderPage() {
     if (!isTop50View) return list;
     // TOP 50 ko'rinishida — eng ko'p sotilgandan kamayib boruvchi ketma-ket tartib
     return [...list].sort((a, b) => {
-      const ra = top50RankMap.get(a.parentProductId || a.id) ?? Number.MAX_SAFE_INTEGER;
-      const rb = top50RankMap.get(b.parentProductId || b.id) ?? Number.MAX_SAFE_INTEGER;
+      const ra = top50RankMap.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+      const rb = top50RankMap.get(b.id) ?? Number.MAX_SAFE_INTEGER;
       return ra - rb;
     });
   }, [products, selectedCat, selectedCatDescendants, search, top50RankMap]);
@@ -886,9 +880,9 @@ export default function OrderPage() {
                 <button
                   onClick={() => { setSelectedCat(TOP50_CAT_ID); setMobileCatOpen(false); }}
                   className="flex items-center justify-between w-full px-5 py-3.5 text-left"
-                  style={{ borderBottom: '1px solid #F8F8F8', color: selectedCat === TOP50_CAT_ID ? '#7C3AED' : '#374151', fontWeight: selectedCat === TOP50_CAT_ID ? 700 : 500, fontSize: 14 }}>
+                  style={{ borderBottom: '1px solid #F8F8F8', color: selectedCat === TOP50_CAT_ID ? '#2563EB' : '#374151', fontWeight: selectedCat === TOP50_CAT_ID ? 700 : 500, fontSize: 14 }}>
                   <span className="flex items-center gap-1.5"><Trophy size={14} />{t.top50Cat}</span>
-                  {selectedCat === TOP50_CAT_ID && <ChevronRight size={16} color="#7C3AED" />}
+                  {selectedCat === TOP50_CAT_ID && <ChevronRight size={16} color="#2563EB" />}
                 </button>
                 {categories.map(c => {
                   const isParentActive = selectedCat === c.id;
@@ -1014,9 +1008,9 @@ export default function OrderPage() {
               onClick={() => setSelectedCat(TOP50_CAT_ID)}
               className="flex items-center gap-1.5 w-full px-3 py-2.5 text-left text-[13px] rounded-xl transition-all mb-0.5"
               style={{
-                color: selectedCat === TOP50_CAT_ID ? '#7C3AED' : '#555',
+                color: selectedCat === TOP50_CAT_ID ? '#2563EB' : '#555',
                 fontWeight: selectedCat === TOP50_CAT_ID ? 700 : 500,
-                background: selectedCat === TOP50_CAT_ID ? 'rgba(124,58,237,0.08)' : 'transparent',
+                background: selectedCat === TOP50_CAT_ID ? 'rgba(37,99,235,0.08)' : 'transparent',
               }}>
               <Trophy size={13} />
               {t.top50Cat}
@@ -1117,8 +1111,7 @@ export default function OrderPage() {
                     onQtyChange={qty => setQty(p.id, qty)}
                     onImageClick={() => setLightboxProduct(p)}
                     lang={lang}
-                    isTop10={top10.has(p.id) || !!(p.parentProductId && top10.has(p.parentProductId))}
-                    isTop50={top50.has(p.id) || !!(p.parentProductId && top50.has(p.parentProductId))}
+                    isTop50={top50RankMap.has(p.id)}
                   />
                 ))}
               </div>
@@ -1137,8 +1130,7 @@ export default function OrderPage() {
                       onQtyChange={qty => setQty(p.id, qty)}
                       onImageClick={() => setLightboxProduct(p)}
                       lang={lang}
-                      isTop10={top10.has(p.id) || !!(p.parentProductId && top10.has(p.parentProductId))}
-                      isTop50={top50.has(p.id) || !!(p.parentProductId && top50.has(p.parentProductId))}
+                      isTop50={top50RankMap.has(p.id)}
                     />
                   ))}
                 </div>

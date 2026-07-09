@@ -33,7 +33,6 @@ async function qaytaHisobla() {
     await topSotuvlarniSaqlash(prisma, natija)
     return NextResponse.json({
       ok: true,
-      top10Soni: natija.top10.length,
       top50Soni: natija.top50.length,
       hisoblanganVaqt: natija.hisoblanganVaqt,
     })

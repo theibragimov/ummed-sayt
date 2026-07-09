@@ -1,21 +1,25 @@
 import { fetchMS } from './ms-api';
 
 export interface TopSalesResult {
-  top10: string[];
-  top50: string[];
-  /** Eng ko'p sotilgandan kamayib boruvchi tartibda — faqat ota-mahsulot (yoki variantsiz mahsulot) idlari, ketma-ket ro'yxat uchun */
+  /** Eng ko'p sotilgandan kamayib boruvchi tartibda — MoySklad "Прибыльность → По товарам"
+   *  hisobotidagi qatorlar bilan bir xil darajada (har bir aniq mahsulot/modifikatsiya alohida) */
   top50Ranked: string[];
+  /** top50Ranked bilan bir xil, faqat tez qidirish (badge) uchun Set sifatida saqlanadi */
+  top50: string[];
   hisoblanganVaqt: string;
 }
 
 const SOZLAMA_KALITI = 'order_top_sotuvlar';
 
 /**
- * So'nggi `kunlar` kunlik sotuvlar bo'yicha TOP 10 / TOP 50 mahsulotlarni hisoblaydi.
+ * So'nggi `kunlar` kunlik sotuvlar bo'yicha TOP 50 mahsulotlarni hisoblaydi.
  *
- * Muhim: variant (razmer/rang) sotuvlari o'z ota-mahsulotiga qo'shib yig'iladi —
- * aks holda bitta ko'p sotiladigan mahsulot o'nlab variantlarga bo'linib ketib,
- * har biri alohida past o'rinda qolib, umuman TOP ro'yxatga tushmay qolishi mumkin edi.
+ * MoySkladning o'zidagi "Прибыльность → По товарам" hisobotiga mos kelishi uchun,
+ * har bir aniq assortiment qatori (mahsulot yoki uning bitta aniq modifikatsiyasi)
+ * o'zining sotilgan miqdori bo'yicha ALOHIDA hisoblanadi — boshqa modifikatsiyalar
+ * bilan qo'shib yig'ilmaydi. Shu sababli, agar bitta mahsulotning faqat bitta o'lchami
+ * (masalan, 20-80mm) ko'p sotilgan bo'lsa, faqat o'sha aniq o'lcham TOP 50ga tushadi —
+ * sotilmagan boshqa o'lchamlari/rangdagi modifikatsiyalari emas.
  */
 export async function hisoblaTopSotuvlar(kunlar = 30): Promise<TopSalesResult> {
   const now = new Date();
@@ -23,29 +27,9 @@ export async function hisoblaTopSotuvlar(kunlar = 30): Promise<TopSalesResult> {
   from.setDate(from.getDate() - kunlar);
   const fmt = (d: Date) => d.toISOString().replace('T', ' ').slice(0, 19);
 
-  // variantId -> ota mahsulot id (to'liq paginatsiya bilan)
-  const variantToProduct: Record<string, string> = {};
-  {
-    let offset = 0;
-    while (true) {
-      const data = await fetchMS(`/entity/variant?limit=1000&offset=${offset}`);
-      const rows: any[] = data?.rows ?? [];
-      for (const v of rows) {
-        const pid = (v.product?.meta?.href || '').split('/').pop();
-        if (v.id && pid) variantToProduct[v.id] = pid;
-      }
-      if (rows.length < 1000 || offset >= 9000) break;
-      offset += 1000;
-    }
-  }
-  // ota mahsulot id -> variant idlar ro'yxati
-  const productToVariants: Record<string, string[]> = {};
-  for (const [vid, pid] of Object.entries(variantToProduct)) {
-    (productToVariants[pid] ||= []).push(vid);
-  }
-
-  // Sotuvlar hisobotini TO'LIQ (barcha sahifalar) olib, mahsulot bo'yicha yig'ish
-  const qtyByKey: Record<string, number> = {}; // kalit = ota mahsulot id (yoki o'z id, agar variant bo'lmasa)
+  // Sotuvlar hisobotini TO'LIQ (barcha sahifalar) olib, har bir aniq assortiment
+  // (mahsulot yoki modifikatsiya) bo'yicha sotilgan miqdorni yig'ish
+  const qtyById: Record<string, number> = {};
   let offset = 0;
   while (true) {
     const data = await fetchMS(
@@ -58,30 +42,18 @@ export async function hisoblaTopSotuvlar(kunlar = 30): Promise<TopSalesResult> {
       if (!id) continue;
       const qty = row.sellQuantity ?? 0;
       if (qty <= 0) continue;
-      const key = variantToProduct[id] || id;
-      qtyByKey[key] = (qtyByKey[key] || 0) + qty;
+      qtyById[id] = (qtyById[id] || 0) + qty;
     }
     if (rows.length < 1000 || offset >= 9000) break;
     offset += 1000;
   }
 
-  const ranked = Object.entries(qtyByKey)
+  const top50Ranked = Object.entries(qtyById)
     .sort((a, b) => b[1] - a[1])
-    .map(([key]) => key);
+    .slice(0, 50)
+    .map(([id]) => id);
 
-  const top10 = new Set<string>();
-  const top50 = new Set<string>();
-  ranked.slice(0, 50).forEach((key, i) => {
-    const ids = [key, ...(productToVariants[key] || [])];
-    for (const id of ids) {
-      top50.add(id);
-      if (i < 10) top10.add(id);
-    }
-  });
-
-  const top50Ranked = ranked.slice(0, 50);
-
-  return { top10: [...top10], top50: [...top50], top50Ranked, hisoblanganVaqt: new Date().toISOString() };
+  return { top50Ranked, top50: top50Ranked, hisoblanganVaqt: new Date().toISOString() };
 }
 
 export async function topSotuvlarniSaqlash(prisma: any, natija: TopSalesResult) {
@@ -97,7 +69,7 @@ export async function keshlanganTopSotuvlarniOlish(prisma: any): Promise<TopSale
   if (!sozlama?.qiymat) return null;
   try {
     const parsed = JSON.parse(sozlama.qiymat);
-    if (Array.isArray(parsed?.top10) && Array.isArray(parsed?.top50)) return parsed;
+    if (Array.isArray(parsed?.top50) && Array.isArray(parsed?.top50Ranked)) return parsed;
   } catch {}
   return null;
 }
