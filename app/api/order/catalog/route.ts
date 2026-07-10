@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
     const selectedPriceType = priceTypeId
       ? priceTypes.find(p => p.id === priceTypeId)
-      : priceTypes[0] || null;
+      : priceTypes.find(p => p.name.includes('100%')) || priceTypes[0] || null;
 
     // 2. Fetch ALL product folders (to build parent-child hierarchy)
     const folderMap: Record<string, { id: string; name: string; parentId: string | null }> = {};
@@ -132,7 +132,7 @@ export async function GET(req: NextRequest) {
     // variantToProduct: variantId -> parentProductId
     const variantToProduct: Record<string, string> = {};
     let priceMap: Record<string, number> = {};
-    const useCustomPrice = !!(priceTypeId && selectedPriceType);
+    const useCustomPrice = !!selectedPriceType;
 
     // Always fetch variants to get parentProductId mapping
     {
