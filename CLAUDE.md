@@ -1,3 +1,26 @@
+# CLAUDE.md
+
+## Project philosophy
+
+- This is a lightweight B2B ordering web application.
+- It is NOT an ERP.
+- Simplicity is preferred over architectural perfection.
+
+## Rules
+
+- Never redesign the UI.
+- Never refactor working code unless requested.
+- Never install new packages unless explicitly approved.
+- Never replace existing libraries.
+- Make the smallest possible change.
+- Modify only files related to the current task.
+- Preserve existing business logic.
+- Keep the project deployable after every change.
+- Explain the affected files before editing.
+- Finish one task completely before starting another.
+
+---
+
 # Ummed — Tibbiy Jihozlar Savdo Kompaniyasi Sayti
 
 ## Loyiha haqida
