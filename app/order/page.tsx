@@ -840,7 +840,7 @@ export default function OrderPage() {
         <header className="relative z-10 flex items-center gap-3 px-5 sm:px-8 py-4 border-b"
           style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
           <img src="/logo.webp" alt="Ummed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
-          <span className="font-bold text-[15px]" style={{ color: '#0a0a0a' }}>Ummed</span>
+          <span className="text-xl font-medium tracking-tight" style={{ color: '#0a0a0a' }}>Ummed</span>
           <div className="flex-1" />
           <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
             className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
@@ -960,14 +960,6 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Floating stat pill */}
-            <div className="absolute -bottom-3 -left-3 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white anim-fade-up"
-              style={{ boxShadow: '0 12px 28px -10px rgba(10,10,10,0.2)', animationDelay: '600ms' }}>
-              <span className="text-[17px] font-extrabold" style={{ color: '#3DB851' }}>700+</span>
-              <span className="text-[11px] font-medium leading-tight" style={{ color: '#7c7c80', maxWidth: 64 }}>
-                {lang === 'uz' ? "mahsulot turi" : 'товаров'}
-              </span>
-            </div>
           </div>
         </main>
       </div>
