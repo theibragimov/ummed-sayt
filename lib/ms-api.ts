@@ -12,8 +12,12 @@ export async function fetchMS(path: string) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: getHeaders(),
     cache: 'no-store',
+    signal: AbortSignal.timeout(10_000),
   });
-  if (!res.ok) throw new Error(`MoySklad API error: ${res.status} ${path}`);
+  if (!res.ok) {
+    console.error(`MoySklad API error: ${res.status} ${path}`);
+    throw new Error(`MoySklad API error: ${res.status} ${path}`);
+  }
   return res.json();
 }
 

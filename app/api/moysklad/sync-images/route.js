@@ -12,7 +12,12 @@ export async function GET(request) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
   const limit = parseInt(new URL(request.url).searchParams.get('limit') || '80')
-  return rasmlarniYuklash(limit)
+  try {
+    return await rasmlarniYuklash(limit)
+  } catch (e) {
+    console.error('moysklad/sync-images GET xato:', e)
+    return NextResponse.json({ xato: 'Rasm yuklashda xatolik' }, { status: 500 })
+  }
 }
 
 export async function POST(request) {
@@ -22,7 +27,12 @@ export async function POST(request) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
   const limit = parseInt(new URL(request.url).searchParams.get('limit') || '80')
-  return rasmlarniYuklash(limit)
+  try {
+    return await rasmlarniYuklash(limit)
+  } catch (e) {
+    console.error('moysklad/sync-images POST xato:', e)
+    return NextResponse.json({ xato: 'Rasm yuklashda xatolik' }, { status: 500 })
+  }
 }
 
 async function rasmlarniYuklash(limit = 80) {

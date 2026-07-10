@@ -245,6 +245,7 @@ export async function GET(req: NextRequest) {
       headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('order/catalog xato:', e);
+    return NextResponse.json({ error: 'Katalog yuklanmadi. Iltimos, qayta urinib ko\'ring.' }, { status: 500 });
   }
 }

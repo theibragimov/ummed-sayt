@@ -77,8 +77,9 @@ const T = {
     clearCart: "Tozalash",
     priceList: "Narx ro'yxati",
     loading: "Yuklanmoqda...",
-    loadError: "Xatolik yuz berdi",
+    loadError: "Katalog yuklanmadi. Iltimos, qayta urinib ko'ring.",
     retry: "Qayta urinish",
+    submitError: "Buyurtma yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.",
     sum: "so'm",
     add: "Qo'shish",
     categories: "Kategoriyalar",
@@ -132,8 +133,9 @@ const T = {
     clearCart: "Очистить",
     priceList: "Прайс-лист",
     loading: "Загрузка...",
-    loadError: "Произошла ошибка",
+    loadError: "Каталог не загрузился. Пожалуйста, попробуйте ещё раз.",
     retry: "Повторить",
+    submitError: "Ошибка при отправке заказа. Пожалуйста, попробуйте ещё раз.",
     sum: "сум",
     add: "Добавить",
     categories: "Категории",
@@ -846,7 +848,8 @@ export default function OrderPage() {
       try { localStorage.removeItem('order-form'); } catch {}
       setView('success');
     } catch (e: any) {
-      setFormErrors({ submit: e.message });
+      console.error('order submit xato:', e);
+      setFormErrors({ submit: t.submitError });
     } finally {
       setSubmitting(false);
     }
@@ -1388,7 +1391,7 @@ export default function OrderPage() {
 
             {loadError && (
               <div className="flex flex-col items-center py-16 gap-4 px-6">
-                <p className="text-[13px] text-red-500 text-center">{t.loadError}: {loadError}</p>
+                <p className="text-[13px] text-red-500 text-center">{t.loadError}</p>
                 <button onClick={() => loadCatalog(selectedPriceType?.id)}
                   className="px-5 py-2.5 rounded-xl text-[13px] font-bold text-white"
                   style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>

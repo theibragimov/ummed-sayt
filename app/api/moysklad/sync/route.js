@@ -49,11 +49,14 @@ export async function GET(request) {
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ xato: 'Ruxsat yo\'q' }, { status: 401 })
   }
-  // to'liq yoki incremental?
   const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
-  // To'liq syncda rasmlar yuklanmaydi (timeout oldini olish uchun)
   const rasmYuklama = tolik ? false : true
-  return syncQil({ tolik, rasmYuklama })
+  try {
+    return await syncQil({ tolik, rasmYuklama })
+  } catch (e) {
+    console.error('moysklad/sync GET xato:', e)
+    return NextResponse.json({ xato: 'Sync xatolik bilan tugadi' }, { status: 500 })
+  }
 }
 
 export async function POST(request) {
@@ -64,7 +67,12 @@ export async function POST(request) {
   }
   const tolik = new URL(request.url).searchParams.get('toliq') === 'true'
   const rasmYuklama = tolik ? false : true
-  return syncQil({ tolik, rasmYuklama })
+  try {
+    return await syncQil({ tolik, rasmYuklama })
+  } catch (e) {
+    console.error('moysklad/sync POST xato:', e)
+    return NextResponse.json({ xato: 'Sync xatolik bilan tugadi' }, { status: 500 })
+  }
 }
 
 async function syncQil({ tolik = false, rasmYuklama = true } = {}) {

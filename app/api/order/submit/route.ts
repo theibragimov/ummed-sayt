@@ -14,8 +14,12 @@ async function msGet(path: string) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: getHeaders(),
     cache: 'no-store',
+    signal: AbortSignal.timeout(15_000),
   });
-  if (!res.ok) throw new Error(`MoySklad GET error: ${res.status} ${path}`);
+  if (!res.ok) {
+    console.error(`MoySklad GET error: ${res.status} ${path}`);
+    throw new Error(`MoySklad GET error: ${res.status} ${path}`);
+  }
   return res.json();
 }
 
@@ -24,10 +28,12 @@ async function msPost(path: string, body: object) {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`MoySklad POST error: ${res.status} — ${text.substring(0, 200)}`);
+    console.error(`MoySklad POST error: ${res.status} ${path} — ${text.substring(0, 200)}`);
+    throw new Error(`MoySklad POST error: ${res.status} ${path}`);
   }
   return res.json();
 }
@@ -95,6 +101,7 @@ export async function POST(req: NextRequest) {
       orderName: result.name,
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('order/submit xato:', e);
+    return NextResponse.json({ error: 'Buyurtma yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.' }, { status: 500 });
   }
 }
