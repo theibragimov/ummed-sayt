@@ -163,6 +163,14 @@ const T = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+function track(event: string, props?: Record<string, unknown>) {
+  try {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', event, props);
+    }
+  } catch {}
+}
+
 function fmtPrice(val: number): string {
   const v = Math.round(val / 100);
   return v.toLocaleString('ru-RU');
@@ -721,7 +729,10 @@ export default function OrderPage() {
     } catch (e: any) {
       // Fon rejimida (keshdan ko'rsatilgandan keyingi yangilanish) xatoni jim yutamiz —
       // foydalanuvchi allaqachon eski (lekin ishlaydigan) ma'lumotni ko'rib turibdi.
-      if (!opts.background) setLoadError(e.message);
+      if (!opts.background) {
+        setLoadError(e.message);
+        track('catalog_load_failed', { lang });
+      }
     } finally {
       if (!opts.background) setLoading(false);
     }
@@ -731,6 +742,7 @@ export default function OrderPage() {
   // Kesh bo'lmasa (birinchi tashrif) — oddiy yuklash spinneri bilan.
   const openCatalog = useCallback(() => {
     setView('catalog');
+    track('catalog_opened', { lang });
     const cached = readCatalogCache('');
     if (cached) {
       setProducts(cached.products);
@@ -842,12 +854,14 @@ export default function OrderPage() {
       });
       const json = await res.json();
       if (!res.ok || json.error) throw new Error(json.error || 'Submit failed');
+      track('order_submitted', { item_count: cartItems.length, lang });
       setSuccessOrderName(json.orderName || '');
       setCart({});
       setFormName(''); setFormCompany(''); setFormPhone('');
       try { localStorage.removeItem('order-form'); } catch {}
       setView('success');
     } catch (e: any) {
+      track('order_submit_failed', { item_count: cartItems.length, lang });
       console.error('order submit xato:', e);
       setFormErrors({ submit: t.submitError });
     } finally {
@@ -1602,7 +1616,7 @@ export default function OrderPage() {
                 </p>
               </div>
 
-              <button onClick={() => { if (cartTotal < FREE_DELIVERY_THRESHOLD) setShowDeliveryConfirm(true); else setView('checkout'); }}
+              <button onClick={() => { if (cartTotal < FREE_DELIVERY_THRESHOLD) setShowDeliveryConfirm(true); else { track('checkout_started', { item_count: cartCount, lang }); setView('checkout'); } }}
                 className="w-full py-4 rounded-2xl text-[15px] font-bold text-white"
                 style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }}>
                 {t.orderBtn}
@@ -1634,7 +1648,7 @@ export default function OrderPage() {
                   style={{ background: '#2563EB' }}>
                   {t.addMoreBtn}
                 </button>
-                <button onClick={() => { setShowDeliveryConfirm(false); setView('checkout'); }}
+                <button onClick={() => { setShowDeliveryConfirm(false); track('checkout_started', { item_count: cartCount, lang }); setView('checkout'); }}
                   className="w-full py-3.5 rounded-xl text-[14px] font-bold transition-transform active:scale-[0.98]"
                   style={{ background: '#F5F5F5', color: '#374151' }}>
                   {t.continueAnywayBtn}
