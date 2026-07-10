@@ -426,7 +426,14 @@ function ProductRow({
               style={{ background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
               {cartQty === 1 ? <Trash2 size={11} color="#FF6B35" /> : <Minus size={11} color="#FF6B35" />}
             </button>
-            <span className="w-5 text-center text-[13px] font-bold text-gray-900">{cartQty}</span>
+            <input
+              type="number"
+              min={1}
+              value={cartQty}
+              onChange={e => { const v = parseInt(e.target.value); if (v > 0) onQtyChange(v); }}
+              className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
+              style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
+            />
             <button
               onClick={() => onQtyChange(cartQty + 1)}
               className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -1597,7 +1604,14 @@ export default function OrderPage() {
                         style={{ background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
                         {quantity === 1 ? <Trash2 size={11} color="#FF6B35" /> : <Minus size={11} color="#FF6B35" />}
                       </button>
-                      <span className="w-5 text-center text-[13px] font-bold text-gray-900">{quantity}</span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={quantity}
+                        onChange={e => { const v = parseInt(e.target.value); if (v > 0) setQty(p.id, v); }}
+                        className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
+                        style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
+                      />
                       <button onClick={() => setQty(p.id, quantity + 1)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center"
                         style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
