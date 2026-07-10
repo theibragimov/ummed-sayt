@@ -42,6 +42,7 @@ interface CartItem {
 
 type View = 'landing' | 'catalog' | 'cart' | 'checkout' | 'success';
 type Lang = 'uz' | 'ru';
+type OnboardingStep = 'category' | 'display' | 'language';
 
 // ─── Translations ─────────────────────────────────────────────────────────────
 
@@ -92,8 +93,13 @@ const T = {
     addMoreBtn: "Mahsulot qo'shish",
     continueAnywayBtn: "Baribir davom etish",
     newArrivalBadge: "Yangilik",
-    onboardingCategoryHint: "Mahsulotlarni kategoriya bo'yicha ko'rish uchun shu yerni bosing",
-    onboardingLangHint: "Tilni shu yerdan bemalol almashtirishingiz mumkin",
+    onboardingCategoryTitle: "Kategoriya tanlang",
+    onboardingCategoryHint: "Kerakli mahsulotlarni tez topish uchun shu tugma orqali kategoriyalar ro'yxatini oching.",
+    onboardingViewTitle: "Ko'rinishni almashtiring",
+    onboardingViewHint: "Mahsulotlarni rasmli grid yoki ixcham ro'yxat ko'rinishida ko'rishingiz mumkin.",
+    onboardingLangTitle: "Tilni almashtiring",
+    onboardingLangHint: "Buyurtma sahifasini o'zbek yoki rus tilida ishlatish uchun shu tugmani bosing.",
+    onboardingNext: "Keyingisi",
     onboardingGotIt: "Tushunarli",
   },
   ru: {
@@ -142,8 +148,13 @@ const T = {
     addMoreBtn: "Добавить товары",
     continueAnywayBtn: "Продолжить в любом случае",
     newArrivalBadge: "Новинка",
-    onboardingCategoryHint: "Нажмите здесь, чтобы выбрать товары по категориям",
-    onboardingLangHint: "Здесь вы можете легко изменить язык",
+    onboardingCategoryTitle: "Выберите категорию",
+    onboardingCategoryHint: "Откройте список категорий, чтобы быстрее найти нужные товары.",
+    onboardingViewTitle: "Смените вид",
+    onboardingViewHint: "Товары можно смотреть плиткой с фото или компактным списком.",
+    onboardingLangTitle: "Смените язык",
+    onboardingLangHint: "Нажмите эту кнопку, чтобы переключить страницу заказа на узбекский или русский язык.",
+    onboardingNext: "Далее",
     onboardingGotIt: "Понятно",
   },
 };
@@ -594,20 +605,36 @@ export default function OrderPage() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_PRODUCT_LIMIT);
   const [displayMode, setDisplayMode] = useState<'list' | 'grid'>('grid');
   useEffect(() => {
-    const saved = localStorage.getItem('order-display-mode') as 'list' | 'grid' | null;
-    if (saved) setDisplayMode(saved);
+    const timer = window.setTimeout(() => {
+      const saved = localStorage.getItem('order-display-mode') as 'list' | 'grid' | null;
+      if (saved) setDisplayMode(saved);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
-  // Birinchi marta kirganlar uchun podskazka (kategoriya va til tugmalari haqida)
+  // Birinchi marta kirganlar uchun podskazka (kategoriya, ko'rinish va til tugmalari haqida)
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('category');
   useEffect(() => {
-    try {
-      if (!localStorage.getItem('order-onboarding-seen-v1')) setShowOnboarding(true);
-    } catch {}
+    const timer = window.setTimeout(() => {
+      try {
+        if (!localStorage.getItem('order-onboarding-seen-v2')) setShowOnboarding(true);
+      } catch {}
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
+  const onboardingSteps: OnboardingStep[] = ['category', 'display', 'language'];
+  function nextOnboardingStep() {
+    const currentIndex = onboardingSteps.indexOf(onboardingStep);
+    if (currentIndex >= onboardingSteps.length - 1) {
+      dismissOnboarding();
+      return;
+    }
+    setOnboardingStep(onboardingSteps[currentIndex + 1]);
+  }
   function dismissOnboarding() {
     setShowOnboarding(false);
-    try { localStorage.setItem('order-onboarding-seen-v1', '1'); } catch {}
+    try { localStorage.setItem('order-onboarding-seen-v2', '1'); } catch {}
   }
 
   // Sotilgan miqdori bo'yicha TO'LIQ tartiblangan ro'yxat (50 tadan ancha katta bo'lishi mumkin) —
@@ -646,12 +673,15 @@ export default function OrderPage() {
 
   // Restore form from localStorage
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('order-form') || '{}');
-      if (saved.name) setFormName(saved.name);
-      if (saved.company) setFormCompany(saved.company);
-      if (saved.phone) setFormPhone(saved.phone);
-    } catch {}
+    const timer = window.setTimeout(() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('order-form') || '{}');
+        if (saved.name) setFormName(saved.name);
+        if (saved.company) setFormCompany(saved.company);
+        if (saved.phone) setFormPhone(saved.phone);
+      } catch {}
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Save form to localStorage on change
@@ -714,8 +744,11 @@ export default function OrderPage() {
   }, [loadCatalog]);
 
   useEffect(() => {
-    setCart(parseStoredCart());
-    setCartHydrated(true);
+    const timer = window.setTimeout(() => {
+      setCart(parseStoredCart());
+      setCartHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -726,7 +759,10 @@ export default function OrderPage() {
   // loadCatalog is called when user taps CTA on landing screen (not on mount)
   useEffect(() => { window.scrollTo({ top: 0 }); }, [view]);
   useEffect(() => {
-    setVisibleCount(INITIAL_PRODUCT_LIMIT);
+    const timer = window.setTimeout(() => {
+      setVisibleCount(INITIAL_PRODUCT_LIMIT);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [selectedCat, search, selectedPriceType?.id]);
 
   const cartItems = Object.values(cart);
@@ -990,11 +1026,64 @@ export default function OrderPage() {
 
   if (view === 'catalog') {
     const displayCatName = selectedCatName || t.allCategories;
+    const onboardingCopy: Record<OnboardingStep, { title: string; body: string; align: 'left' | 'center' | 'right' }> = {
+      category: { title: t.onboardingCategoryTitle, body: t.onboardingCategoryHint, align: 'left' },
+      display: { title: t.onboardingViewTitle, body: t.onboardingViewHint, align: 'right' },
+      language: { title: t.onboardingLangTitle, body: t.onboardingLangHint, align: 'right' },
+    };
+    const activeOnboarding = showOnboarding && !mobileCatOpen;
+    const activeOnboardingIndex = onboardingSteps.indexOf(onboardingStep) + 1;
+    const renderOnboardingBubble = (step: OnboardingStep) => {
+      if (!activeOnboarding || onboardingStep !== step) return null;
+      const copy = onboardingCopy[step];
+      const isLast = activeOnboardingIndex === onboardingSteps.length;
+      const alignClass = copy.align === 'right'
+        ? 'right-0'
+        : copy.align === 'center'
+          ? 'left-1/2 -translate-x-1/2'
+          : 'left-0';
+      const arrowClass = copy.align === 'right'
+        ? 'right-5'
+        : copy.align === 'center'
+          ? 'left-1/2 -translate-x-1/2'
+          : 'left-5';
+
+      return (
+        <div className={`absolute top-full mt-3 z-[80] w-[min(78vw,280px)] rounded-2xl p-3.5 text-white anim-fade-in ${alignClass}`}
+          style={{ background: '#18181b', boxShadow: '0 18px 45px -14px rgba(0,0,0,0.65)' }}>
+          <div className={`absolute -top-1.5 h-3 w-3 rotate-45 ${arrowClass}`} style={{ background: '#18181b' }} />
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <div>
+              <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#FFB199' }}>
+                {activeOnboardingIndex}/{onboardingSteps.length}
+              </div>
+              <h3 className="text-[14px] font-extrabold leading-tight">{copy.title}</h3>
+            </div>
+            <button onClick={dismissOnboarding} className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white/10" aria-label={t.close}>
+              <X size={15} />
+            </button>
+          </div>
+          <p className="mb-3 text-[12px] leading-relaxed text-white/82">{copy.body}</p>
+          <button
+            onClick={nextOnboardingStep}
+            className="w-full rounded-xl py-2 text-[12px] font-extrabold transition-transform active:scale-[0.98]"
+            style={{ background: '#FF6B35', color: '#fff' }}>
+            {isLast ? t.onboardingGotIt : t.onboardingNext}
+          </button>
+        </div>
+      );
+    };
 
     return (
       <div className="min-h-screen" style={{ background: '#FAFAFA' }}>
         {lightboxProduct && (
           <Lightbox product={lightboxProduct} onClose={() => setLightboxProduct(null)} />
+        )}
+        {activeOnboarding && (
+          <div
+            className="fixed inset-0 z-[45] bg-black/30 backdrop-blur-[2px]"
+            onClick={dismissOnboarding}
+          />
         )}
 
         {/* Mobile category drawer */}
@@ -1059,8 +1148,8 @@ export default function OrderPage() {
         )}
 
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-white"
-          style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+        <header className="sticky top-0 bg-white"
+          style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', zIndex: activeOnboarding ? 60 : 40 }}>
           <div className="flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 h-14 max-w-5xl mx-auto">
             <img src="/logo.webp" alt="Logo" className="flex-shrink-0" style={{ width: 32, height: 32, objectFit: 'contain' }} />
             <span className="hidden sm:inline font-bold text-gray-900 text-[15px] whitespace-nowrap flex-shrink-0">{t.storeName}</span>
@@ -1070,31 +1159,21 @@ export default function OrderPage() {
             </span>
 
             {/* Mobile: category button */}
-            <div className="relative lg:hidden">
+            <div className={`relative lg:hidden ${activeOnboarding && onboardingStep === 'category' ? 'z-[70]' : ''}`}>
               <button
-                onClick={() => { setMobileCatOpen(true); dismissOnboarding(); }}
+                onClick={() => { setMobileCatOpen(true); if (activeOnboarding) nextOnboardingStep(); }}
                 className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold ml-0.5 min-w-0"
                 style={{
                   background: '#F5F5F5',
                   color: !selectedCat ? '#666' : (selectedCat === TOP50_CAT_ID ? '#2563EB' : '#FF6B35'),
                   border: !selectedCat ? '1px solid #E0E0E0' : `1px solid ${selectedCat === TOP50_CAT_ID ? 'rgba(37,99,235,0.3)' : 'rgba(255,107,53,0.3)'}`,
+                  boxShadow: activeOnboarding && onboardingStep === 'category' ? '0 0 0 4px rgba(255,255,255,0.9), 0 16px 38px rgba(0,0,0,0.24)' : undefined,
                 }}>
                 <Menu size={12} className="flex-shrink-0" />
                 <span className="max-w-[64px] truncate">{displayCatName}</span>
                 <ChevronDown size={12} className="flex-shrink-0" />
               </button>
-              {showOnboarding && (
-                <div className="absolute top-full left-0 mt-2 z-50 w-56 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
-                  style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
-                  <div className="absolute -top-1.5 left-6 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
-                  <div className="flex items-start justify-between gap-2">
-                    <p>{t.onboardingCategoryHint}</p>
-                    <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
-                      <X size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
+              {renderOnboardingBubble('category')}
             </div>
 
             <div className="flex-1" />
@@ -1108,37 +1187,42 @@ export default function OrderPage() {
               </button>
             )}
             {/* View toggle */}
-            <button
-              onClick={() => setDisplayMode(m => { const next = m === 'list' ? 'grid' : 'list'; localStorage.setItem('order-display-mode', next); return next; })}
-              className="w-8 h-8 rounded-xl flex items-center justify-center border ml-1 flex-shrink-0"
-              style={{ borderColor: '#E5E5E5', background: displayMode === 'grid' ? '#FFF0EB' : '#fff', color: displayMode === 'grid' ? '#FF6B35' : '#666' }}
-              title={displayMode === 'list' ? 'Galereya ko\'rinish' : 'Ro\'yat ko\'rinish'}>
-              {displayMode === 'list' ? <LayoutGrid size={15} /> : <LayoutList size={15} />}
-            </button>
+            <div className={`relative flex-shrink-0 ${activeOnboarding && onboardingStep === 'display' ? 'z-[70]' : ''}`}>
+              <button
+                onClick={() => {
+                  setDisplayMode(m => {
+                    const next = m === 'list' ? 'grid' : 'list';
+                    localStorage.setItem('order-display-mode', next);
+                    return next;
+                  });
+                  if (activeOnboarding) nextOnboardingStep();
+                }}
+                className="w-8 h-8 rounded-xl flex items-center justify-center border ml-1 flex-shrink-0"
+                style={{
+                  borderColor: '#E5E5E5',
+                  background: displayMode === 'grid' ? '#FFF0EB' : '#fff',
+                  color: displayMode === 'grid' ? '#FF6B35' : '#666',
+                  boxShadow: activeOnboarding && onboardingStep === 'display' ? '0 0 0 4px rgba(255,255,255,0.9), 0 16px 38px rgba(0,0,0,0.24)' : undefined,
+                }}
+                title={displayMode === 'list' ? 'Galereya ko\'rinish' : 'Ro\'yat ko\'rinish'}
+                aria-label={displayMode === 'list' ? 'Galereya ko\'rinish' : 'Ro\'yat ko\'rinish'}>
+                {displayMode === 'list' ? <LayoutGrid size={15} /> : <LayoutList size={15} />}
+              </button>
+              {renderOnboardingBubble('display')}
+            </div>
 
-            <div className="relative flex-shrink-0">
-              <button onClick={() => { setLang(l => l === 'uz' ? 'ru' : 'uz'); dismissOnboarding(); }}
+            <div className={`relative flex-shrink-0 ${activeOnboarding && onboardingStep === 'language' ? 'z-[70]' : ''}`}>
+              <button onClick={() => { setLang(l => l === 'uz' ? 'ru' : 'uz'); if (activeOnboarding) nextOnboardingStep(); }}
                 className="px-2 sm:px-2.5 py-1.5 rounded-xl text-[11px] font-bold border ml-1"
-                style={{ borderColor: '#E5E5E5', color: '#666' }}>
+                style={{
+                  borderColor: '#E5E5E5',
+                  color: '#666',
+                  background: '#fff',
+                  boxShadow: activeOnboarding && onboardingStep === 'language' ? '0 0 0 4px rgba(255,255,255,0.9), 0 16px 38px rgba(0,0,0,0.24)' : undefined,
+                }}>
                 {lang === 'uz' ? 'RU' : 'UZ'}
               </button>
-              {showOnboarding && (
-                <div className="absolute top-full right-0 mt-2 max-lg:mt-[108px] z-50 w-52 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
-                  style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
-                  <div className="absolute -top-1.5 right-6 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <p>{t.onboardingLangHint}</p>
-                    <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
-                      <X size={14} />
-                    </button>
-                  </div>
-                  <button onClick={dismissOnboarding}
-                    className="w-full py-1.5 rounded-lg text-[11px] font-bold"
-                    style={{ background: '#FF6B35' }}>
-                    {t.onboardingGotIt}
-                  </button>
-                </div>
-              )}
+              {renderOnboardingBubble('language')}
             </div>
           </div>
 
@@ -1176,18 +1260,30 @@ export default function OrderPage() {
         {/* Body: sidebar + product list */}
         <div className="max-w-5xl mx-auto flex">
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block w-56 flex-shrink-0 sticky top-[106px] self-start relative"
+          <aside className={`hidden lg:block w-56 flex-shrink-0 sticky top-[106px] self-start relative ${activeOnboarding && onboardingStep === 'category' ? 'z-[70]' : ''}`}
             style={{ height: 'calc(100vh - 106px)', overflowY: 'auto', padding: '8px 0 8px 8px' }}>
-            {showOnboarding && (
-              <div className="absolute left-[calc(100%+12px)] top-0 z-50 w-56 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
-                style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
-                <div className="absolute top-3 -left-1.5 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
-                <div className="flex items-start justify-between gap-2">
-                  <p>{t.onboardingCategoryHint}</p>
-                  <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
-                    <X size={14} />
+            {activeOnboarding && onboardingStep === 'category' && (
+              <div className="absolute left-[calc(100%+12px)] top-2 z-[80] w-64 rounded-2xl p-3.5 text-white anim-fade-in"
+                style={{ background: '#18181b', boxShadow: '0 18px 45px -14px rgba(0,0,0,0.65)' }}>
+                <div className="absolute top-4 -left-1.5 h-3 w-3 rotate-45" style={{ background: '#18181b' }} />
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <div>
+                    <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#FFB199' }}>
+                      {activeOnboardingIndex}/{onboardingSteps.length}
+                    </div>
+                    <h3 className="text-[14px] font-extrabold leading-tight">{t.onboardingCategoryTitle}</h3>
+                  </div>
+                  <button onClick={dismissOnboarding} className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white/10" aria-label={t.close}>
+                    <X size={15} />
                   </button>
                 </div>
+                <p className="mb-3 text-[12px] leading-relaxed text-white/82">{t.onboardingCategoryHint}</p>
+                <button
+                  onClick={nextOnboardingStep}
+                  className="w-full rounded-xl py-2 text-[12px] font-extrabold transition-transform active:scale-[0.98]"
+                  style={{ background: '#FF6B35', color: '#fff' }}>
+                  {t.onboardingNext}
+                </button>
               </div>
             )}
             {/* All products */}
@@ -1198,6 +1294,7 @@ export default function OrderPage() {
                 color: !selectedCat ? '#FF6B35' : '#555',
                 fontWeight: !selectedCat ? 700 : 500,
                 background: !selectedCat ? 'rgba(255,107,53,0.08)' : 'transparent',
+                boxShadow: activeOnboarding && onboardingStep === 'category' ? '0 0 0 4px rgba(255,255,255,0.9), 0 16px 38px rgba(0,0,0,0.18)' : undefined,
               }}>
               {t.allCategories}
             </button>
