@@ -1826,34 +1826,6 @@ export default function OrderPage() {
         <div className="mb-8">
           {ratingSubmitted ? (
             <p className="text-[14px] text-green-600 font-medium">{t.ratingThanks}</p>
-          ) : rating > 0 && rating < 5 ? (
-            /* Comment form for 1–4 stars */
-            <div className="text-left">
-              <p className="text-[13px] font-semibold text-gray-700 mb-2">{t.ratingCommentTitle}</p>
-              <textarea
-                value={ratingComment}
-                onChange={e => setRatingComment(e.target.value)}
-                placeholder={t.ratingCommentPlaceholder as string}
-                rows={3}
-                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-[13px] text-gray-800 resize-none outline-none focus:border-orange-400 transition-colors"
-              />
-              <button
-                onClick={async () => {
-                  setRatingSubmitted(true);
-                  try {
-                    await fetch('/api/order/rating', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ rating, comment: ratingComment, orderName: successOrderName }),
-                    });
-                  } catch {}
-                }}
-                className="mt-2 w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-opacity active:opacity-80"
-                style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}
-              >
-                {t.ratingCommentSend}
-              </button>
-            </div>
           ) : (
             <>
               <p className="text-[13px] text-gray-500 mb-3">{t.ratingTitle}</p>
@@ -1861,19 +1833,7 @@ export default function OrderPage() {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
-                    onClick={async () => {
-                      setRating(star);
-                      if (star === 5) {
-                        setRatingSubmitted(true);
-                        try {
-                          await fetch('/api/order/rating', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ rating: star, orderName: successOrderName }),
-                          });
-                        } catch {}
-                      }
-                    }}
+                    onClick={() => setRating(star)}
                     onMouseEnter={() => setRatingHover(star)}
                     onMouseLeave={() => setRatingHover(0)}
                     className="text-[32px] leading-none transition-transform hover:scale-110"
@@ -1883,10 +1843,37 @@ export default function OrderPage() {
                   </button>
                 ))}
               </div>
-              {(ratingHover || rating) > 0 && (
-                <p className="text-[12px] text-gray-400 mt-2">
-                  {(t.ratingLabels as string[])[(ratingHover || rating) - 1]}
+              {rating > 0 && (
+                <p className="text-[12px] text-gray-400 mt-2 mb-3">
+                  {(t.ratingLabels as string[])[rating - 1]}
                 </p>
+              )}
+              {rating > 0 && rating < 5 && (
+                <textarea
+                  value={ratingComment}
+                  onChange={e => setRatingComment(e.target.value)}
+                  placeholder={t.ratingCommentPlaceholder as string}
+                  rows={3}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-[13px] text-gray-800 resize-none outline-none focus:border-orange-400 transition-colors mb-2 text-left"
+                />
+              )}
+              {rating > 0 && (
+                <button
+                  onClick={async () => {
+                    setRatingSubmitted(true);
+                    try {
+                      await fetch('/api/order/rating', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ rating, comment: ratingComment, orderName: successOrderName }),
+                      });
+                    } catch {}
+                  }}
+                  className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-opacity active:opacity-80"
+                  style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}
+                >
+                  {t.ratingCommentSend}
+                </button>
               )}
             </>
           )}
