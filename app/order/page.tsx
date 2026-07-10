@@ -102,6 +102,12 @@ const T = {
     onboardingLangHint: "Buyurtma sahifasini o'zbek yoki rus tilida ishlatish uchun shu tugmani bosing.",
     onboardingNext: "Keyingisi",
     onboardingGotIt: "Tushunarli",
+    ratingTitle: "Buyurtma jarayonini baholang",
+    ratingThanks: "Bahoingiz uchun rahmat!",
+    ratingLabels: ["Juda yomon", "Yomon", "O'rtacha", "Yaxshi", "A'lo"],
+    ratingCommentTitle: "Nima yaxshilansa bo'ladi?",
+    ratingCommentPlaceholder: "Izohingizni yozing...",
+    ratingCommentSend: "Yuborish",
   },
   ru: {
     storeName: "Онлайн Заказ",
@@ -158,6 +164,12 @@ const T = {
     onboardingLangHint: "Нажмите эту кнопку, чтобы переключить страницу заказа на узбекский или русский язык.",
     onboardingNext: "Далее",
     onboardingGotIt: "Понятно",
+    ratingTitle: "Оцените процесс оформления заказа",
+    ratingThanks: "Спасибо за вашу оценку!",
+    ratingLabels: ["Очень плохо", "Плохо", "Нормально", "Хорошо", "Отлично"],
+    ratingCommentTitle: "Что можно улучшить?",
+    ratingCommentPlaceholder: "Напишите ваш комментарий...",
+    ratingCommentSend: "Отправить",
   },
 };
 
@@ -609,6 +621,11 @@ export default function OrderPage() {
   const [cartHydrated, setCartHydrated] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [successOrderName, setSuccessOrderName] = useState('');
+  const [rating, setRating] = useState(0);
+  const [ratingHover, setRatingHover] = useState(0);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [ratingComment, setRatingComment] = useState('');
+  const [ratingCommentSent, setRatingCommentSent] = useState(false);
   const [showDeliveryConfirm, setShowDeliveryConfirm] = useState(false);
   const [lightboxProduct, setLightboxProduct] = useState<Product | null>(null);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
@@ -1639,9 +1656,12 @@ export default function OrderPage() {
               <h3 className="text-[17px] font-extrabold mb-2" style={{ color: '#0a0a0a' }}>
                 {t.freeDeliveryConfirmTitle}
               </h3>
-              <p className="text-[13.5px] leading-relaxed mb-6" style={{ color: '#7c7c80' }}>
-                {t.freeDeliveryConfirmMsg}
-              </p>
+              <div className="w-full rounded-2xl px-4 py-3 mb-6 text-left"
+                style={{ background: 'rgba(37,99,235,0.07)', border: '1px solid rgba(37,99,235,0.18)' }}>
+                <p className="text-[13.5px] font-semibold leading-relaxed" style={{ color: '#1D4ED8' }}>
+                  {t.freeDeliveryConfirmMsg}
+                </p>
+              </div>
               <div className="flex flex-col gap-2.5 w-full">
                 <button onClick={() => { setShowDeliveryConfirm(false); setView('catalog'); }}
                   className="w-full py-3.5 rounded-xl text-[14px] font-bold text-white transition-transform active:scale-[0.98]"
@@ -1790,7 +1810,77 @@ export default function OrderPage() {
             <span className="text-[13px] font-bold text-orange-500">{successOrderName}</span>
           </div>
         )}
-        <button onClick={() => setView('catalog')}
+        {/* Rating */}
+        <div className="mb-8">
+          {ratingSubmitted ? (
+            <p className="text-[14px] text-green-600 font-medium">{t.ratingThanks}</p>
+          ) : rating > 0 && rating < 5 ? (
+            /* Comment form for 1–4 stars */
+            <div className="text-left">
+              <p className="text-[13px] font-semibold text-gray-700 mb-2">{t.ratingCommentTitle}</p>
+              <textarea
+                value={ratingComment}
+                onChange={e => setRatingComment(e.target.value)}
+                placeholder={t.ratingCommentPlaceholder as string}
+                rows={3}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-[13px] text-gray-800 resize-none outline-none focus:border-orange-400 transition-colors"
+              />
+              <button
+                onClick={async () => {
+                  setRatingSubmitted(true);
+                  try {
+                    await fetch('/api/order/rating', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ rating, comment: ratingComment, orderName: successOrderName }),
+                    });
+                  } catch {}
+                }}
+                className="mt-2 w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-opacity active:opacity-80"
+                style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}
+              >
+                {t.ratingCommentSend}
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="text-[13px] text-gray-500 mb-3">{t.ratingTitle}</p>
+              <div className="flex items-center justify-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={async () => {
+                      setRating(star);
+                      if (star === 5) {
+                        setRatingSubmitted(true);
+                        try {
+                          await fetch('/api/order/rating', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ rating: star, orderName: successOrderName }),
+                          });
+                        } catch {}
+                      }
+                    }}
+                    onMouseEnter={() => setRatingHover(star)}
+                    onMouseLeave={() => setRatingHover(0)}
+                    className="text-[32px] leading-none transition-transform hover:scale-110"
+                    aria-label={(t.ratingLabels as string[])[star - 1]}
+                  >
+                    <span style={{ color: star <= (ratingHover || rating) ? '#F59E0B' : '#D1D5DB' }}>★</span>
+                  </button>
+                ))}
+              </div>
+              {(ratingHover || rating) > 0 && (
+                <p className="text-[12px] text-gray-400 mt-2">
+                  {(t.ratingLabels as string[])[(ratingHover || rating) - 1]}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
+        <button onClick={() => { setRating(0); setRatingHover(0); setRatingSubmitted(false); setRatingComment(''); setRatingCommentSent(false); setView('catalog'); }}
           className="w-full py-4 rounded-2xl text-[15px] font-bold text-white"
           style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }}>
           {t.newOrder}

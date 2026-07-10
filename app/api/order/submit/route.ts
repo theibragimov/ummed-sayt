@@ -39,6 +39,12 @@ async function msPost(path: string, body: object) {
 }
 
 export async function POST(req: NextRequest) {
+  const startedAt = Date.now();
+  const timestamp = () => new Date().toISOString();
+  const requestId = crypto.randomUUID().split('-')[0];
+
+  console.log(`[ORDER_STARTED]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nRequest received`);
+
   try {
     const body = await req.json();
     const { customer, items } = body;
@@ -46,6 +52,8 @@ export async function POST(req: NextRequest) {
     // items: [{ productId, name, quantity, price }]
 
     if (!customer?.name || !customer?.phone || !items?.length) {
+      const duration = Date.now() - startedAt;
+      console.log(`[ORDER_FAILED]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms\nReason: Missing required fields`);
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -95,12 +103,23 @@ export async function POST(req: NextRequest) {
 
     const result = await msPost('/entity/customerorder', orderPayload);
 
+    const duration = Date.now() - startedAt;
+    console.log(`[ORDER_SUCCESS]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms`);
+
     return NextResponse.json({
       success: true,
       orderId: result.id,
       orderName: result.name,
     });
   } catch (e: any) {
+    const duration = Date.now() - startedAt;
+    const httpMatch = e?.message?.match(/MoySklad (?:GET|POST) error: (\d{3}) /);
+    const reason = httpMatch
+      ? `HTTP ${httpMatch[1]}`
+      : e?.name === 'TimeoutError' || e?.name === 'AbortError'
+        ? 'Timeout'
+        : e?.message ?? 'Unknown error';
+    console.log(`[ORDER_FAILED]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms\nReason: ${reason}`);
     console.error('order/submit xato:', e);
     return NextResponse.json({ error: 'Buyurtma yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.' }, { status: 500 });
   }
