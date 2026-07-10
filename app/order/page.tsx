@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
-  Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent,
+  Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent, MapPin,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -64,6 +64,7 @@ const T = {
     namePlaceholder: "Ism Familya *",
     companyPlaceholder: "Firma nomi (ixtiyoriy)",
     phonePlaceholder: "+998 XX XXX XX XX *",
+    addressPlaceholder: "Yetkazib berish manzili (ixtiyoriy)",
     submitBtn: "Tasdiqlash va yuborish",
     orderSummary: "Buyurtma tarkibi",
     successTitle: "Buyurtma qabul qilindi!",
@@ -126,6 +127,7 @@ const T = {
     namePlaceholder: "Имя Фамилия *",
     companyPlaceholder: "Название компании (необязательно)",
     phonePlaceholder: "+998 XX XXX XX XX *",
+    addressPlaceholder: "Адрес доставки (необязательно)",
     submitBtn: "Подтвердить и отправить",
     orderSummary: "Состав заказа",
     successTitle: "Заказ принят!",
@@ -695,6 +697,7 @@ export default function OrderPage() {
   const [formName, setFormName] = useState('');
   const [formCompany, setFormCompany] = useState('');
   const [formPhone, setFormPhone] = useState('');
+  const [formAddress, setFormAddress] = useState('');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -706,6 +709,7 @@ export default function OrderPage() {
         if (saved.name) setFormName(saved.name);
         if (saved.company) setFormCompany(saved.company);
         if (saved.phone) setFormPhone(saved.phone);
+        if (saved.address) setFormAddress(saved.address);
       } catch {}
     }, 0);
     return () => window.clearTimeout(timer);
@@ -714,9 +718,9 @@ export default function OrderPage() {
   // Save form to localStorage on change
   useEffect(() => {
     try {
-      localStorage.setItem('order-form', JSON.stringify({ name: formName, company: formCompany, phone: formPhone }));
+      localStorage.setItem('order-form', JSON.stringify({ name: formName, company: formCompany, phone: formPhone, address: formAddress }));
     } catch {}
-  }, [formName, formCompany, formPhone]);
+  }, [formName, formCompany, formPhone, formAddress]);
 
   const loadCatalog = useCallback(async (ptId = '', opts: { background?: boolean } = {}) => {
     if (!opts.background) {
@@ -859,7 +863,7 @@ export default function OrderPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customer: { name: formName.trim(), company: formCompany.trim(), phone: formPhone.trim() },
+          customer: { name: formName.trim(), company: formCompany.trim(), phone: formPhone.trim(), address: formAddress.trim() },
           items: cartItems.map(i => ({
             productId: i.product.id,
             type: i.product.type,
@@ -874,7 +878,7 @@ export default function OrderPage() {
       track('order_submitted', { item_count: cartItems.length, lang });
       setSuccessOrderName(json.orderName || '');
       setCart({});
-      setFormName(''); setFormCompany(''); setFormPhone('');
+      setFormName(''); setFormCompany(''); setFormPhone(''); setFormAddress('');
       try { localStorage.removeItem('order-form'); } catch {}
       setView('success');
     } catch (e: any) {
@@ -1732,6 +1736,13 @@ export default function OrderPage() {
                   style={{ border: `2px solid ${formErrors.phone ? '#EF4444' : '#F0F0F0'}`, background: '#FAFAFA' }} />
               </div>
               {formErrors.phone && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.phone}</p>}
+            </div>
+            <div className="relative">
+              <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input type="text" placeholder={t.addressPlaceholder as string} value={formAddress}
+                onChange={e => setFormAddress(e.target.value)}
+                className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
+                style={{ border: '2px solid #F0F0F0', background: '#FAFAFA' }} />
             </div>
           </div>
 
