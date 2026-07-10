@@ -839,8 +839,8 @@ export default function OrderPage() {
         {/* ── Header ── */}
         <header className="relative z-10 flex items-center gap-3 px-5 sm:px-8 py-4 border-b"
           style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
-          <img src="/logo.webp" alt="Умmed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
-          <span className="font-bold text-[15px]" style={{ color: '#0a0a0a' }}>Умmed</span>
+          <img src="/logo.webp" alt="Ummed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
+          <span className="font-bold text-[15px]" style={{ color: '#0a0a0a' }}>Ummed</span>
           <div className="flex-1" />
           <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
             className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
@@ -871,8 +871,8 @@ export default function OrderPage() {
             </div>
 
             {/* Title */}
-            <h1 className="font-extrabold mb-5 leading-[1.08] anim-fade-up"
-              style={{ fontSize: 'clamp(30px,4.2vw,48px)', color: '#0a0a0a', letterSpacing: '-0.03em', animationDelay: '120ms' }}>
+            <h1 className="font-medium mb-5 leading-[1.1] tracking-tight anim-fade-up"
+              style={{ fontSize: 'clamp(30px,4.2vw,48px)', color: '#0a0a0a', animationDelay: '120ms' }}>
               {lang === 'uz'
                 ? <>Buyurtma berish uchun<br />mahsulotlar ro&apos;yxati</>
                 : <>Список товаров<br />для заказа</>}
