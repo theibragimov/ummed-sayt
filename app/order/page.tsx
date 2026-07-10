@@ -1445,7 +1445,7 @@ export default function OrderPage() {
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-5"
             style={{ background: 'rgba(10,10,10,0.5)' }}
             onClick={() => setShowDeliveryConfirm(false)}>
-            <div className="w-full max-w-sm rounded-3xl bg-white p-6" onClick={e => e.stopPropagation()}
+            <div className="w-full max-w-sm rounded-3xl bg-white p-6 flex flex-col items-center text-center" onClick={e => e.stopPropagation()}
               style={{ boxShadow: '0 30px 60px -20px rgba(10,10,10,0.35)' }}>
               <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
                 style={{ background: 'rgba(37,99,235,0.12)' }}>
@@ -1457,7 +1457,7 @@ export default function OrderPage() {
               <p className="text-[13.5px] leading-relaxed mb-6" style={{ color: '#7c7c80' }}>
                 {t.freeDeliveryConfirmMsg}
               </p>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2.5 w-full">
                 <button onClick={() => { setShowDeliveryConfirm(false); setView('catalog'); }}
                   className="w-full py-3.5 rounded-xl text-[14px] font-bold text-white transition-transform active:scale-[0.98]"
                   style={{ background: '#2563EB' }}>
