@@ -90,7 +90,7 @@ const T = {
     freeDeliveryNeedEnd: "qoldi",
     freeDeliveryDone: "Tabriklaymiz! Toshkent shahar ichida yetkazib berish sizga bepul.",
     freeDeliveryConfirmTitle: "Haqiqatan ham rasmiylashtirmoqchimisiz?",
-    freeDeliveryConfirmMsg: "Buyurtmangiz summasini 2 mln so'mdan ortiq qilsangiz, Toshkent shahar ichida yetkazib berish bepul amalga oshiriladi.",
+    freeDeliveryConfirmMsg: ["Buyurtma summasini ", "2 mln so'm", "dan oshirsangiz, Toshkent bo'ylab yetkazib berish bepul."],
     addMoreBtn: "Mahsulot qo'shish",
     continueAnywayBtn: "Baribir davom etish",
     newArrivalBadge: "Yangilik",
@@ -152,7 +152,7 @@ const T = {
     freeDeliveryNeedEnd: "",
     freeDeliveryDone: "Поздравляем! Доставка по Ташкенту для вас бесплатна.",
     freeDeliveryConfirmTitle: "Вы действительно хотите оформить заказ?",
-    freeDeliveryConfirmMsg: "Если сумма заказа превысит 2 млн сум, доставка по Ташкенту будет бесплатной.",
+    freeDeliveryConfirmMsg: ["Если сумма заказа превысит ", "2 млн сум", ", доставка по Ташкенту будет бесплатной."],
     addMoreBtn: "Добавить товары",
     continueAnywayBtn: "Продолжить в любом случае",
     newArrivalBadge: "Новинка",
@@ -1647,29 +1647,30 @@ export default function OrderPage() {
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-5"
             style={{ background: 'rgba(10,10,10,0.5)' }}
             onClick={() => setShowDeliveryConfirm(false)}>
-            <div className="w-full max-w-sm rounded-3xl bg-white p-6 flex flex-col items-center text-center" onClick={e => e.stopPropagation()}
+            <div className="w-full max-w-md rounded-3xl bg-white p-7 flex flex-col items-center text-center" onClick={e => e.stopPropagation()}
               style={{ boxShadow: '0 30px 60px -20px rgba(10,10,10,0.35)' }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                style={{ background: 'rgba(37,99,235,0.12)' }}>
-                <Truck size={22} color="#2563EB" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center mb-5"
+                style={{ background: 'rgba(37,99,235,0.08)' }}>
+                <Truck size={20} color="#2563EB" />
               </div>
-              <h3 className="text-[17px] font-extrabold mb-2" style={{ color: '#0a0a0a' }}>
+              <h3 className="text-[19px] font-extrabold mb-3" style={{ color: '#0a0a0a' }}>
                 {t.freeDeliveryConfirmTitle}
               </h3>
-              <div className="w-full rounded-2xl px-4 py-3 mb-6 text-left"
-                style={{ background: 'rgba(37,99,235,0.07)', border: '1px solid rgba(37,99,235,0.18)' }}>
-                <p className="text-[13.5px] font-semibold leading-relaxed" style={{ color: '#1D4ED8' }}>
-                  {t.freeDeliveryConfirmMsg}
-                </p>
-              </div>
+              <p className="text-[14px] leading-relaxed mb-7" style={{ color: '#6B7280' }}>
+                {(t.freeDeliveryConfirmMsg as string[])[0]}
+                <span className="font-bold" style={{ color: '#0a0a0a' }}>
+                  {(t.freeDeliveryConfirmMsg as string[])[1]}
+                </span>
+                {(t.freeDeliveryConfirmMsg as string[])[2]}
+              </p>
               <div className="flex flex-col gap-2.5 w-full">
                 <button onClick={() => { setShowDeliveryConfirm(false); setView('catalog'); }}
-                  className="w-full py-3.5 rounded-xl text-[14px] font-bold text-white transition-transform active:scale-[0.98]"
+                  className="w-full py-3.5 rounded-xl text-[15px] font-bold text-white transition-transform active:scale-[0.98]"
                   style={{ background: '#2563EB' }}>
                   {t.addMoreBtn}
                 </button>
                 <button onClick={() => { setShowDeliveryConfirm(false); track('checkout_started', { item_count: cartCount, lang }); setView('checkout'); }}
-                  className="w-full py-3.5 rounded-xl text-[14px] font-bold transition-transform active:scale-[0.98]"
+                  className="w-full py-3.5 rounded-xl text-[15px] font-bold transition-transform active:scale-[0.98]"
                   style={{ background: '#F5F5F5', color: '#374151' }}>
                   {t.continueAnywayBtn}
                 </button>
