@@ -618,7 +618,7 @@ export default function OrderPage() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        if (!localStorage.getItem('order-onboarding-seen-v2')) setShowOnboarding(true);
+        if (!localStorage.getItem('order-onboarding-seen-v3')) setShowOnboarding(true);
       } catch {}
     }, 0);
     return () => window.clearTimeout(timer);
@@ -634,7 +634,7 @@ export default function OrderPage() {
   }
   function dismissOnboarding() {
     setShowOnboarding(false);
-    try { localStorage.setItem('order-onboarding-seen-v2', '1'); } catch {}
+    try { localStorage.setItem('order-onboarding-seen-v3', '1'); } catch {}
   }
 
   // Sotilgan miqdori bo'yicha TO'LIQ tartiblangan ro'yxat (50 tadan ancha katta bo'lishi mumkin) —
@@ -1073,12 +1073,46 @@ export default function OrderPage() {
         </div>
       );
     };
+    const renderDesktopCategoryBubble = () => {
+      if (!activeOnboarding || onboardingStep !== 'category') return null;
+
+      return (
+        <div
+          className="hidden lg:block fixed top-[174px] z-[80] w-[280px] rounded-2xl p-3.5 text-white anim-fade-in"
+          style={{
+            left: 'calc(max(16px, calc(50vw - 512px)) + 244px)',
+            background: '#18181b',
+            boxShadow: '0 18px 45px -14px rgba(0,0,0,0.65)',
+          }}>
+          <div className="absolute left-[-6px] top-5 h-3 w-3 rotate-45" style={{ background: '#18181b' }} />
+          <div className="mb-2 flex items-start justify-between gap-3">
+            <div>
+              <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#FFB199' }}>
+                {activeOnboardingIndex}/{onboardingSteps.length}
+              </div>
+              <h3 className="text-[14px] font-extrabold leading-tight">{t.onboardingCategoryTitle}</h3>
+            </div>
+            <button onClick={dismissOnboarding} className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white/10" aria-label={t.close}>
+              <X size={15} />
+            </button>
+          </div>
+          <p className="mb-3 text-[12px] leading-relaxed text-white/82">{t.onboardingCategoryHint}</p>
+          <button
+            onClick={nextOnboardingStep}
+            className="w-full rounded-xl py-2 text-[12px] font-extrabold transition-transform active:scale-[0.98]"
+            style={{ background: '#FF6B35', color: '#fff' }}>
+            {t.onboardingNext}
+          </button>
+        </div>
+      );
+    };
 
     return (
       <div className="min-h-screen" style={{ background: '#FAFAFA' }}>
         {lightboxProduct && (
           <Lightbox product={lightboxProduct} onClose={() => setLightboxProduct(null)} />
         )}
+        {renderDesktopCategoryBubble()}
         {activeOnboarding && (
           <div
             className="fixed inset-0 z-[45] bg-black/30 backdrop-blur-[2px]"
@@ -1262,30 +1296,6 @@ export default function OrderPage() {
           {/* Desktop sidebar */}
           <aside className={`hidden lg:block w-56 flex-shrink-0 sticky top-[106px] self-start relative ${activeOnboarding && onboardingStep === 'category' ? 'z-[70]' : ''}`}
             style={{ height: 'calc(100vh - 106px)', overflowY: 'auto', padding: '8px 0 8px 8px' }}>
-            {activeOnboarding && onboardingStep === 'category' && (
-              <div className="absolute left-[calc(100%+12px)] top-2 z-[80] w-64 rounded-2xl p-3.5 text-white anim-fade-in"
-                style={{ background: '#18181b', boxShadow: '0 18px 45px -14px rgba(0,0,0,0.65)' }}>
-                <div className="absolute top-4 -left-1.5 h-3 w-3 rotate-45" style={{ background: '#18181b' }} />
-                <div className="mb-2 flex items-start justify-between gap-3">
-                  <div>
-                    <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#FFB199' }}>
-                      {activeOnboardingIndex}/{onboardingSteps.length}
-                    </div>
-                    <h3 className="text-[14px] font-extrabold leading-tight">{t.onboardingCategoryTitle}</h3>
-                  </div>
-                  <button onClick={dismissOnboarding} className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white/10" aria-label={t.close}>
-                    <X size={15} />
-                  </button>
-                </div>
-                <p className="mb-3 text-[12px] leading-relaxed text-white/82">{t.onboardingCategoryHint}</p>
-                <button
-                  onClick={nextOnboardingStep}
-                  className="w-full rounded-xl py-2 text-[12px] font-extrabold transition-transform active:scale-[0.98]"
-                  style={{ background: '#FF6B35', color: '#fff' }}>
-                  {t.onboardingNext}
-                </button>
-              </div>
-            )}
             {/* All products */}
             <button
               onClick={() => setSelectedCat(null)}
