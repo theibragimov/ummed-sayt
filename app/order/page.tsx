@@ -91,6 +91,10 @@ const T = {
     freeDeliveryConfirmMsg: "Buyurtmangiz summasini 2 mln so'mdan ortiq qilsangiz, Toshkent shahar ichida yetkazib berish bepul amalga oshiriladi.",
     addMoreBtn: "Mahsulot qo'shish",
     continueAnywayBtn: "Baribir davom etish",
+    newArrivalBadge: "Yangilik",
+    onboardingCategoryHint: "Mahsulotlarni kategoriya bo'yicha ko'rish uchun shu yerni bosing",
+    onboardingLangHint: "Tilni shu yerdan bemalol almashtirishingiz mumkin",
+    onboardingGotIt: "Tushunarli",
   },
   ru: {
     storeName: "Онлайн Заказ",
@@ -137,6 +141,10 @@ const T = {
     freeDeliveryConfirmMsg: "Если сумма заказа превысит 2 млн сум, доставка по Ташкенту будет бесплатной.",
     addMoreBtn: "Добавить товары",
     continueAnywayBtn: "Продолжить в любом случае",
+    newArrivalBadge: "Новинка",
+    onboardingCategoryHint: "Нажмите здесь, чтобы выбрать товары по категориям",
+    onboardingLangHint: "Здесь вы можете легко изменить язык",
+    onboardingGotIt: "Понятно",
   },
 };
 
@@ -332,7 +340,7 @@ function ProductRow({
           {isNewArrival && (
             <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
               style={{ background: '#3DB851' }}>
-              Новинка
+              {t.newArrivalBadge}
             </span>
           )}
           {isTop50 && (
@@ -483,7 +491,7 @@ function ProductCard({
             {isNewArrival && (
               <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
                 style={{ background: '#3DB851', letterSpacing: '0.03em' }}>
-                Новинка
+                {t.newArrivalBadge}
               </div>
             )}
             {isTop50 && (
@@ -589,6 +597,18 @@ export default function OrderPage() {
     const saved = localStorage.getItem('order-display-mode') as 'list' | 'grid' | null;
     if (saved) setDisplayMode(saved);
   }, []);
+
+  // Birinchi marta kirganlar uchun podskazka (kategoriya va til tugmalari haqida)
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('order-onboarding-seen-v1')) setShowOnboarding(true);
+    } catch {}
+  }, []);
+  function dismissOnboarding() {
+    setShowOnboarding(false);
+    try { localStorage.setItem('order-onboarding-seen-v1', '1'); } catch {}
+  }
 
   // Sotilgan miqdori bo'yicha TO'LIQ tartiblangan ro'yxat (50 tadan ancha katta bo'lishi mumkin) —
   // ba'zi ko'p sotilgan mahsulotlar omborda vaqtincha tugab qolgan bo'lishi mumkin, shuning uchun
@@ -1050,14 +1070,32 @@ export default function OrderPage() {
             </span>
 
             {/* Mobile: category button */}
-            <button
-              onClick={() => setMobileCatOpen(true)}
-              className="lg:hidden flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold ml-0.5 min-w-0"
-              style={{ background: '#F5F5F5', color: selectedCat ? '#FF6B35' : '#666', border: selectedCat ? '1px solid rgba(255,107,53,0.3)' : '1px solid #E0E0E0' }}>
-              <Menu size={12} className="flex-shrink-0" />
-              <span className="max-w-[64px] truncate">{displayCatName}</span>
-              <ChevronDown size={12} className="flex-shrink-0" />
-            </button>
+            <div className="relative lg:hidden">
+              <button
+                onClick={() => { setMobileCatOpen(true); dismissOnboarding(); }}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold ml-0.5 min-w-0"
+                style={{
+                  background: '#F5F5F5',
+                  color: !selectedCat ? '#666' : (selectedCat === TOP50_CAT_ID ? '#2563EB' : '#FF6B35'),
+                  border: !selectedCat ? '1px solid #E0E0E0' : `1px solid ${selectedCat === TOP50_CAT_ID ? 'rgba(37,99,235,0.3)' : 'rgba(255,107,53,0.3)'}`,
+                }}>
+                <Menu size={12} className="flex-shrink-0" />
+                <span className="max-w-[64px] truncate">{displayCatName}</span>
+                <ChevronDown size={12} className="flex-shrink-0" />
+              </button>
+              {showOnboarding && (
+                <div className="absolute top-full left-0 mt-2 z-50 w-56 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
+                  style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
+                  <div className="absolute -top-1.5 left-6 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
+                  <div className="flex items-start justify-between gap-2">
+                    <p>{t.onboardingCategoryHint}</p>
+                    <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
+                      <X size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="flex-1" />
 
@@ -1078,11 +1116,30 @@ export default function OrderPage() {
               {displayMode === 'list' ? <LayoutGrid size={15} /> : <LayoutList size={15} />}
             </button>
 
-            <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
-              className="px-2 sm:px-2.5 py-1.5 rounded-xl text-[11px] font-bold border ml-1 flex-shrink-0"
-              style={{ borderColor: '#E5E5E5', color: '#666' }}>
-              {lang === 'uz' ? 'RU' : 'UZ'}
-            </button>
+            <div className="relative flex-shrink-0">
+              <button onClick={() => { setLang(l => l === 'uz' ? 'ru' : 'uz'); dismissOnboarding(); }}
+                className="px-2 sm:px-2.5 py-1.5 rounded-xl text-[11px] font-bold border ml-1"
+                style={{ borderColor: '#E5E5E5', color: '#666' }}>
+                {lang === 'uz' ? 'RU' : 'UZ'}
+              </button>
+              {showOnboarding && (
+                <div className="absolute top-full right-0 mt-2 max-lg:mt-[108px] z-50 w-52 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
+                  style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
+                  <div className="absolute -top-1.5 right-6 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <p>{t.onboardingLangHint}</p>
+                    <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <button onClick={dismissOnboarding}
+                    className="w-full py-1.5 rounded-lg text-[11px] font-bold"
+                    style={{ background: '#FF6B35' }}>
+                    {t.onboardingGotIt}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Search bar */}
@@ -1119,8 +1176,20 @@ export default function OrderPage() {
         {/* Body: sidebar + product list */}
         <div className="max-w-5xl mx-auto flex">
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block w-56 flex-shrink-0 sticky top-[106px] self-start"
+          <aside className="hidden lg:block w-56 flex-shrink-0 sticky top-[106px] self-start relative"
             style={{ height: 'calc(100vh - 106px)', overflowY: 'auto', padding: '8px 0 8px 8px' }}>
+            {showOnboarding && (
+              <div className="absolute left-[calc(100%+12px)] top-0 z-50 w-56 rounded-xl p-3 text-white text-[12px] leading-snug anim-fade-in"
+                style={{ background: '#18181b', boxShadow: '0 12px 28px -8px rgba(0,0,0,0.4)' }}>
+                <div className="absolute top-3 -left-1.5 w-3 h-3 rotate-45" style={{ background: '#18181b' }} />
+                <div className="flex items-start justify-between gap-2">
+                  <p>{t.onboardingCategoryHint}</p>
+                  <button onClick={dismissOnboarding} className="flex-shrink-0 opacity-70 hover:opacity-100">
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
             {/* All products */}
             <button
               onClick={() => setSelectedCat(null)}
