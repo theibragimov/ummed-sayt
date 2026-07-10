@@ -84,6 +84,13 @@ const T = {
     close: "Yopish",
     showMore: "Yana ko'rsatish",
     top50Cat: "TOP 50 mahsulotlar",
+    freeDeliveryNeed: "Toshkent shahar ichida bepul yetkazib berish uchun yana",
+    freeDeliveryNeedEnd: "qoldi",
+    freeDeliveryDone: "Tabriklaymiz! Toshkent shahar ichida yetkazib berish sizga bepul.",
+    freeDeliveryConfirmTitle: "Haqiqatan ham rasmiylashtirmoqchimisiz?",
+    freeDeliveryConfirmMsg: "Buyurtmangiz summasini 2 mln so'mdan ortiq qilsangiz, Toshkent shahar ichida yetkazib berish bepul amalga oshiriladi.",
+    addMoreBtn: "Mahsulot qo'shish",
+    continueAnywayBtn: "Baribir davom etish",
   },
   ru: {
     storeName: "Онлайн Заказ",
@@ -123,6 +130,13 @@ const T = {
     close: "Закрыть",
     showMore: "Показать ещё",
     top50Cat: "ТОП 50 товаров",
+    freeDeliveryNeed: "До бесплатной доставки по Ташкенту осталось",
+    freeDeliveryNeedEnd: "",
+    freeDeliveryDone: "Поздравляем! Доставка по Ташкенту для вас бесплатна.",
+    freeDeliveryConfirmTitle: "Вы действительно хотите оформить заказ?",
+    freeDeliveryConfirmMsg: "Если сумма заказа превысит 2 млн сум, доставка по Ташкенту будет бесплатной.",
+    addMoreBtn: "Добавить товары",
+    continueAnywayBtn: "Продолжить в любом случае",
   },
 };
 
@@ -138,6 +152,8 @@ const CATALOG_CACHE_PREFIX = 'moysklad-order-catalog-v1';
 const INITIAL_PRODUCT_LIMIT = 160;
 const PRODUCT_LIMIT_STEP = 160;
 const TOP50_CAT_ID = '__top50__';
+// Narxlar *100 birlikda saqlanadi (fmtPrice / 100), shuning uchun 2 000 000 so'm = 200 000 000
+const FREE_DELIVERY_THRESHOLD = 200_000_000;
 const NEW_ARRIVAL_CATEGORY_MARKER = 'Новинки';
 
 function isNewArrivalProduct(p: Product): boolean {
@@ -564,6 +580,7 @@ export default function OrderPage() {
   const [cartHydrated, setCartHydrated] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [successOrderName, setSuccessOrderName] = useState('');
+  const [showDeliveryConfirm, setShowDeliveryConfirm] = useState(false);
   const [lightboxProduct, setLightboxProduct] = useState<Product | null>(null);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PRODUCT_LIMIT);
@@ -1386,7 +1403,7 @@ export default function OrderPage() {
               </div>
 
               {cartTotal > 0 && (
-                <div className="rounded-2xl p-4 mb-6"
+                <div className="rounded-2xl p-4 mb-4"
                   style={{ background: '#FFF8F5', border: '1px solid #FFE5D9' }}>
                   <div className="flex items-center justify-between">
                     <span className="text-[14px] font-semibold text-gray-700">{t.total}</span>
@@ -1397,7 +1414,24 @@ export default function OrderPage() {
                 </div>
               )}
 
-              <button onClick={() => setView('checkout')}
+              {/* Bepul yetkazib berish holati */}
+              <div className="rounded-2xl p-3.5 mb-6 flex items-center gap-3"
+                style={{
+                  background: cartTotal >= FREE_DELIVERY_THRESHOLD ? '#F0FBF3' : '#F5F8FF',
+                  border: `1px solid ${cartTotal >= FREE_DELIVERY_THRESHOLD ? '#CDEFD8' : '#DCE7FF'}`,
+                }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: cartTotal >= FREE_DELIVERY_THRESHOLD ? 'rgba(61,184,81,0.15)' : 'rgba(37,99,235,0.12)' }}>
+                  <Truck size={17} color={cartTotal >= FREE_DELIVERY_THRESHOLD ? '#3DB851' : '#2563EB'} />
+                </div>
+                <p className="text-[12.5px] font-medium leading-snug" style={{ color: '#374151' }}>
+                  {cartTotal >= FREE_DELIVERY_THRESHOLD
+                    ? t.freeDeliveryDone
+                    : <>{t.freeDeliveryNeed} <b style={{ color: '#2563EB' }}>{fmtPrice(FREE_DELIVERY_THRESHOLD - cartTotal)} {t.sum}</b> {t.freeDeliveryNeedEnd}</>}
+                </p>
+              </div>
+
+              <button onClick={() => { if (cartTotal < FREE_DELIVERY_THRESHOLD) setShowDeliveryConfirm(true); else setView('checkout'); }}
                 className="w-full py-4 rounded-2xl text-[15px] font-bold text-white"
                 style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }}>
                 {t.orderBtn}
@@ -1405,6 +1439,39 @@ export default function OrderPage() {
             </>
           )}
         </div>
+
+        {/* Bepul yetkazib berish chegarasiga yetmasa tasdiqlash oynasi */}
+        {showDeliveryConfirm && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-5"
+            style={{ background: 'rgba(10,10,10,0.5)' }}
+            onClick={() => setShowDeliveryConfirm(false)}>
+            <div className="w-full max-w-sm rounded-3xl bg-white p-6" onClick={e => e.stopPropagation()}
+              style={{ boxShadow: '0 30px 60px -20px rgba(10,10,10,0.35)' }}>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
+                style={{ background: 'rgba(37,99,235,0.12)' }}>
+                <Truck size={22} color="#2563EB" />
+              </div>
+              <h3 className="text-[17px] font-extrabold mb-2" style={{ color: '#0a0a0a' }}>
+                {t.freeDeliveryConfirmTitle}
+              </h3>
+              <p className="text-[13.5px] leading-relaxed mb-6" style={{ color: '#7c7c80' }}>
+                {t.freeDeliveryConfirmMsg}
+              </p>
+              <div className="flex flex-col gap-2.5">
+                <button onClick={() => { setShowDeliveryConfirm(false); setView('catalog'); }}
+                  className="w-full py-3.5 rounded-xl text-[14px] font-bold text-white transition-transform active:scale-[0.98]"
+                  style={{ background: '#2563EB' }}>
+                  {t.addMoreBtn}
+                </button>
+                <button onClick={() => { setShowDeliveryConfirm(false); setView('checkout'); }}
+                  className="w-full py-3.5 rounded-xl text-[14px] font-bold transition-transform active:scale-[0.98]"
+                  style={{ background: '#F5F5F5', color: '#374151' }}>
+                  {t.continueAnywayBtn}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
