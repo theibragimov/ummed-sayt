@@ -160,11 +160,11 @@ export default function KatalogPage() {
     <>
       <SiteHeader />
       <main style={{ backgroundColor: "#fff", fontFamily: "var(--font-sans)" }}>
-        <div className="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-24">
 
           <Reveal variant="up" className="mb-10">
             <span className="section-label mb-3">{lang === "ru" ? "Каталог" : "Katalog"}</span>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mt-3" style={{ color: "#111" }}>
+            <h1 className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6" style={{ color: "#111" }}>
               {lang === "ru" ? "Продукция" : "Mahsulotlar"}
             </h1>
           </Reveal>
