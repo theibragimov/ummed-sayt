@@ -19,8 +19,8 @@ function SectionHeader({ nom }) {
   );
 }
 
-/* ── Mahsulot rasmi qutisi ── */
-function ImgBox({ url, alt }) {
+/* ── Mahsulot rasmi qutisi (hit badge ichida) ── */
+function ImgBox({ url, alt, isHit, hitColor }) {
   return (
     <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0"
       style={{ width: 280, height: 240, minWidth: 280, border: "1px solid #e5e5e5" }}>
@@ -29,18 +29,12 @@ function ImgBox({ url, alt }) {
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
-    </div>
-  );
-}
-
-/* ── Hit badge ── */
-function HitBadge({ color = "#00BCD4" }) {
-  return (
-    <div className="flex justify-center mt-3">
-      <span className="px-5 py-1.5 rounded-full text-white text-xs font-bold"
-        style={{ backgroundColor: color }}>
-        Хит Продаж
-      </span>
+      {isHit && (
+        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
+          style={{ backgroundColor: hitColor || "#00BCD4" }}>
+          Хит Продаж
+        </span>
+      )}
     </div>
   );
 }
@@ -50,7 +44,7 @@ function DescCard({ pillLabel, pillColor, desc }) {
   return (
     <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
       style={{ backgroundColor: "#F2F2F2", minHeight: 240 }}>
-      <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-bold leading-snug"
+      <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-medium leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
       </span>
@@ -63,14 +57,11 @@ function DescCard({ pillLabel, pillColor, desc }) {
   );
 }
 
-/* ── Oddiy qator: [rasm + hit] chap, [karta] o'ng ── */
+/* ── Oddiy qator: [rasm] chap, [karta] o'ng ── */
 function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor }) {
   return (
     <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 mb-8">
-      <div className="flex-shrink-0">
-        <ImgBox url={imageUrl} alt={alt} size={200} />
-        {isHit && <HitBadge color={hitColor} />}
-      </div>
+      <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} />
       <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
     </div>
   );
@@ -83,8 +74,7 @@ function GridVariants({ imageUrl, variants, desc, nom }) {
       <div className="grid grid-cols-2 gap-5 sm:gap-6 mb-6">
         {variants.map((v, i) => (
           <div key={v.id || i} className="flex flex-col">
-            <ImgBox url={imageUrl} alt={v.label} size={undefined} />
-            {v.hit && <HitBadge color="#00BCD4" />}
+            <ImgBox url={imageUrl} alt={v.label} isHit={v.hit} hitColor="#00BCD4" />
             <div className="mt-3 py-2.5 px-4 rounded-xl text-center text-white text-sm font-bold"
               style={{ backgroundColor: v.color || "#E8491D" }}>
               {v.label}
@@ -178,9 +168,6 @@ export default function KatalogPage() {
             </h1>
           </Reveal>
 
-          {!yuklanmoqda && sections.length > 1 && (
-            <CategoryNav sections={sections} activeKat={activeKat} setActiveKat={setActiveKat} lang={lang} />
-          )}
 
           {yuklanmoqda ? (
             <p className="text-center py-24 text-sm" style={{ color: "#aaa" }}>Yuklanmoqda...</p>
