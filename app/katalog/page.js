@@ -22,8 +22,8 @@ function SectionHeader({ nom }) {
 /* ── Mahsulot rasmi qutisi (hit badge ichida) ── */
 function ImgBox({ url, alt, isHit, hitColor }) {
   return (
-    <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0"
-      style={{ width: 280, height: 240, minWidth: 280, border: "1px solid #e5e5e5" }}>
+    <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
+      style={{ width: 280, minWidth: 280, minHeight: 240, border: "1px solid #e5e5e5" }}>
       {url ? (
         <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
