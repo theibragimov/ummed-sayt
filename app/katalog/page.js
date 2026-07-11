@@ -23,7 +23,7 @@ function SectionHeader({ nom }) {
 function ImgBox({ url, alt, isHit, hitColor }) {
   return (
     <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
-      style={{ width: 280, minWidth: 280, minHeight: 240, border: "1px solid #e5e5e5" }}>
+      style={{ width: 420, minWidth: 420, minHeight: 260, border: "1px solid #e5e5e5" }}>
       {url ? (
         <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
@@ -42,8 +42,8 @@ function ImgBox({ url, alt, isHit, hitColor }) {
 /* ── Tavsif kartasi (o'ng tomon) ── */
 function DescCard({ pillLabel, pillColor, desc }) {
   return (
-    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
-      style={{ backgroundColor: "#F2F2F2", minHeight: 240 }}>
+    <div className="rounded-2xl p-6 sm:p-8 flex flex-col gap-4 justify-start"
+      style={{ backgroundColor: "#F2F2F2", minHeight: 260, width: 380, minWidth: 320 }}>
       <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-medium leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
