@@ -7,39 +7,25 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
-/* ── UMMED badge (sarlavha o'ng tomoni) ── */
-function UmmedBadge() {
-  return (
-    <div className="flex items-center gap-1.5 px-4 py-2 rounded-full flex-shrink-0"
-      style={{ backgroundColor: "#E8491D" }}>
-      <span className="text-white font-bold text-sm">U</span>
-      <span className="text-white font-bold text-sm tracking-wide">UMMED</span>
-    </div>
-  );
-}
-
-/* ── Kategoriya sarlavhasi: katta matn + qalin chiziq ── */
+/* ── Kategoriya sarlavhasi ── */
 function SectionHeader({ nom }) {
   return (
     <div className="mb-8 sm:mb-10">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "#111" }}>
-          {nom}
-        </h2>
-        <UmmedBadge />
-      </div>
-      <div style={{ height: 2, backgroundColor: "#111" }} />
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3" style={{ color: "#111" }}>
+        {nom}
+      </h2>
+      <div style={{ height: 1, backgroundColor: "#ccc" }} />
     </div>
   );
 }
 
 /* ── Mahsulot rasmi qutisi ── */
-function ImgBox({ url, alt, size = 220 }) {
+function ImgBox({ url, alt }) {
   return (
     <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0"
-      style={{ width: size, height: size, minWidth: size, border: "1px solid #e5e5e5" }}>
+      style={{ width: 280, height: 240, minWidth: 280, border: "1px solid #e5e5e5" }}>
       {url ? (
-        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-3" sizes={`${size}px`} />
+        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
@@ -62,8 +48,8 @@ function HitBadge({ color = "#00BCD4" }) {
 /* ── Tavsif kartasi (o'ng tomon) ── */
 function DescCard({ pillLabel, pillColor, desc }) {
   return (
-    <div className="flex-1 rounded-2xl p-6 sm:p-8 flex flex-col gap-3 justify-start"
-      style={{ backgroundColor: "#F2F2F2" }}>
+    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
+      style={{ backgroundColor: "#F2F2F2", minHeight: 240 }}>
       <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-bold leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
@@ -183,13 +169,12 @@ export default function KatalogPage() {
   return (
     <>
       <SiteHeader />
-      <main style={{ backgroundColor: "#fff" }}>
+      <main style={{ backgroundColor: "#fff", fontFamily: "var(--font-sans)" }}>
         <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
 
           <Reveal variant="up" className="mb-10">
-            <span className="section-label">{lang === "ru" ? "КАТАЛОГ" : "KATALOG"}</span>
-            <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight" style={{ color: "#111" }}>
-              {lang === "ru" ? "Каталог продукции" : "Mahsulotlar katalogi"}
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: "#111" }}>
+              {lang === "ru" ? "Продукция" : "Mahsulotlar"}
             </h1>
           </Reveal>
 
