@@ -163,17 +163,16 @@ export default function KatalogPage() {
         <div className="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
 
           <Reveal variant="up" className="mb-10">
-            <div className="flex items-center gap-2 mb-3">
-              <span style={{ width: 10, height: 10, backgroundColor: "#E8491D", display: "inline-block", flexShrink: 0 }} />
-              <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "#555" }}>
-                {lang === "ru" ? "Каталог" : "Katalog"}
-              </span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: "#111" }}>
+            <span className="section-label mb-3">{lang === "ru" ? "Каталог" : "Katalog"}</span>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mt-3" style={{ color: "#111" }}>
               {lang === "ru" ? "Продукция" : "Mahsulotlar"}
             </h1>
           </Reveal>
 
+
+          {!yuklanmoqda && sections.length > 1 && (
+            <CategoryNav sections={sections} activeKat={activeKat} setActiveKat={setActiveKat} lang={lang} />
+          )}
 
           {yuklanmoqda ? (
             <p className="text-center py-24 text-sm" style={{ color: "#aaa" }}>Yuklanmoqda...</p>
