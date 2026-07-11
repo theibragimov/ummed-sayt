@@ -486,7 +486,7 @@ export default function HomePage() {
                 {/* O'ng qism — do'konlar, kengaytirilgan */}
                 <div
                   className="lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
-                  style={{ borderLeft: "1px solid var(--border)", borderTop: "1px solid var(--border)" }}
+                  style={{ borderLeft: "1px solid var(--border)" }}
                 >
                   <h3
                     className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
