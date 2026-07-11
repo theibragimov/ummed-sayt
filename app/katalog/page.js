@@ -160,7 +160,7 @@ export default function KatalogPage() {
     <>
       <SiteHeader />
       <main style={{ backgroundColor: "#fff", fontFamily: "var(--font-sans)" }}>
-        <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
+        <div className="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
 
           <Reveal variant="up" className="mb-10">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: "#111" }}>
