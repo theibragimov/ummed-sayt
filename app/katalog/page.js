@@ -194,6 +194,8 @@ export default function KatalogPage() {
                       const desc = lang === "ru"
                         ? (product.qisqaTavsifRu || product.qisqaTavsif)
                         : (product.qisqaTavsif || product.qisqaTavsifRu);
+                      const pillColor = (product.brend && product.brend.startsWith('#'))
+                        ? product.brend : color;
                       const variants = Array.isArray(product.variantlar) && product.variantlar.length > 0
                         ? product.variantlar : null;
 
@@ -235,7 +237,7 @@ export default function KatalogPage() {
                           imageUrl={url}
                           alt={nom}
                           pillLabel={nom}
-                          pillColor={color}
+                          pillColor={pillColor}
                           desc={desc}
                           isHit={product.featured}
                           hitColor="#00BCD4"
