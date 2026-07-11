@@ -20,10 +20,10 @@ function SectionHeader({ nom }) {
 }
 
 /* ── Mahsulot rasmi qutisi (hit badge ichida) ── */
-function ImgBox({ url, alt, isHit, hitColor }) {
+function ImgBox({ url, alt, isHit, hitColor, wide }) {
   return (
     <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
-      style={{ width: 420, minWidth: 420, minHeight: 260, border: "1px solid #e5e5e5" }}>
+      style={{ width: wide ? 420 : 280, minWidth: wide ? 420 : 280, minHeight: 240, border: "1px solid #e5e5e5" }}>
       {url ? (
         <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
@@ -42,8 +42,8 @@ function ImgBox({ url, alt, isHit, hitColor }) {
 /* ── Tavsif kartasi (o'ng tomon) ── */
 function DescCard({ pillLabel, pillColor, desc }) {
   return (
-    <div className="rounded-2xl p-6 sm:p-8 flex flex-col gap-4 justify-start"
-      style={{ backgroundColor: "#F2F2F2", minHeight: 260, width: 380, minWidth: 320 }}>
+    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
+      style={{ backgroundColor: "#F2F2F2", minHeight: 240 }}>
       <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-medium leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
@@ -58,10 +58,10 @@ function DescCard({ pillLabel, pillColor, desc }) {
 }
 
 /* ── Oddiy qator: [rasm] chap, [karta] o'ng ── */
-function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor }) {
+function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide }) {
   return (
     <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 mb-8">
-      <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} />
+      <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} wide={wide} />
       <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
     </div>
   );
@@ -183,6 +183,7 @@ export default function KatalogPage() {
               {displayed.map(({ kategoriya, products }) => {
                 const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : kategoriya?.nom;
                 const color = kategoriya?.rangKodi || "#E8491D";
+                const wideImg = kategoriya?.slug === 'kalopriyomniklar';
 
                 return (
                   <section key={kategoriya?.slug}>
@@ -225,6 +226,7 @@ export default function KatalogPage() {
                                 desc={i === 0 ? desc : null}
                                 isHit={v.hit}
                                 hitColor="#00BCD4"
+                                wide={wideImg}
                               />
                             ))}
                           </div>
@@ -241,6 +243,7 @@ export default function KatalogPage() {
                           desc={desc}
                           isHit={product.featured}
                           hitColor="#00BCD4"
+                          wide={wideImg}
                         />
                       );
                     })}
