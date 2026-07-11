@@ -7,59 +7,146 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
+/* ── UMMED badge (sarlavha o'ng tomoni) ── */
 function UmmedBadge() {
   return (
-    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "#E8491D" }}>
-      <span className="text-white font-bold text-xs">U</span>
-      <span className="text-white font-semibold text-xs tracking-wider">UMMED</span>
+    <div className="flex items-center gap-1.5 px-4 py-2 rounded-full flex-shrink-0"
+      style={{ backgroundColor: "#E8491D" }}>
+      <span className="text-white font-bold text-sm">U</span>
+      <span className="text-white font-bold text-sm tracking-wide">UMMED</span>
     </div>
   );
 }
 
-function CategoryHeader({ nom }) {
+/* ── Kategoriya sarlavhasi: katta matn + qalin chiziq ── */
+function SectionHeader({ nom }) {
   return (
-    <div className="flex items-center justify-between pb-3 mb-6" style={{ borderBottom: "2px solid #1a1a1a" }}>
-      <h2 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ color: "#1a1a1a" }}>{nom}</h2>
-      <UmmedBadge />
+    <div className="mb-8 sm:mb-10">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "#111" }}>
+          {nom}
+        </h2>
+        <UmmedBadge />
+      </div>
+      <div style={{ height: 2, backgroundColor: "#111" }} />
     </div>
   );
 }
 
-/* Bir qatorli mahsulot satri: rasm chap, karta o'ng */
-function ProductRow({ imageUrl, nom, pillLabel, pillColor, desc, isHit, badgeColor }) {
+/* ── Mahsulot rasmi qutisi ── */
+function ImgBox({ url, alt, size = 220 }) {
   return (
-    <div className="flex flex-row gap-4 sm:gap-6 mb-5 items-start">
-      {/* Rasm */}
-      <div className="relative flex-shrink-0 rounded-xl overflow-hidden bg-white flex items-center justify-center"
-        style={{ width: 140, height: 140, minWidth: 140, border: "1px solid #e8e8e8" }}>
-        {imageUrl ? (
-          <Image src={imageUrl} alt={nom} fill style={{ objectFit: "contain" }} className="p-2" sizes="140px" />
-        ) : (
-          <span className="text-4xl select-none opacity-25">📦</span>
-        )}
-        {isHit && (
-          <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-0.5 rounded-full text-white text-[10px] font-bold"
-            style={{ backgroundColor: badgeColor || "#00BCD4" }}>
-            Хит Продаж
+    <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0"
+      style={{ width: size, height: size, minWidth: size, border: "1px solid #e5e5e5" }}>
+      {url ? (
+        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-3" sizes={`${size}px`} />
+      ) : (
+        <span className="text-5xl opacity-20 select-none">📦</span>
+      )}
+    </div>
+  );
+}
+
+/* ── Hit badge ── */
+function HitBadge({ color = "#00BCD4" }) {
+  return (
+    <div className="flex justify-center mt-3">
+      <span className="px-5 py-1.5 rounded-full text-white text-xs font-bold"
+        style={{ backgroundColor: color }}>
+        Хит Продаж
+      </span>
+    </div>
+  );
+}
+
+/* ── Tavsif kartasi (o'ng tomon) ── */
+function DescCard({ pillLabel, pillColor, desc }) {
+  return (
+    <div className="flex-1 rounded-2xl p-6 sm:p-8 flex flex-col gap-3 justify-start"
+      style={{ backgroundColor: "#F2F2F2" }}>
+      <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-bold leading-snug"
+        style={{ backgroundColor: pillColor || "#E8491D" }}>
+        {pillLabel}
+      </span>
+      {desc && (
+        <p className="text-sm sm:text-base leading-relaxed" style={{ color: "#444" }}>
+          {desc}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── Oddiy qator: [rasm + hit] chap, [karta] o'ng ── */
+function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor }) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 mb-8">
+      <div className="flex-shrink-0">
+        <ImgBox url={imageUrl} alt={alt} size={200} />
+        {isHit && <HitBadge color={hitColor} />}
+      </div>
+      <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
+    </div>
+  );
+}
+
+/* ── 2×2 grid (ignalar uslubi) + pastda tavsif kartasi ── */
+function GridVariants({ imageUrl, variants, desc, nom }) {
+  return (
+    <div className="mb-8">
+      <div className="grid grid-cols-2 gap-5 sm:gap-6 mb-6">
+        {variants.map((v, i) => (
+          <div key={v.id || i} className="flex flex-col">
+            <ImgBox url={imageUrl} alt={v.label} size={undefined} />
+            {v.hit && <HitBadge color="#00BCD4" />}
+            <div className="mt-3 py-2.5 px-4 rounded-xl text-center text-white text-sm font-bold"
+              style={{ backgroundColor: v.color || "#E8491D" }}>
+              {v.label}
+            </div>
+          </div>
+        ))}
+      </div>
+      {desc && (
+        <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: "#F2F2F2" }}>
+          <span className="inline-block px-4 py-1.5 rounded-xl text-white text-sm font-bold mb-3"
+            style={{ backgroundColor: "#2d3748" }}>
+            {nom}
           </span>
-        )}
-      </div>
-
-      {/* Karta */}
-      <div className="flex-1 rounded-xl p-4 sm:p-5 min-h-[140px] flex flex-col justify-start gap-2.5"
-        style={{ backgroundColor: "#F5F5F5" }}>
-        <span className="inline-block self-start px-3 py-1 rounded-md text-white text-sm font-semibold leading-snug"
-          style={{ backgroundColor: pillColor || "#E8491D" }}>
-          {pillLabel}
-        </span>
-        {desc && (
-          <p className="text-sm leading-relaxed" style={{ color: "#555" }}>{desc}</p>
-        )}
-      </div>
+          <p className="text-sm sm:text-base leading-relaxed" style={{ color: "#444" }}>{desc}</p>
+        </div>
+      )}
     </div>
   );
 }
 
+/* ── Kategoriya navigatsiyasi (yuqorida, anchor) ── */
+function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
+  return (
+    <div className="flex flex-wrap gap-2 mb-12">
+      <button onClick={() => setActiveKat(null)}
+        className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+        style={!activeKat ? { backgroundColor: "#111", color: "#fff" } : { backgroundColor: "#f0f0f0", color: "#444" }}>
+        {lang === "ru" ? "Все" : "Hammasi"}
+      </button>
+      {sections.map((s) => {
+        const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : s.kategoriya?.nom;
+        const active = activeKat === s.kategoriya?.slug;
+        return (
+          <button key={s.kategoriya?.slug}
+            onClick={() => setActiveKat(s.kategoriya?.slug)}
+            className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+            style={active
+              ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
+              : { backgroundColor: "#f0f0f0", color: "#444" }}>
+            {nom}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ══════════════════ ASOSIY SAHIFA ══════════════════ */
 export default function KatalogPage() {
   const { lang } = useLang();
   const [mahsulotlar, setMahsulotlar] = useState([]);
@@ -77,16 +164,18 @@ export default function KatalogPage() {
   }, []);
 
   const sections = useMemo(() => {
-    const byKat = new Map();
+    const map = new Map();
     for (const p of mahsulotlar) {
-      const kid = p.kategoriyaId || p.kategoriya?.slug;
-      if (!byKat.has(kid)) byKat.set(kid, { kategoriya: p.kategoriya, products: [] });
-      byKat.get(kid).products.push(p);
+      const k = p.kategoriyaId || p.kategoriya?.slug;
+      if (!map.has(k)) map.set(k, { kategoriya: p.kategoriya, products: [] });
+      map.get(k).products.push(p);
     }
-    return [...byKat.values()].sort((a, b) => (a.kategoriya?.tartibRaqami ?? 99) - (b.kategoriya?.tartibRaqami ?? 99));
+    return [...map.values()].sort((a, b) =>
+      (a.kategoriya?.tartibRaqami ?? 99) - (b.kategoriya?.tartibRaqami ?? 99)
+    );
   }, [mahsulotlar]);
 
-  const displayedSections = useMemo(() =>
+  const displayed = useMemo(() =>
     activeKat ? sections.filter((s) => s.kategoriya?.slug === activeKat) : sections,
     [sections, activeKat]
   );
@@ -94,117 +183,93 @@ export default function KatalogPage() {
   return (
     <>
       <SiteHeader />
-      <main style={{ backgroundColor: "#fff", minHeight: "60vh" }}>
-        <div className="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-10 pt-8 sm:pt-12 pb-20 sm:pb-28">
+      <main style={{ backgroundColor: "#fff" }}>
+        <div className="max-w-[900px] mx-auto px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-24">
 
           <Reveal variant="up" className="mb-10">
             <span className="section-label">{lang === "ru" ? "КАТАЛОГ" : "KATALOG"}</span>
-            <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight" style={{ color: "#1a1a1a" }}>
+            <h1 className="text-3xl sm:text-4xl font-bold mt-3 tracking-tight" style={{ color: "#111" }}>
               {lang === "ru" ? "Каталог продукции" : "Mahsulotlar katalogi"}
             </h1>
           </Reveal>
 
-          <div className="flex gap-10 lg:gap-16 items-start">
+          {!yuklanmoqda && sections.length > 1 && (
+            <CategoryNav sections={sections} activeKat={activeKat} setActiveKat={setActiveKat} lang={lang} />
+          )}
 
-            {/* Chap tomondagi kategoriya menyusi */}
-            {!yuklanmoqda && sections.length > 0 && (
-              <aside className="hidden md:block flex-shrink-0 sticky top-24" style={{ width: 200 }}>
-                <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: "#aaa" }}>
-                  {lang === "ru" ? "Категории" : "Kategoriyalar"}
-                </p>
-                <ul className="space-y-0.5">
-                  <li>
-                    <button onClick={() => setActiveKat(null)}
-                      className="w-full text-left px-3 py-2 rounded-lg text-sm transition-all"
-                      style={!activeKat ? { backgroundColor: "#f0f0f0", fontWeight: 600, color: "#1a1a1a" } : { color: "#555" }}>
-                      {lang === "ru" ? "Все" : "Hammasi"}
-                    </button>
-                  </li>
-                  {sections.map((s) => {
-                    const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : s.kategoriya?.nom;
-                    const isActive = activeKat === s.kategoriya?.slug;
-                    return (
-                      <li key={s.kategoriya?.slug}>
-                        <button onClick={() => setActiveKat(s.kategoriya?.slug)}
-                          className="w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2"
-                          style={isActive
-                            ? { backgroundColor: s.kategoriya?.rangKodi + "18", fontWeight: 600, color: s.kategoriya?.rangKodi || "#E8491D" }
-                            : { color: "#555" }}>
-                          <span className="w-2 h-2 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: s.kategoriya?.rangKodi || "#E8491D" }} />
-                          {nom}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </aside>
-            )}
+          {yuklanmoqda ? (
+            <p className="text-center py-24 text-sm" style={{ color: "#aaa" }}>Yuklanmoqda...</p>
+          ) : displayed.length === 0 ? (
+            <p className="text-center py-24 text-sm" style={{ color: "#aaa" }}>Mahsulotlar topilmadi</p>
+          ) : (
+            <div className="space-y-16 sm:space-y-20">
+              {displayed.map(({ kategoriya, products }) => {
+                const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : kategoriya?.nom;
+                const color = kategoriya?.rangKodi || "#E8491D";
 
-            {/* O'ng tomondagi asosiy kontent */}
-            <div className="flex-1 min-w-0">
-              {yuklanmoqda ? (
-                <p className="text-sm py-24 text-center" style={{ color: "#aaa" }}>Yuklanmoqda...</p>
-              ) : displayedSections.length === 0 ? (
-                <p className="text-sm py-24 text-center" style={{ color: "#aaa" }}>Mahsulotlar topilmadi</p>
-              ) : (
-                <div className="space-y-14">
-                  {displayedSections.map(({ kategoriya, products }) => {
-                    const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : kategoriya?.nom;
-                    const color = kategoriya?.rangKodi || "#E8491D";
+                return (
+                  <section key={kategoriya?.slug}>
+                    <SectionHeader nom={katNom} />
 
-                    return (
-                      <section key={kategoriya?.slug} id={`kat-${kategoriya?.slug}`}>
-                        <CategoryHeader nom={katNom} />
+                    {products.map((product) => {
+                      const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
+                      const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
+                      const desc = lang === "ru"
+                        ? (product.qisqaTavsifRu || product.qisqaTavsif)
+                        : (product.qisqaTavsif || product.qisqaTavsifRu);
+                      const variants = Array.isArray(product.variantlar) && product.variantlar.length > 0
+                        ? product.variantlar : null;
 
-                        {products.map((product) => {
-                          const imageUrl = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
-                          const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
-                          const desc = lang === "ru"
-                            ? (product.qisqaTavsifRu || product.qisqaTavsif)
-                            : (product.qisqaTavsif || product.qisqaTavsifRu);
-                          const variants = Array.isArray(product.variantlar) && product.variantlar.length > 0
-                            ? product.variantlar : null;
-
-                          if (variants) {
-                            return (
-                              <div key={product.id}>
-                                {variants.map((v, i) => (
-                                  <ProductRow
-                                    key={v.id || i}
-                                    imageUrl={imageUrl}
-                                    nom={v.label}
-                                    pillLabel={v.label}
-                                    pillColor={v.color || color}
-                                    desc={i === 0 ? desc : null}
-                                    isHit={v.hit}
-                                    badgeColor="#00BCD4"
-                                  />
-                                ))}
-                              </div>
-                            );
-                          }
-
+                      if (variants) {
+                        const isGrid = variants.some((v) => v.grid);
+                        if (isGrid) {
                           return (
-                            <ProductRow
+                            <GridVariants
                               key={product.id}
-                              imageUrl={imageUrl}
-                              nom={nom}
-                              pillLabel={nom}
-                              pillColor={color}
+                              imageUrl={url}
+                              variants={variants}
                               desc={desc}
-                              isHit={product.featured}
-                              badgeColor="#00BCD4"
+                              nom={nom}
                             />
                           );
-                        })}
-                      </section>
-                    );
-                  })}
-                </div>
-              )}
+                        }
+                        // Hero qatorlar (har bir variant alohida qator)
+                        return (
+                          <div key={product.id}>
+                            {variants.map((v, i) => (
+                              <HeroRow
+                                key={v.id || i}
+                                imageUrl={url}
+                                alt={v.label}
+                                pillLabel={v.label}
+                                pillColor={v.color || color}
+                                desc={i === 0 ? desc : null}
+                                isHit={v.hit}
+                                hitColor="#00BCD4"
+                              />
+                            ))}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <HeroRow
+                          key={product.id}
+                          imageUrl={url}
+                          alt={nom}
+                          pillLabel={nom}
+                          pillColor={color}
+                          desc={desc}
+                          isHit={product.featured}
+                          hitColor="#00BCD4"
+                        />
+                      );
+                    })}
+                  </section>
+                );
+              })}
             </div>
-          </div>
+          )}
         </div>
       </main>
       <SiteFooter />
