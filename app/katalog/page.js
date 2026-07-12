@@ -132,7 +132,7 @@ function ProductGrid({ products, lang, color }) {
 /* ── Kategoriya navigatsiyasi ── */
 function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
   return (
-    <div className="flex gap-2 mb-10 overflow-x-auto pb-2 scrollbar-hide" style={{ WebkitOverflowScrolling: "touch" }}>
+    <div className="flex flex-wrap gap-2 mb-10">
       <button onClick={() => setActiveKat(null)}
         className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
         style={!activeKat
