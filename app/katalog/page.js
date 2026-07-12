@@ -95,6 +95,39 @@ function GridVariants({ imageUrl, variants, desc, nom }) {
   );
 }
 
+/* ── 3×N grid layout (Makon Mirzo uslubi) ── */
+function ProductGrid({ products, lang, color }) {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+      {products.map((product) => {
+        const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
+        const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
+        const pillColor = (product.brend && product.brend.startsWith('#')) ? product.brend : color;
+        return (
+          <div key={product.id} className="flex flex-col gap-3">
+            <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden"
+              style={{ aspectRatio: '3/4', border: "1px solid #e5e5e5" }}>
+              {url ? (
+                <Image src={url} alt={nom} fill style={{ objectFit: "contain" }} className="p-3" sizes="280px" />
+              ) : (
+                <span className="text-4xl opacity-20 select-none">📦</span>
+              )}
+              {product.featured && (
+                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
+                  style={{ backgroundColor: "#00BCD4" }}>Хит Продаж</span>
+              )}
+            </div>
+            <div className="px-3 py-2 rounded-xl text-center text-white text-xs sm:text-sm font-medium leading-snug"
+              style={{ backgroundColor: pillColor }}>
+              {nom}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /* ── Kategoriya navigatsiyasi (yuqorida, anchor) ── */
 function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
   return (
@@ -185,11 +218,15 @@ export default function KatalogPage() {
                 const color = kategoriya?.rangKodi || "#E8491D";
                 const wideImg = ['kalopriyomniklar', 'pastalar'].includes(kategoriya?.slug);
 
+                const isGrid = kategoriya?.slug === 'ortopediya';
+
                 return (
                   <section key={kategoriya?.slug}>
                     <SectionHeader nom={katNom} />
 
-                    {products.map((product) => {
+                    {isGrid ? (
+                      <ProductGrid products={products} lang={lang} color={color} />
+                    ) : products.map((product) => {
                       const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
                       const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
                       const desc = lang === "ru"
@@ -201,8 +238,8 @@ export default function KatalogPage() {
                         ? product.variantlar : null;
 
                       if (variants) {
-                        const isGrid = variants.some((v) => v.grid);
-                        if (isGrid) {
+                        const isGridVariant = variants.some((v) => v.grid);
+                        if (isGridVariant) {
                           return (
                             <GridVariants
                               key={product.id}
@@ -247,7 +284,7 @@ export default function KatalogPage() {
                         />
                       );
                     })}
-                  </section>
+                    </section>
                 );
               })}
             </div>
