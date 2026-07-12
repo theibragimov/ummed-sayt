@@ -4,7 +4,7 @@ import Image from 'next/image'
 import RasmYuklash from '@/components/admin/RasmYuklash'
 import { A } from '@/components/admin/AdminStyles'
 
-const INIT = { nom: '', nomRu: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '', rangKodi: '#E8491D' }
+const INIT = { nom: '', nomRu: '', nomEn: '', tavsif: '', tartibRaqami: 100, parentId: '', rasmUrl: '', rangKodi: '#E8491D' }
 
 export default function KategoriyalarPage() {
   const [kategoriyalar, setKategoriyalar] = useState([])
@@ -17,7 +17,7 @@ export default function KategoriyalarPage() {
 
   function ochModal(k = null) {
     setTahrirlash(k)
-    setForm(k ? { nom: k.nom, nomRu: k.nomRu || '', tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '', rangKodi: k.rangKodi || '#E8491D' } : INIT)
+    setForm(k ? { nom: k.nom, nomRu: k.nomRu || '', nomEn: k.nomEn || '', tavsif: k.tavsif || '', tartibRaqami: k.tartibRaqami, parentId: k.parentId || '', rasmUrl: k.rasmUrl || '', rangKodi: k.rangKodi || '#E8491D' } : INIT)
     setModal(true)
   }
 
@@ -87,14 +87,18 @@ export default function KategoriyalarPage() {
         <div style={A.overlay}>
           <div style={A.modal}>
             <h3 style={{ ...A.h2, marginBottom: '20px' }}>{tahrirlash ? 'Tahrirlash' : 'Yangi kategoriya'}</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
               <div>
-                <label style={A.label}>Nom (O'zbek) *</label>
+                <label style={A.label}>🇺🇿 Nom (O'zbek) *</label>
                 <input value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} style={A.input} required />
               </div>
               <div>
-                <label style={A.label}>Nom (Rus tili)</label>
+                <label style={A.label}>🇷🇺 Название (Русский)</label>
                 <input value={form.nomRu} onChange={e => setForm({ ...form, nomRu: e.target.value })} style={A.input} placeholder="Русское название" />
+              </div>
+              <div>
+                <label style={A.label}>🇬🇧 Name (English)</label>
+                <input value={form.nomEn} onChange={e => setForm({ ...form, nomEn: e.target.value })} style={A.input} placeholder="English name" />
               </div>
             </div>
             <div style={{ marginBottom: '14px' }}>
