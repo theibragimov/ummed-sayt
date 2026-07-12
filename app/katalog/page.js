@@ -11,19 +11,19 @@ import { useLang } from "@/lib/i18n";
 function SectionHeader({ nom }) {
   return (
     <div className="mb-8 sm:mb-10">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3 text-gray-900 dark:text-white">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3" style={{ color: "var(--text)" }}>
         {nom}
       </h2>
-      <div className="h-px bg-gray-200 dark:bg-gray-700" />
+      <div style={{ height: 1, backgroundColor: "var(--border-strong)" }} />
     </div>
   );
 }
 
-/* ── Mahsulot rasmi qutisi (hit badge ichida) ── */
+/* ── Mahsulot rasmi qutisi ── */
 function ImgBox({ url, alt, isHit, hitColor, wide }) {
   return (
-    <div className="relative flex items-center justify-center bg-white dark:bg-gray-800 rounded-2xl overflow-hidden flex-shrink-0 self-stretch border border-gray-200 dark:border-gray-700"
-      style={{ width: wide ? 560 : 280, minWidth: wide ? 560 : 280, minHeight: 240 }}>
+    <div className="relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
+      style={{ width: wide ? 560 : 280, minWidth: wide ? 560 : 280, minHeight: 240, backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
       {url ? (
         <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
@@ -39,17 +39,17 @@ function ImgBox({ url, alt, isHit, hitColor, wide }) {
   );
 }
 
-/* ── Tavsif kartasi (o'ng tomon) ── */
+/* ── Tavsif kartasi ── */
 function DescCard({ pillLabel, pillColor, desc }) {
   return (
-    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start bg-gray-100 dark:bg-gray-800"
-      style={{ minHeight: 240 }}>
+    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
+      style={{ backgroundColor: "var(--bg-soft)", minHeight: 240 }}>
       <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-medium leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
       </span>
       {desc && (
-        <p className="text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="text-sm sm:text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>
           {desc}
         </p>
       )}
@@ -57,7 +57,7 @@ function DescCard({ pillLabel, pillColor, desc }) {
   );
 }
 
-/* ── Oddiy qator: [rasm] chap, [karta] o'ng ── */
+/* ── Oddiy qator ── */
 function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide }) {
   return (
     <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 mb-8">
@@ -67,7 +67,7 @@ function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, w
   );
 }
 
-/* ── 2×2 grid (ignalar uslubi) + pastda tavsif kartasi ── */
+/* ── 2×2 grid ── */
 function GridVariants({ imageUrl, variants, desc, nom }) {
   return (
     <div className="mb-8">
@@ -83,19 +83,19 @@ function GridVariants({ imageUrl, variants, desc, nom }) {
         ))}
       </div>
       {desc && (
-        <div className="rounded-2xl p-6 sm:p-8 bg-gray-100 dark:bg-gray-800">
+        <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: "var(--bg-soft)" }}>
           <span className="inline-block px-4 py-1.5 rounded-xl text-white text-sm font-bold mb-3"
             style={{ backgroundColor: "#2d3748" }}>
             {nom}
           </span>
-          <p className="text-sm sm:text-base leading-relaxed text-gray-600 dark:text-gray-300">{desc}</p>
+          <p className="text-sm sm:text-base leading-relaxed" style={{ color: "var(--text-muted)" }}>{desc}</p>
         </div>
       )}
     </div>
   );
 }
 
-/* ── 4×N grid layout (Makon Mirzo uslubi) ── */
+/* ── 4×N grid (Makon Mirzo) ── */
 function ProductGrid({ products, lang, color }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
@@ -105,8 +105,8 @@ function ProductGrid({ products, lang, color }) {
         const pillColor = (product.brend && product.brend.startsWith('#')) ? product.brend : color;
         return (
           <div key={product.id} className="flex flex-col gap-3">
-            <div className="relative flex items-center justify-center bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700"
-              style={{ aspectRatio: '1/1' }}>
+            <div className="relative flex items-center justify-center rounded-2xl overflow-hidden"
+              style={{ aspectRatio: '1/1', backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
               {url ? (
                 <Image src={url} alt={nom} fill style={{ objectFit: "contain" }} className="p-3" sizes="280px" />
               ) : (
@@ -128,13 +128,15 @@ function ProductGrid({ products, lang, color }) {
   );
 }
 
-/* ── Kategoriya navigatsiyasi (yuqorida, anchor) ── */
+/* ── Kategoriya navigatsiyasi ── */
 function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
   return (
     <div className="flex flex-wrap gap-2 mb-12">
       <button onClick={() => setActiveKat(null)}
         className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
-        style={!activeKat ? { backgroundColor: "#111", color: "#fff" } : { backgroundColor: "var(--nav-bg, #f0f0f0)", color: "var(--nav-color, #444)" }}>
+        style={!activeKat
+          ? { backgroundColor: "var(--text)", color: "var(--bg)" }
+          : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
         {lang === "ru" ? "Все" : "Hammasi"}
       </button>
       {sections.map((s) => {
@@ -146,7 +148,7 @@ function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
             className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
             style={active
               ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
-              : { backgroundColor: "var(--nav-bg, #f0f0f0)", color: "var(--nav-color, #444)" }}>
+              : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
             {nom}
           </button>
         );
@@ -155,7 +157,7 @@ function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
   );
 }
 
-/* ── Animatsiyali ro'yxat ── */
+/* ── Kategoriya almashganda animatsiya ── */
 function FadeList({ children, triggerKey }) {
   const [visible, setVisible] = useState(false);
   const prev = useRef(triggerKey);
@@ -244,12 +246,13 @@ export default function KatalogPage() {
   return (
     <>
       <SiteHeader />
-      <main className="bg-white dark:bg-gray-900" style={{ fontFamily: "var(--font-sans)" }}>
+      <main style={{ backgroundColor: "var(--bg)", fontFamily: "var(--font-sans)" }}>
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-24">
 
           <Reveal variant="up" className="mb-10">
             <span className="section-label mb-3">{lang === "ru" ? "Каталог" : "Katalog"}</span>
-            <h1 className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6 text-gray-900 dark:text-white">
+            <h1 className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6"
+              style={{ color: "var(--text)" }}>
               {lang === "ru" ? "Продукция" : "Mahsulotlar"}
             </h1>
           </Reveal>
@@ -259,9 +262,9 @@ export default function KatalogPage() {
           )}
 
           {yuklanmoqda ? (
-            <p className="text-center py-24 text-sm text-gray-400">Yuklanmoqda...</p>
+            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>Yuklanmoqda...</p>
           ) : displayed.length === 0 ? (
-            <p className="text-center py-24 text-sm text-gray-400">Mahsulotlar topilmadi</p>
+            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>Mahsulotlar topilmadi</p>
           ) : (
             <FadeList triggerKey={activeKat}>
               <div className="space-y-16 sm:space-y-20">
@@ -295,13 +298,7 @@ export default function KatalogPage() {
                             const isGridVariant = variants.some((v) => v.grid);
                             if (isGridVariant) {
                               return (
-                                <GridVariants
-                                  key={product.id}
-                                  imageUrl={url}
-                                  variants={variants}
-                                  desc={desc}
-                                  nom={nom}
-                                />
+                                <GridVariants key={product.id} imageUrl={url} variants={variants} desc={desc} nom={nom} />
                               );
                             }
                             return (
