@@ -268,7 +268,7 @@ export default function KatalogPage() {
                 {displayed.map(({ kategoriya, products }) => {
                   const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : lang === "en" ? (kategoriya?.nomEn || kategoriya?.nom) : kategoriya?.nom;
                   const color = kategoriya?.rangKodi || "#E8491D";
-                  const wideImg = ['kalopriyomniklar', 'pastalar', 'reabilitatsiya'].includes(kategoriya?.slug);
+                  const wideImg = ['kalopriyomniklar', 'pastalar', 'reabilitatsiya', 'ginekologik-mahsulotlar'].includes(kategoriya?.slug);
                   const isGrid = kategoriya?.slug === 'ortopediya';
 
                   return (
