@@ -183,7 +183,7 @@ export default function KatalogPage() {
               {displayed.map(({ kategoriya, products }) => {
                 const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : kategoriya?.nom;
                 const color = kategoriya?.rangKodi || "#E8491D";
-                const wideImg = kategoriya?.slug === 'kalopriyomniklar';
+                const wideImg = ['kalopriyomniklar', 'pastalar'].includes(kategoriya?.slug);
 
                 return (
                   <section key={kategoriya?.slug}>
