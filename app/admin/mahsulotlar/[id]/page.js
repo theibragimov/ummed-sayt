@@ -12,6 +12,7 @@ export default async function MahsulotTahrirlash({ params }) {
   const boshlangich = {
     nom: mahsulot.nom,
     nomRu: mahsulot.nomRu || '',
+    nomEn: mahsulot.nomEn || '',
     slug: mahsulot.slug,
     narx: mahsulot.narx || '',
     narxBirligi: mahsulot.narxBirligi,
@@ -19,8 +20,10 @@ export default async function MahsulotTahrirlash({ params }) {
     modelRaqami: mahsulot.modelRaqami || '',
     qisqaTavsif: mahsulot.qisqaTavsif || '',
     qisqaTavsifRu: mahsulot.qisqaTavsifRu || '',
+    qisqaTavsifEn: mahsulot.qisqaTavsifEn || '',
     toliqTavsif: mahsulot.toliqTavsif || '',
     toliqTavsifRu: mahsulot.toliqTavsifRu || '',
+    toliqTavsifEn: mahsulot.toliqTavsifEn || '',
     mavjudligi: mahsulot.mavjudligi,
     featured: mahsulot.featured,
     kategoriyaId: mahsulot.kategoriyaId ? String(mahsulot.kategoriyaId) : '',

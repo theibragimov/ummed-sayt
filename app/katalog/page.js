@@ -101,7 +101,7 @@ function ProductGrid({ products, lang, color }) {
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
       {products.map((product) => {
         const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
-        const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
+        const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
         const pillColor = (product.brend && product.brend.startsWith('#')) ? product.brend : color;
         return (
           <div key={product.id} className="flex flex-col gap-3">
@@ -214,7 +214,7 @@ export default function KatalogPage() {
           ) : (
             <div className="space-y-16 sm:space-y-20">
               {displayed.map(({ kategoriya, products }) => {
-                const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : kategoriya?.nom;
+                const katNom = lang === "ru" ? (kategoriya?.nomRu || kategoriya?.nom) : lang === "en" ? (kategoriya?.nomEn || kategoriya?.nom) : kategoriya?.nom;
                 const color = kategoriya?.rangKodi || "#E8491D";
                 const wideImg = ['kalopriyomniklar', 'pastalar'].includes(kategoriya?.slug);
 
@@ -228,9 +228,11 @@ export default function KatalogPage() {
                       <ProductGrid products={products} lang={lang} color={color} />
                     ) : products.map((product) => {
                       const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
-                      const nom = lang === "ru" ? (product.nomRu || product.nom) : product.nom;
+                      const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
                       const desc = lang === "ru"
                         ? (product.qisqaTavsifRu || product.qisqaTavsif)
+                        : lang === "en"
+                        ? (product.qisqaTavsifEn || product.qisqaTavsif)
                         : (product.qisqaTavsif || product.qisqaTavsifRu);
                       const pillColor = (product.brend && product.brend.startsWith('#'))
                         ? product.brend : color;

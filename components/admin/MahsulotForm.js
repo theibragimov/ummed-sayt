@@ -7,9 +7,9 @@ import { A } from './AdminStyles'
 export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
   const router = useRouter()
   const [form, setForm] = useState({
-    nom: '', nomRu: '', slug: '', narx: '', narxBirligi: "so'm",
-    brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '',
-    toliqTavsif: '', toliqTavsifRu: '',
+    nom: '', nomRu: '', nomEn: '', slug: '', narx: '', narxBirligi: "so'm",
+    brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '', qisqaTavsifEn: '',
+    toliqTavsif: '', toliqTavsifRu: '', toliqTavsifEn: '',
     mavjudligi: true, featured: false, belgi: '', kategoriyaId: '',
     asosiyRasmUrl: '', turi: 'katalog', ...boshlangich,
   })
@@ -54,14 +54,18 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Asosiy ma'lumotlar
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={A.label}>Mahsulot nomi (O'zbek) *</label>
+            <label style={A.label}>🇺🇿 Nom (O'zbek) *</label>
             <input required value={form.nom} onChange={e => oz('nom', e.target.value)} style={A.input} placeholder="O'zbekcha nom" />
           </div>
           <div>
-            <label style={A.label}>Название (Русский)</label>
+            <label style={A.label}>🇷🇺 Название (Русский)</label>
             <input value={form.nomRu} onChange={e => oz('nomRu', e.target.value)} style={A.input} placeholder="Русское название" />
+          </div>
+          <div>
+            <label style={A.label}>🇬🇧 Name (English)</label>
+            <input value={form.nomEn || ''} onChange={e => oz('nomEn', e.target.value)} style={A.input} placeholder="English name" />
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -117,24 +121,32 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           Tavsiflar
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={A.label}>Qisqa tavsif (O'zbek)</label>
-            <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={3} style={A.textarea} placeholder="O'zbekcha qisqa tavsif" />
+            <label style={A.label}>🇺🇿 Qisqa tavsif (O'zbek)</label>
+            <textarea value={form.qisqaTavsif} onChange={e => oz('qisqaTavsif', e.target.value)} rows={4} style={A.textarea} placeholder="O'zbekcha qisqa tavsif" />
           </div>
           <div>
-            <label style={A.label}>Краткое описание (Русский)</label>
-            <textarea value={form.qisqaTavsifRu} onChange={e => oz('qisqaTavsifRu', e.target.value)} rows={3} style={A.textarea} placeholder="Краткое описание на русском" />
+            <label style={A.label}>🇷🇺 Краткое описание (Рус)</label>
+            <textarea value={form.qisqaTavsifRu} onChange={e => oz('qisqaTavsifRu', e.target.value)} rows={4} style={A.textarea} placeholder="Краткое описание на русском" />
+          </div>
+          <div>
+            <label style={A.label}>🇬🇧 Short description (EN)</label>
+            <textarea value={form.qisqaTavsifEn || ''} onChange={e => oz('qisqaTavsifEn', e.target.value)} rows={4} style={A.textarea} placeholder="Short description in English" />
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={A.label}>To'liq tavsif — O'zbek (HTML)</label>
+            <label style={A.label}>🇺🇿 To'liq tavsif (HTML)</label>
             <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
           </div>
           <div>
-            <label style={A.label}>Полное описание — Русский (HTML)</label>
+            <label style={A.label}>🇷🇺 Полное описание (HTML)</label>
             <textarea value={form.toliqTavsifRu} onChange={e => oz('toliqTavsifRu', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Описание...</p>" />
+          </div>
+          <div>
+            <label style={A.label}>🇬🇧 Full description (HTML)</label>
+            <textarea value={form.toliqTavsifEn || ''} onChange={e => oz('toliqTavsifEn', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Description...</p>" />
           </div>
         </div>
       </div>
