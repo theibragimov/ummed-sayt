@@ -106,7 +106,7 @@ function ProductGrid({ products, lang, color }) {
         return (
           <div key={product.id} className="flex flex-col gap-3">
             <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden"
-              style={{ height: 140, border: "1px solid #e5e5e5" }}>
+              style={{ aspectRatio: '1/1', border: "1px solid #e5e5e5" }}>
               {url ? (
                 <Image src={url} alt={nom} fill style={{ objectFit: "contain" }} className="p-3" sizes="280px" />
               ) : (
