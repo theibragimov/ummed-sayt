@@ -11,7 +11,7 @@ import { useLang } from "@/lib/i18n";
 function SectionHeader({ nom }) {
   return (
     <div className="mb-8 sm:mb-10">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3" style={{ color: "var(--text)" }}>
+      <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3" style={{ color: "var(--text)" }}>
         {nom}
       </h2>
       <div style={{ height: 1, backgroundColor: "var(--border-strong)" }} />
@@ -22,10 +22,11 @@ function SectionHeader({ nom }) {
 /* ── Mahsulot rasmi qutisi ── */
 function ImgBox({ url, alt, isHit, hitColor, wide }) {
   return (
-    <div className="relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
-      style={{ width: wide ? 560 : 280, minWidth: wide ? 560 : 280, minHeight: 240, backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
+    <div
+      className={`relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch w-full min-h-[200px] sm:min-h-[240px] ${wide ? "sm:w-[560px] sm:min-w-[560px]" : "sm:w-[280px] sm:min-w-[280px]"}`}
+      style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
       {url ? (
-        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
+        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="(max-width: 640px) 100vw, 560px" />
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
@@ -42,8 +43,8 @@ function ImgBox({ url, alt, isHit, hitColor, wide }) {
 /* ── Tavsif kartasi ── */
 function DescCard({ pillLabel, pillColor, desc }) {
   return (
-    <div className="flex-1 rounded-2xl p-7 sm:p-9 flex flex-col gap-4 justify-start"
-      style={{ backgroundColor: "var(--bg-soft)", minHeight: 240 }}>
+    <div className="flex-1 rounded-2xl p-5 sm:p-9 flex flex-col gap-3 sm:gap-4 justify-start"
+      style={{ backgroundColor: "var(--bg-soft)", minHeight: 180 }}>
       <span className="inline-block self-start px-4 py-2 rounded-xl text-white text-sm font-medium leading-snug"
         style={{ backgroundColor: pillColor || "#E8491D" }}>
         {pillLabel}
@@ -60,7 +61,7 @@ function DescCard({ pillLabel, pillColor, desc }) {
 /* ── Oddiy qator ── */
 function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 mb-8">
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-6 sm:mb-8">
       <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} wide={wide} />
       <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
     </div>
@@ -98,7 +99,7 @@ function GridVariants({ imageUrl, variants, desc, nom }) {
 /* ── 4×N grid (Makon Mirzo) ── */
 function ProductGrid({ products, lang, color }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
       {products.map((product) => {
         const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
         const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
@@ -131,9 +132,9 @@ function ProductGrid({ products, lang, color }) {
 /* ── Kategoriya navigatsiyasi ── */
 function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
   return (
-    <div className="flex flex-wrap gap-2 mb-12">
+    <div className="flex gap-2 mb-10 overflow-x-auto pb-2 scrollbar-hide" style={{ WebkitOverflowScrolling: "touch" }}>
       <button onClick={() => setActiveKat(null)}
-        className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+        className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
         style={!activeKat
           ? { backgroundColor: "var(--text)", color: "var(--bg)" }
           : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
@@ -145,7 +146,7 @@ function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
         return (
           <button key={s.kategoriya?.slug}
             onClick={() => setActiveKat(s.kategoriya?.slug)}
-            className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+            className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
             style={active
               ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
               : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>

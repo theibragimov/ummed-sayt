@@ -414,7 +414,14 @@ html[data-theme="dark"] .uzum-mega-frame {
               0 6px 18px -4px rgba(107, 33, 168, 0.35);
 }
 
-/* Karusel — scrollbarni yashirish */
+/* Scrollbarni yashirish */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
