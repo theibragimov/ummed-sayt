@@ -98,7 +98,7 @@ function GridVariants({ imageUrl, variants, desc, nom }) {
 /* ── 3×N grid layout (Makon Mirzo uslubi) ── */
 function ProductGrid({ products, lang, color }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
       {products.map((product) => {
         const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
         const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
