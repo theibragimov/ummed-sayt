@@ -23,7 +23,7 @@ function SectionHeader({ nom }) {
 function ImgBox({ url, alt, isHit, hitColor, wide }) {
   return (
     <div className="relative flex items-center justify-center bg-white rounded-2xl overflow-hidden flex-shrink-0 self-stretch"
-      style={{ width: wide ? 420 : 280, minWidth: wide ? 420 : 280, minHeight: 240, border: "1px solid #e5e5e5" }}>
+      style={{ width: wide ? 560 : 280, minWidth: wide ? 560 : 280, minHeight: 240, border: "1px solid #e5e5e5" }}>
       {url ? (
         <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="280px" />
       ) : (
