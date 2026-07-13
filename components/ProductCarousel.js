@@ -157,11 +157,6 @@ function Card({ item, bg, imgH, lang }) {
         )}
       </div>
       <div className="mt-5">
-        {item.kategoriya?.nom && (
-          <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#E8491D" }}>
-            {lang === "ru" ? (item.kategoriya.nomRu || item.kategoriya.nom) : item.kategoriya.nom}
-          </span>
-        )}
         <h3 className="text-[14px] sm:text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
         <p className="mt-1 sm:mt-2 text-[12px] sm:text-[15px] font-light leading-relaxed line-clamp-2" style={{ color: "var(--text-muted)" }}>{desc}</p>
         {isDbItem && item.narx && (
