@@ -78,7 +78,7 @@ export default function InteractiveHero() {
 
         {/* Asosiy sarlavha */}
         <h1
-          className="mt-5 sm:mt-7 text-[30px] sm:text-[42px] md:text-[60px] lg:text-[76px] font-medium leading-[1.1] sm:leading-[1.05] tracking-[-0.03em] sm:tracking-[-0.04em] max-w-5xl anim-fade-up"
+          className="mt-5 sm:mt-7 text-[26px] sm:text-[36px] md:text-[48px] lg:text-[58px] font-medium leading-[1.1] sm:leading-[1.05] tracking-[-0.03em] sm:tracking-[-0.04em] max-w-6xl anim-fade-up"
           style={{ animationDelay: "180ms", color: "var(--text)" }}
         >
           <span className="block">{title1}</span>
