@@ -593,7 +593,7 @@ export default function HomePage() {
               >
                 <div>
                   <span className="section-label">{L("Hamkorlik", "Партнёрство", "Partnership")}</span>
-                  <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 600 }}>
+                  <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 800 }}>
                     {lang === "ru" ? <>Всё необходимое для вашей аптеки или клиники<br />— в одном месте!</> : lang === "en" ? <>Find all the medical supplies your pharmacy or clinic needs<br />— in one place!</> : <>Apteka yoki klinikangiz uchun kerakli tibbiyot buyumlarini<br />bir joydan toping!</>}
                   </h2>
                   <p className="mt-3 text-sm font-light leading-relaxed" style={{ color: "var(--text-muted, #888)" }}>
