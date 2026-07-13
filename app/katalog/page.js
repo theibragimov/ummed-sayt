@@ -26,7 +26,7 @@ function ImgBox({ url, alt, isHit, hitColor, wide }) {
       className={`relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch w-full min-h-[200px] sm:min-h-[240px] ${wide ? "sm:w-[560px] sm:min-w-[560px]" : "sm:w-[280px] sm:min-w-[280px]"}`}
       style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
       {url ? (
-        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} className="p-4" sizes="(max-width: 640px) 100vw, 560px" />
+        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} sizes="(max-width: 640px) 100vw, 560px" />
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
