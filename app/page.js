@@ -506,7 +506,7 @@ export default function HomePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all hover:opacity-85 hover:scale-[1.02] whitespace-nowrap"
-                        style={{ backgroundColor: "#FFE566", color: "#3D0FA0" }}
+                        style={{ backgroundColor: "#FFE000", color: "#3D0FA0" }}
                       >
                         {shop.name}
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
