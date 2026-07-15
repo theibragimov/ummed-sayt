@@ -19,21 +19,23 @@ function SectionHeader({ nom }) {
   );
 }
 
+const HIT_LABEL = { uz: "Eng ko'p sotiladi", ru: "Хит Продаж", en: "Bestseller" };
+
 /* ── Mahsulot rasmi qutisi ── */
-function ImgBox({ url, alt, isHit, hitColor, wide }) {
+function ImgBox({ url, alt, isHit, hitColor, wide, lang }) {
   return (
     <div
       className={`relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch w-full min-h-[200px] sm:min-h-[240px] ${wide ? "sm:w-[560px] sm:min-w-[560px]" : "sm:w-[280px] sm:min-w-[280px]"}`}
       style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
       {url ? (
-        <Image src={url} alt={alt} fill style={{ objectFit: "contain" }} sizes="(max-width: 640px) 100vw, 560px" />
+        <Image src={url} alt={alt} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 100vw, 560px" />
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
       {isHit && (
         <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
           style={{ backgroundColor: hitColor || "#00BCD4" }}>
-          Хит Продаж
+          {HIT_LABEL[lang] || HIT_LABEL.uz}
         </span>
       )}
     </div>
@@ -59,23 +61,23 @@ function DescCard({ pillLabel, pillColor, desc }) {
 }
 
 /* ── Oddiy qator ── */
-function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide }) {
+function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide, lang }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-6 sm:mb-8">
-      <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} wide={wide} />
+      <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} wide={wide} lang={lang} />
       <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
     </div>
   );
 }
 
 /* ── 2×2 grid ── */
-function GridVariants({ imageUrl, variants, desc, nom }) {
+function GridVariants({ imageUrl, variants, desc, nom, lang }) {
   return (
     <div className="mb-8">
       <div className="grid grid-cols-2 gap-5 sm:gap-6 mb-6">
         {variants.map((v, i) => (
           <div key={v.id || i} className="flex flex-col">
-            <ImgBox url={imageUrl} alt={v.label} isHit={v.hit} hitColor="#00BCD4" />
+            <ImgBox url={imageUrl} alt={v.label} isHit={v.hit} hitColor="#00BCD4" lang={lang} />
             <div className="mt-3 py-2.5 px-4 rounded-xl text-center text-white text-sm font-bold"
               style={{ backgroundColor: v.color || "#E8491D" }}>
               {v.label}
@@ -109,13 +111,13 @@ function ProductGrid({ products, lang, color }) {
             <div className="relative flex items-center justify-center rounded-2xl overflow-hidden"
               style={{ aspectRatio: '1/1', backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
               {url ? (
-                <Image src={url} alt={nom} fill style={{ objectFit: "contain" }} className="p-3" sizes="280px" />
+                <Image src={url} alt={nom} fill style={{ objectFit: "cover" }} sizes="280px" />
               ) : (
                 <span className="text-4xl opacity-20 select-none">📦</span>
               )}
               {product.featured && (
                 <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-                  style={{ backgroundColor: "#00BCD4" }}>Хит Продаж</span>
+                  style={{ backgroundColor: "#00BCD4" }}>{HIT_LABEL[lang] || HIT_LABEL.uz}</span>
               )}
             </div>
             <div className="px-3 py-2 rounded-xl text-center text-white text-xs sm:text-sm font-medium leading-snug"
@@ -221,7 +223,7 @@ export default function KatalogPage() {
     fetch("/api/mahsulotlar?hammasi=true")
       .then((r) => r.json())
       .then((data) => {
-        setMahsulotlar(Array.isArray(data) ? data.filter((p) => p.kategoriya) : []);
+        setMahsulotlar(Array.isArray(data) ? data.filter((p) => p.kategoriya && p.turi === 'katalog') : []);
         setYuklanmoqda(false);
       })
       .catch(() => setYuklanmoqda(false));
@@ -299,7 +301,7 @@ export default function KatalogPage() {
                             const isGridVariant = variants.some((v) => v.grid);
                             if (isGridVariant) {
                               return (
-                                <GridVariants key={product.id} imageUrl={url} variants={variants} desc={desc} nom={nom} />
+                                <GridVariants key={product.id} imageUrl={url} variants={variants} desc={desc} nom={nom} lang={lang} />
                               );
                             }
                             return (
@@ -315,6 +317,7 @@ export default function KatalogPage() {
                                     isHit={v.hit}
                                     hitColor="#00BCD4"
                                     wide={wideImg}
+                                    lang={lang}
                                   />
                                 ))}
                               </div>
@@ -332,6 +335,7 @@ export default function KatalogPage() {
                               isHit={product.featured}
                               hitColor="#00BCD4"
                               wide={wideImg}
+                              lang={lang}
                             />
                           );
                         })}

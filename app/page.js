@@ -462,22 +462,22 @@ export default function HomePage() {
         <section className="pt-10 sm:pt-16 pb-4" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
             <Reveal variant="up">
+              <span className="section-label mb-4 block">{L("Uzum Market", "Uzum Market", "Uzum Market")}</span>
               <div
                 className="rounded-2xl overflow-hidden flex flex-col lg:flex-row"
-                style={{ backgroundColor: "var(--bg-soft)" }}
+                style={{ background: "linear-gradient(135deg, #7B2FF7 0%, #5B1AC8 50%, #3D0FA0 100%)" }}
               >
                 {/* Chap qism */}
                 <div className="flex-1 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-3 sm:gap-5">
-                  <span className="section-label">{L("Uzum Market", "Uzum Market", "Uzum Market")}</span>
                   <h2
                     className="text-2xl sm:text-3xl lg:text-[38px] font-medium leading-[1.1] tracking-tight"
-                    style={{ color: "var(--text)" }}
+                    style={{ color: "#fff" }}
                   >
                     {t.uzum.title}
                   </h2>
                   <p
                     className="text-sm font-light leading-relaxed max-w-md"
-                    style={{ color: "var(--text-muted)" }}
+                    style={{ color: "rgba(255,255,255,0.75)" }}
                   >
                     {t.uzum.subtitle}
                   </p>
@@ -486,11 +486,11 @@ export default function HomePage() {
                 {/* O'ng qism — do'konlar, kengaytirilgan */}
                 <div
                   className="lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
-                  style={{ borderLeft: "1px solid var(--border)" }}
+                  style={{ borderLeft: "1px solid rgba(255,255,255,0.15)" }}
                 >
                   <h3
                     className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
-                    style={{ color: "var(--text)" }}
+                    style={{ color: "rgba(255,255,255,0.85)" }}
                   >
                     {L("Do'konlar", "Магазины", "Stores")}
                   </h3>
@@ -505,8 +505,8 @@ export default function HomePage() {
                         href={shop.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-medium transition-all hover:opacity-85 hover:scale-[1.02] whitespace-nowrap"
-                        style={{ backgroundColor: "#6E27D9" }}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all hover:opacity-85 hover:scale-[1.02] whitespace-nowrap"
+                        style={{ backgroundColor: "#FFE566", color: "#3D0FA0" }}
                       >
                         {shop.name}
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -594,7 +594,7 @@ export default function HomePage() {
                 <div>
                   <span className="section-label">{L("Hamkorlik", "Партнёрство", "Partnership")}</span>
                   <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 800 }}>
-                    {lang === "ru" ? <>Всё необходимое для вашей аптеки или клиники<br />— в одном месте!</> : lang === "en" ? <>Find all the medical supplies your pharmacy or clinic needs<br />— in one place!</> : <>Apteka yoki klinikangiz uchun kerakli tibbiyot buyumlarini<br />bir joydan toping!</>}
+                    {lang === "ru" ? <>Оптовая доставка медицинских изделий<br />по всему Узбекистану.</> : lang === "en" ? <>Wholesale delivery of medical supplies<br />across all of Uzbekistan.</> : <>Butun O&apos;zbekiston bo&apos;ylab tibbiyot<br />buyumlarini ulgurji yetkazib beramiz.</>}
                   </h2>
                   <p className="mt-3 text-sm font-light leading-relaxed" style={{ color: "var(--text-muted, #888)" }}>
                     {L("550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.", "Работаем на основе доверия 550+ клиентов и партнёров.", "We operate on the trust of 550+ clients and partners.")}
