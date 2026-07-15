@@ -465,7 +465,7 @@ export default function HomePage() {
               <span className="section-label mb-4 block">{L("Uzum Market", "Uzum Market", "Uzum Market")}</span>
               <div
                 className="rounded-2xl overflow-hidden flex flex-col lg:flex-row"
-                style={{ background: "linear-gradient(135deg, #7B2FF7 0%, #5B1AC8 50%, #3D0FA0 100%)" }}
+                style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)" }}
               >
                 {/* Chap qism */}
                 <div className="flex-1 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-3 sm:gap-5">
