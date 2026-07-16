@@ -28,13 +28,15 @@ function ImgBox({ url, alt, isHit, hitColor, wide, lang }) {
       className={`relative flex items-center justify-center rounded-2xl overflow-hidden flex-shrink-0 self-stretch w-full min-h-[200px] sm:min-h-[240px] ${wide ? "sm:w-[560px] sm:min-w-[560px]" : "sm:w-[280px] sm:min-w-[280px]"}`}
       style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
       {url ? (
-        <Image src={url} alt={alt} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 100vw, 560px" />
+        <div className="absolute inset-0 transition-transform duration-300 ease-out hover:scale-105">
+          <Image src={url} alt={alt} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 100vw, 560px" />
+        </div>
       ) : (
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
       {isHit && (
         <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-          style={{ backgroundColor: hitColor || "#E91E8C" }}>
+          style={{ backgroundColor: hitColor || "#E91E8C", zIndex: 1 }}>
           {HIT_LABEL[lang] || HIT_LABEL.uz}
         </span>
       )}
@@ -63,7 +65,7 @@ function DescCard({ pillLabel, pillColor, desc }) {
 /* ── Oddiy qator ── */
 function HeroRow({ imageUrl, alt, pillLabel, pillColor, desc, isHit, hitColor, wide, lang }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-6 sm:mb-8">
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-8 mb-5 sm:mb-8">
       <ImgBox url={imageUrl} alt={alt} isHit={isHit} hitColor={hitColor} wide={wide} lang={lang} />
       <DescCard pillLabel={pillLabel} pillColor={pillColor} desc={desc} />
     </div>
@@ -98,31 +100,37 @@ function GridVariants({ imageUrl, variants, desc, nom, lang }) {
   );
 }
 
-/* ── 4×N grid (Makon Mirzo) ── */
+/* ── 4×N grid (Ortopediya) ── */
 function ProductGrid({ products, lang, color }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
       {products.map((product) => {
         const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
         const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
         const pillColor = (product.brend && product.brend.startsWith('#')) ? product.brend : color;
         return (
-          <div key={product.id} className="flex flex-col gap-3">
-            <div className="relative flex items-center justify-center rounded-2xl overflow-hidden"
-              style={{ aspectRatio: '1/1', backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
+          <div key={product.id} className="flex flex-row sm:flex-col gap-3">
+            {/* Image: mobile = 100px square, desktop = full-width square */}
+            <div className="relative rounded-2xl overflow-hidden flex-shrink-0 w-[100px] h-[100px] sm:w-full sm:h-auto sm:aspect-square"
+              style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
               {url ? (
-                <Image src={url} alt={nom} fill style={{ objectFit: "cover" }} sizes="280px" />
+                <div className="absolute inset-0 transition-transform duration-300 ease-out hover:scale-105">
+                  <Image src={url} alt={nom} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 100px, 280px" />
+                </div>
               ) : (
-                <span className="text-4xl opacity-20 select-none">📦</span>
+                <span className="absolute inset-0 flex items-center justify-center text-3xl opacity-20 select-none">📦</span>
               )}
               {product.featured && (
                 <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-                  style={{ backgroundColor: "#E91E8C" }}>{HIT_LABEL[lang] || HIT_LABEL.uz}</span>
+                  style={{ backgroundColor: "#E91E8C", zIndex: 1 }}>{HIT_LABEL[lang] || HIT_LABEL.uz}</span>
               )}
             </div>
-            <div className="px-3 py-2 rounded-xl text-center text-white text-xs sm:text-sm font-medium leading-snug"
-              style={{ backgroundColor: pillColor }}>
-              {nom}
+            {/* Label */}
+            <div className="flex-1 flex items-center sm:block">
+              <div className="w-full px-3 py-2 rounded-xl text-left sm:text-center text-white text-xs sm:text-sm font-medium leading-snug"
+                style={{ backgroundColor: pillColor }}>
+                {nom}
+              </div>
             </div>
           </div>
         );
@@ -133,30 +141,85 @@ function ProductGrid({ products, lang, color }) {
 
 /* ── Kategoriya navigatsiyasi ── */
 function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
+  const [open, setOpen] = useState(false);
+  const allLabel = lang === "ru" ? "Все" : lang === "en" ? "All" : "Hammasi";
+
+  const activeSection = sections.find(s => s.kategoriya?.slug === activeKat);
+  const activeColor = activeSection?.kategoriya?.rangKodi || "#E8491D";
+  const activeLabel = activeKat
+    ? (lang === "ru" ? (activeSection?.kategoriya?.nomRu || activeSection?.kategoriya?.nom)
+      : lang === "en" ? (activeSection?.kategoriya?.nomEn || activeSection?.kategoriya?.nom)
+      : activeSection?.kategoriya?.nom)
+    : allLabel;
+
   return (
-    <div className="flex flex-wrap gap-2 mb-10">
-      <button onClick={() => setActiveKat(null)}
-        className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
-        style={!activeKat
-          ? { backgroundColor: "var(--text)", color: "var(--bg)" }
-          : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
-        {lang === "ru" ? "Все" : lang === "en" ? "All" : "Hammasi"}
-      </button>
-      {sections.map((s) => {
-        const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
-        const active = activeKat === s.kategoriya?.slug;
-        return (
-          <button key={s.kategoriya?.slug}
-            onClick={() => setActiveKat(s.kategoriya?.slug)}
-            className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
-            style={active
-              ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
-              : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
-            {nom}
-          </button>
-        );
-      })}
-    </div>
+    <>
+      {/* Desktop: flex wrap */}
+      <div className="hidden sm:flex flex-wrap gap-2 mb-10">
+        <button onClick={() => setActiveKat(null)}
+          className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
+          style={!activeKat
+            ? { backgroundColor: "var(--text)", color: "var(--bg)" }
+            : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
+          {allLabel}
+        </button>
+        {sections.map((s) => {
+          const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
+          const active = activeKat === s.kategoriya?.slug;
+          return (
+            <button key={s.kategoriya?.slug}
+              onClick={() => setActiveKat(s.kategoriya?.slug)}
+              className="px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0"
+              style={active
+                ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
+                : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
+              {nom}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobile: accordion dropdown */}
+      <div className="sm:hidden mb-8 relative">
+        <button
+          onClick={() => setOpen(o => !o)}
+          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold"
+          style={{
+            backgroundColor: activeKat ? activeColor : "var(--text)",
+            color: activeKat ? "#fff" : "var(--bg)",
+          }}>
+          <span>{activeLabel}</span>
+          <span style={{ fontSize: 18, lineHeight: 1, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+        </button>
+        {open && (
+          <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl overflow-hidden shadow-lg z-20"
+            style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
+            <button
+              onClick={() => { setActiveKat(null); setOpen(false); }}
+              className="w-full text-left px-4 py-3 text-sm font-medium"
+              style={!activeKat
+                ? { backgroundColor: "var(--text)", color: "var(--bg)" }
+                : { color: "var(--text)" }}>
+              {allLabel}
+            </button>
+            {sections.map((s) => {
+              const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
+              const active = activeKat === s.kategoriya?.slug;
+              return (
+                <button key={s.kategoriya?.slug}
+                  onClick={() => { setActiveKat(s.kategoriya?.slug); setOpen(false); }}
+                  className="w-full text-left px-4 py-3 text-sm font-medium border-t"
+                  style={active
+                    ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff", borderColor: "transparent" }
+                    : { color: "var(--text)", borderColor: "var(--border-strong)" }}>
+                  {nom}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
