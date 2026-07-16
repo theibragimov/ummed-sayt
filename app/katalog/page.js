@@ -33,8 +33,8 @@ function ImgBox({ url, alt, isHit, hitColor, wide, lang }) {
         <span className="text-5xl opacity-20 select-none">📦</span>
       )}
       {isHit && (
-        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-          style={{ backgroundColor: hitColor || "#00BCD4" }}>
+        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-gray-900 text-xs font-semibold whitespace-nowrap"
+          style={{ backgroundColor: hitColor || "#F5C800" }}>
           {HIT_LABEL[lang] || HIT_LABEL.uz}
         </span>
       )}
@@ -77,7 +77,7 @@ function GridVariants({ imageUrl, variants, desc, nom, lang }) {
       <div className="grid grid-cols-2 gap-5 sm:gap-6 mb-6">
         {variants.map((v, i) => (
           <div key={v.id || i} className="flex flex-col">
-            <ImgBox url={imageUrl} alt={v.label} isHit={v.hit} hitColor="#00BCD4" lang={lang} />
+            <ImgBox url={imageUrl} alt={v.label} isHit={v.hit} hitColor="#F5C800" lang={lang} />
             <div className="mt-3 py-2.5 px-4 rounded-xl text-center text-white text-sm font-bold"
               style={{ backgroundColor: v.color || "#E8491D" }}>
               {v.label}
@@ -116,8 +116,8 @@ function ProductGrid({ products, lang, color }) {
                 <span className="text-4xl opacity-20 select-none">📦</span>
               )}
               {product.featured && (
-                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-                  style={{ backgroundColor: "#00BCD4" }}>{HIT_LABEL[lang] || HIT_LABEL.uz}</span>
+                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-gray-900 text-xs font-semibold whitespace-nowrap"
+                  style={{ backgroundColor: "#F5C800" }}>{HIT_LABEL[lang] || HIT_LABEL.uz}</span>
               )}
             </div>
             <div className="px-3 py-2 rounded-xl text-center text-white text-xs sm:text-sm font-medium leading-snug"
@@ -315,7 +315,7 @@ export default function KatalogPage() {
                                     pillColor={v.color || color}
                                     desc={i === 0 ? desc : null}
                                     isHit={v.hit}
-                                    hitColor="#00BCD4"
+                                    hitColor="#F5C800"
                                     wide={wideImg}
                                     lang={lang}
                                   />
@@ -333,7 +333,7 @@ export default function KatalogPage() {
                               pillColor={pillColor}
                               desc={desc}
                               isHit={product.featured}
-                              hitColor="#00BCD4"
+                              hitColor="#F5C800"
                               wide={wideImg}
                               lang={lang}
                             />
