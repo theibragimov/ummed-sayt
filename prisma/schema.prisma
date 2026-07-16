@@ -45,6 +45,7 @@ model Mahsulot {
   qisqaTavsifEn   String?        @map("qisqa_tavsif_en")
   toliqTavsif     String?        @map("toliq_tavsif")
   toliqTavsifRu   String?        @map("toliq_tavsif_ru")
+  toliqTavsifEn   String?        @map("toliq_tavsif_en")
   brend           String?
   modelRaqami     String?        @map("model_raqami")
   featured        Boolean        @default(false)
