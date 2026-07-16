@@ -140,10 +140,10 @@ function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
         style={!activeKat
           ? { backgroundColor: "var(--text)", color: "var(--bg)" }
           : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
-        {lang === "ru" ? "Все" : "Hammasi"}
+        {lang === "ru" ? "Все" : lang === "en" ? "All" : "Hammasi"}
       </button>
       {sections.map((s) => {
-        const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : s.kategoriya?.nom;
+        const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
         const active = activeKat === s.kategoriya?.slug;
         return (
           <button key={s.kategoriya?.slug}
@@ -253,10 +253,10 @@ export default function KatalogPage() {
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-24">
 
           <Reveal variant="up" className="mb-10">
-            <span className="section-label mb-3">{lang === "ru" ? "Каталог" : "Katalog"}</span>
+            <span className="section-label mb-3">{lang === "ru" ? "Каталог" : lang === "en" ? "Catalog" : "Katalog"}</span>
             <h1 className="text-3xl md:text-4xl lg:text-[44px] font-medium leading-[1.1] tracking-tight mt-6"
               style={{ color: "var(--text)" }}>
-              {lang === "ru" ? "Продукция" : "Mahsulotlar"}
+              {lang === "ru" ? "Продукция" : lang === "en" ? "Products" : "Mahsulotlar"}
             </h1>
           </Reveal>
 
@@ -265,9 +265,9 @@ export default function KatalogPage() {
           )}
 
           {yuklanmoqda ? (
-            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>Yuklanmoqda...</p>
+            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>{lang === "ru" ? "Загрузка..." : lang === "en" ? "Loading..." : "Yuklanmoqda..."}</p>
           ) : displayed.length === 0 ? (
-            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>Mahsulotlar topilmadi</p>
+            <p className="text-center py-24 text-sm" style={{ color: "var(--text-muted)" }}>{lang === "ru" ? "Товары не найдены" : lang === "en" ? "No products found" : "Mahsulotlar topilmadi"}</p>
           ) : (
             <FadeList triggerKey={activeKat}>
               <div className="space-y-16 sm:space-y-20">

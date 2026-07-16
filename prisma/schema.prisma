@@ -42,6 +42,7 @@ model Mahsulot {
   mavjudligi      Boolean        @default(true)
   qisqaTavsif     String?        @map("qisqa_tavsif")
   qisqaTavsifRu   String?        @map("qisqa_tavsif_ru")
+  qisqaTavsifEn   String?        @map("qisqa_tavsif_en")
   toliqTavsif     String?        @map("toliq_tavsif")
   toliqTavsifRu   String?        @map("toliq_tavsif_ru")
   brend           String?
