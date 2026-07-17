@@ -594,7 +594,7 @@ export default function HomePage() {
                 <div>
                   <span className="section-label">{L("Hamkorlik", "Партнёрство", "Partnership")}</span>
                   <h2 className="text-xl sm:text-3xl font-medium leading-snug tracking-tight mt-3 sm:mt-6" style={{ color: "var(--text)", maxWidth: 800 }}>
-                    {lang === "ru" ? <>Оптовая доставка медицинских изделий<br />по всему Узбекистану.</> : lang === "en" ? <>Wholesale delivery of medical supplies<br />across all of Uzbekistan.</> : <>Butun O&apos;zbekiston bo&apos;ylab tibbiyot<br />buyumlarini ulgurji yetkazib beramiz.</>}
+                    {lang === "ru" ? <>Оптовая доставка медицинских изделий<br />по всему Узбекистану.</> : lang === "en" ? <>Wholesale delivery of medical supplies<br />across all of Uzbekistan.</> : <>Butun O&apos;zbekiston bo&apos;ylab tibbiyot buyumlarini<br />ulgurji yetkazib beramiz!</>}
                   </h2>
                   <p className="mt-3 text-sm font-light leading-relaxed" style={{ color: "var(--text-muted, #888)" }}>
                     {L("550+ mijoz va hamkorlar ishonchi asosida faoliyat yuritamiz.", "Работаем на основе доверия 550+ клиентов и партнёров.", "We operate on the trust of 550+ clients and partners.")}
