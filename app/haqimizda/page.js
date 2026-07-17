@@ -78,11 +78,11 @@ export default function HaqimzdaPage() {
         {/* To'liq kenglikdagi rasm */}
         <Reveal variant="up" delay={100}>
           <div
-            className="mx-auto mt-8 overflow-hidden"
+            className="mx-auto mt-8 overflow-hidden rounded-2xl"
             style={{ maxWidth: "1100px", paddingLeft: "24px", paddingRight: "24px" }}
           >
             <div
-              className="w-full relative"
+              className="w-full relative overflow-hidden rounded-2xl"
               style={{ height: "clamp(240px, 38vw, 560px)" }}
             >
               <Image
@@ -176,7 +176,7 @@ export default function HaqimzdaPage() {
                 {/* Rasm */}
                 <div className="flex-shrink-0 w-full lg:w-[380px] flex justify-center lg:justify-start">
                   <div
-                    className="relative overflow-hidden flex items-center justify-center"
+                    className="relative overflow-hidden rounded-2xl flex items-center justify-center"
                     style={{ aspectRatio: "4/5", width: "min(300px, 80vw)", backgroundColor: "#f0ece6" }}
                   >
                     <FounderImage alt={a.founder.name} />
@@ -270,7 +270,7 @@ export default function HaqimzdaPage() {
             </Reveal>
 
             <div
-              className="grid grid-cols-1 md:grid-cols-3"
+              className="grid grid-cols-1 md:grid-cols-3 overflow-hidden rounded-2xl"
               style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
             >
               {a.values.items.map((v, i) => (
@@ -316,17 +316,17 @@ export default function HaqimzdaPage() {
             {/* Mobil: 2x2 grid, Desktop: 5 ustunli */}
             <div className="hidden lg:grid lg:grid-cols-5 gap-3" style={{ height: "clamp(400px, 55vw, 680px)" }}>
               <div className="lg:col-span-2 grid grid-rows-2 gap-3">
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden rounded-2xl">
                   <Image src="/j2.jpg" alt="Ummed ish jarayoni" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
                 </div>
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden rounded-2xl">
                   <Image src="/j3.jpg" alt="Ummed jo'natish" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
                 </div>
               </div>
-              <div className="relative overflow-hidden lg:col-span-2">
+              <div className="relative overflow-hidden rounded-2xl lg:col-span-2">
                 <Image src="/j1.jpg" alt="Ummed ombor" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
               </div>
-              <div className="relative overflow-hidden lg:col-span-1">
+              <div className="relative overflow-hidden rounded-2xl lg:col-span-1">
                 <Image src="/j0.jpg" alt="Ummed ishxona" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
               </div>
             </div>
@@ -334,7 +334,7 @@ export default function HaqimzdaPage() {
             {/* Mobil versiya: 2x2 grid, to'g'ri o'lcham */}
             <div className="grid lg:hidden grid-cols-2 gap-2">
               {["/j1.jpg", "/j2.jpg", "/j3.jpg", "/j0.jpg"].map((src, i) => (
-                <div key={i} className="relative overflow-hidden rounded-sm" style={{ aspectRatio: "1/1" }}>
+                <div key={i} className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: "1/1" }}>
                   <Image src={src} alt="Ummed" fill className="object-cover" />
                 </div>
               ))}

@@ -97,7 +97,7 @@ export default function MahsulotDetailPage({ params }) {
 
             {/* Chap: Rasm */}
             <div>
-              <div className="w-full flex items-center justify-center overflow-hidden"
+              <div className="w-full flex items-center justify-center overflow-hidden rounded-2xl"
                 style={{ aspectRatio: "1 / 1", position: "relative", backgroundColor: "var(--card-bg, #f9f9f7)" }}>
                 {joriyRasm ? (
                   <Image src={joriyRasm} alt={nom} fill style={{ objectFit: "contain" }} />
