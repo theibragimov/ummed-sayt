@@ -355,7 +355,7 @@ export default function HomePage() {
             <Reveal variant="up" delay={100}>
               <div
                 className="grid grid-cols-3 relative max-w-5xl mx-auto"
-                style={{ border: "1px solid var(--border-strong)", borderRadius: "2px" }}
+                style={{ border: "1px solid var(--border-strong)", borderRadius: "16px", overflow: "hidden" }}
               >
                 {[
                   {
