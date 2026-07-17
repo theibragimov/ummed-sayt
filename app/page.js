@@ -544,12 +544,12 @@ export default function HomePage() {
             {yangiliklar.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-muted, #888)" }}>{L("Yangiliklar yo'q", "Новостей нет", "No news yet")}</p>
             ) : (
-              <div className={`grid gap-4 sm:gap-6 ${yangiliklar.length === 1 ? "grid-cols-1" : yangiliklar.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
                 {yangiliklar.map((item, idx) => {
                   const sarlavha = (lang === "ru" && item.sarlavhaRu) ? item.sarlavhaRu : item.sarlavha;
                   const sana = item.sana ? new Date(item.sana).toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", { day: "numeric", month: "long", year: "numeric" }) : "";
                   const katNom = item.kategoriya?.nom || "";
-                  const isFeatured = idx === 0 && yangiliklar.length >= 3;
+                  const isFeatured = false;
                   return (
                     <Reveal key={item.id} variant="up" delay={idx * 70}>
                       <Link
