@@ -324,6 +324,25 @@ function Lightbox({ product, onClose }: { product: Product; onClose: () => void 
   );
 }
 
+// ─── Cart Qty Input ───────────────────────────────────────────────────────────
+
+function CartQtyInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [inputVal, setInputVal] = useState(String(value));
+  const [editing, setEditing] = useState(false);
+  return (
+    <input
+      type="number"
+      min={1}
+      value={editing ? inputVal : value}
+      onFocus={() => { setEditing(true); setInputVal(String(value)); }}
+      onChange={e => setInputVal(e.target.value)}
+      onBlur={() => { setEditing(false); const v = parseInt(inputVal); if (v > 0) onChange(v); }}
+      className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
+      style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
+    />
+  );
+}
+
 // ─── Product Row ──────────────────────────────────────────────────────────────
 
 function ProductRow({
@@ -341,6 +360,8 @@ function ProductRow({
   const t = T[lang];
   const { base: baseName, variant } = parseVariant(product.name);
   const [imgErr, setImgErr] = useState(false);
+  const [inputVal, setInputVal] = useState<string>('');
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="flex items-center gap-3 px-4 py-3"
@@ -429,8 +450,10 @@ function ProductRow({
             <input
               type="number"
               min={1}
-              value={cartQty}
-              onChange={e => { const v = parseInt(e.target.value); if (v > 0) onQtyChange(v); }}
+              value={editing ? inputVal : cartQty}
+              onFocus={() => { setEditing(true); setInputVal(String(cartQty)); }}
+              onChange={e => setInputVal(e.target.value)}
+              onBlur={() => { setEditing(false); const v = parseInt(inputVal); if (v > 0) onQtyChange(v); }}
               className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
               style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
             />
@@ -1604,14 +1627,7 @@ export default function OrderPage() {
                         style={{ background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
                         {quantity === 1 ? <Trash2 size={11} color="#FF6B35" /> : <Minus size={11} color="#FF6B35" />}
                       </button>
-                      <input
-                        type="number"
-                        min={1}
-                        value={quantity}
-                        onChange={e => { const v = parseInt(e.target.value); if (v > 0) setQty(p.id, v); }}
-                        className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
-                        style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
-                      />
+                      <CartQtyInput value={quantity} onChange={v => setQty(p.id, v)} />
                       <button onClick={() => setQty(p.id, quantity + 1)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center"
                         style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
