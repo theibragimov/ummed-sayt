@@ -618,7 +618,7 @@ function ProductCard({
                 style={{ background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
                 {cartQty === 1 ? <Trash2 size={11} color="#FF6B35" /> : <Minus size={11} color="#FF6B35" />}
               </button>
-              <span className="w-5 text-center text-[12px] font-bold text-gray-900">{cartQty}</span>
+              <CartQtyInput value={cartQty} onChange={onQtyChange} />
               <button
                 onClick={() => onQtyChange(cartQty + 1)}
                 className="w-7 h-7 rounded-xl flex items-center justify-center"
