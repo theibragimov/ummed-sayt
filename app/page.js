@@ -544,33 +544,40 @@ export default function HomePage() {
             {yangiliklar.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-muted, #888)" }}>{L("Yangiliklar yo'q", "Новостей нет", "No news yet")}</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-px sm:border sm:border-[var(--border-strong,#e5e5e5)]">
+              <div className={`grid gap-4 sm:gap-6 ${yangiliklar.length === 1 ? "grid-cols-1" : yangiliklar.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
                 {yangiliklar.map((item, idx) => {
                   const sarlavha = (lang === "ru" && item.sarlavhaRu) ? item.sarlavhaRu : item.sarlavha;
-                  const sana = item.sana ? new Date(item.sana).toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", { day: "numeric", month: "short", year: "numeric" }) : "";
+                  const sana = item.sana ? new Date(item.sana).toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", { day: "numeric", month: "long", year: "numeric" }) : "";
                   const katNom = item.kategoriya?.nom || "";
+                  const isFeatured = idx === 0 && yangiliklar.length >= 3;
                   return (
                     <Reveal key={item.id} variant="up" delay={idx * 70}>
                       <Link
                         href={`/yangiliklar/${item.slug}`}
-                        className="group flex flex-col overflow-hidden rounded-xl sm:rounded-none border border-[var(--border-strong,#e5e5e5)] sm:border-0"
-                        style={{
-                          backgroundColor: "var(--bg)",
-                          borderRight: idx < yangiliklar.length - 1 ? "1px solid var(--border-strong, #e5e5e5)" : "none",
-                        }}
+                        className="group flex flex-col overflow-hidden rounded-2xl"
+                        style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-strong, #e5e5e5)", transition: "box-shadow 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
+                        onMouseEnter={e => e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.10)"}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)"}
                       >
-                        <div className="w-full overflow-hidden" style={{ height: 200, backgroundColor: item.kategoriya?.rang || "#f0f4f8" }}>
+                        <div className="w-full overflow-hidden" style={{ height: isFeatured ? 280 : 220, backgroundColor: item.kategoriya?.rang || "#f4f4f4" }}>
                           {item.muqovaRasmUrl ? (
-                            <Image src={item.muqovaRasmUrl} alt={sarlavha} width={400} height={200} style={{ width: "100%", height: "100%", objectFit: "cover" }} className="group-hover:scale-[1.03] transition-transform duration-500" />
+                            <Image src={item.muqovaRasmUrl} alt={sarlavha} width={600} height={isFeatured ? 280 : 220} style={{ width: "100%", height: "100%", objectFit: "cover" }} className="group-hover:scale-[1.04] transition-transform duration-500" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-4xl">📰</div>
+                            <div className="w-full h-full flex items-center justify-center text-5xl opacity-30">📰</div>
                           )}
                         </div>
-                        <div className="p-3 sm:p-5 flex flex-col flex-1">
-                          <p className="text-[11px] font-light mb-2" style={{ color: "var(--text-muted, #888)" }}>
-                            {sana}{katNom ? ` · ${katNom}` : ""}
-                          </p>
-                          <h3 className="text-sm sm:text-base font-medium leading-snug group-hover:opacity-60 transition-opacity" style={{ color: "var(--text)" }}>
+                        <div className="p-4 sm:p-6 flex flex-col flex-1 gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {katNom && (
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "rgba(232,73,29,0.08)", color: "#E8491D" }}>
+                                {katNom}
+                              </span>
+                            )}
+                            {sana && (
+                              <span className="text-[11px] font-light" style={{ color: "var(--text-muted, #888)" }}>{sana}</span>
+                            )}
+                          </div>
+                          <h3 className={`font-medium leading-snug group-hover:opacity-60 transition-opacity ${isFeatured ? "text-base sm:text-lg" : "text-sm sm:text-base"}`} style={{ color: "var(--text)" }}>
                             {sarlavha}
                           </h3>
                         </div>
