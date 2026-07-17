@@ -145,7 +145,7 @@ function Card({ item, bg, imgH, lang }) {
 
   const inner = (
     <>
-      <div className="relative w-full overflow-hidden" style={{ height: `${imgH}px`, background: item.asosiyRasmUrl ? "transparent" : bg }}>
+      <div className="relative w-full overflow-hidden rounded-2xl" style={{ height: `${imgH}px`, background: item.asosiyRasmUrl ? "transparent" : bg }}>
         {item.asosiyRasmUrl ? (
           <Image src={item.asosiyRasmUrl} alt={name} fill style={{ objectFit: "cover", transition: "transform 0.5s ease" }} className="group-hover:scale-[1.03]" />
         ) : item.visual ? (
