@@ -464,7 +464,7 @@ export default function HomePage() {
             <Reveal variant="up">
               <span className="section-label mb-4 block">{L("Uzum Market", "Uzum Market", "Uzum Market")}</span>
               <div
-                className="rounded-2xl overflow-hidden flex flex-col lg:flex-row"
+                className="overflow-hidden flex flex-col lg:flex-row"
                 style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)" }}
               >
                 {/* Chap qism */}
@@ -554,7 +554,7 @@ export default function HomePage() {
                     <Reveal key={item.id} variant="up" delay={idx * 70}>
                       <Link
                         href={`/yangiliklar/${item.slug}`}
-                        className="group flex flex-col overflow-hidden rounded-2xl"
+                        className="group flex flex-col overflow-hidden"
                         style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-strong, #e5e5e5)", transition: "box-shadow 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
                         onMouseEnter={e => e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.10)"}
                         onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)"}

@@ -334,7 +334,7 @@ export default function HaqimzdaPage() {
             {/* Mobil versiya: 2x2 grid, to'g'ri o'lcham */}
             <div className="grid lg:hidden grid-cols-2 gap-2">
               {["/j1.jpg", "/j2.jpg", "/j3.jpg", "/j0.jpg"].map((src, i) => (
-                <div key={i} className="relative overflow-hidden rounded-sm" style={{ aspectRatio: "1/1" }}>
+                <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "1/1" }}>
                   <Image src={src} alt="Ummed" fill className="object-cover" />
                 </div>
               ))}

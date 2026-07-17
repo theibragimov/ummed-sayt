@@ -94,7 +94,7 @@ export default function SiteHeader() {
               </svg>
             </button>
             {langOpen && (
-              <div className="absolute right-0 top-full mt-2 w-32 rounded-xl overflow-hidden shadow-xl lang-dropdown anim-fade-down">
+              <div className="absolute right-0 top-full mt-2 w-32 overflow-hidden shadow-xl lang-dropdown anim-fade-down">
                 {LANGS.map((l) => (
                   <button
                     key={l.code}
