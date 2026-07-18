@@ -71,7 +71,7 @@ export default function YangiliklarPage() {
                 <Reveal variant="up" delay={80} className="mb-12">
                   <Link href={`/yangiliklar/${featured.slug}`} className="group block">
                     <div
-                      className="w-full overflow-hidden mb-6"
+                      className="w-full overflow-hidden mb-6 rounded-2xl"
                       style={{ height: "clamp(220px, 36vw, 520px)", backgroundColor: COLORS[0] }}
                     >
                       {featured.muqovaRasmUrl ? (
@@ -118,7 +118,7 @@ export default function YangiliklarPage() {
                   <Reveal key={item.id} variant="up" delay={idx * 60}>
                     <Link href={`/yangiliklar/${item.slug}`} className="group block">
                       <div
-                        className="w-full overflow-hidden mb-5"
+                        className="w-full overflow-hidden mb-5 rounded-2xl"
                         style={{ height: 240, backgroundColor: COLORS[(idx + 1) % COLORS.length] }}
                       >
                         {item.muqovaRasmUrl ? (
