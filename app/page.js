@@ -324,7 +324,6 @@ export default function HomePage() {
                   variant="up"
                   delay={(idx % 3) * 100}
                   className="service-card group relative p-5 sm:p-10 lg:p-12 flex flex-col items-start transition-all duration-300"
-                  style={{ backdropFilter: "blur(18px) saturate(160%) brightness(1.04)", WebkitBackdropFilter: "blur(18px) saturate(160%) brightness(1.04)" }}
                 >
                   {/* Ikonka — yuqorida */}
                   <div
@@ -355,8 +354,8 @@ export default function HomePage() {
 
             <Reveal variant="up" delay={100}>
               <div
-                className="liquid-glass-jarayon grid grid-cols-3 relative max-w-5xl mx-auto"
-                style={{ borderRadius: "16px", overflow: "hidden", backdropFilter: "blur(28px) saturate(200%) brightness(1.06)", WebkitBackdropFilter: "blur(28px) saturate(200%) brightness(1.06)" }}
+                className="grid grid-cols-3 relative max-w-5xl mx-auto"
+                style={{ border: "1px solid var(--border-strong)", borderRadius: "16px", overflow: "hidden" }}
               >
                 {[
                   {
@@ -486,8 +485,8 @@ export default function HomePage() {
 
                 {/* O'ng qism — do'konlar, kengaytirilgan */}
                 <div
-                  className="liquid-glass-uzum-panel lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
-                  style={{ backdropFilter: "blur(20px) saturate(140%)", WebkitBackdropFilter: "blur(20px) saturate(140%)" }}
+                  className="lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
+                  style={{ borderLeft: "1px solid rgba(255,255,255,0.15)" }}
                 >
                   <h3
                     className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
@@ -555,8 +554,10 @@ export default function HomePage() {
                     <Reveal key={item.id} variant="up" delay={idx * 70}>
                       <Link
                         href={`/yangiliklar/${item.slug}`}
-                        className="liquid-glass-news group flex flex-col overflow-hidden rounded-2xl"
-                        style={{ backdropFilter: "blur(22px) saturate(180%) brightness(1.03)", WebkitBackdropFilter: "blur(22px) saturate(180%) brightness(1.03)" }}
+                        className="group flex flex-col overflow-hidden rounded-2xl"
+                        style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-strong, #e5e5e5)", transition: "box-shadow 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
+                        onMouseEnter={e => e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.10)"}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)"}
                       >
                         <div className="w-full overflow-hidden" style={{ height: isFeatured ? 280 : 220, backgroundColor: item.kategoriya?.rang || "#f4f4f4" }}>
                           {item.muqovaRasmUrl ? (
