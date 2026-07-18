@@ -37,7 +37,10 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
       body: JSON.stringify(payload),
     })
     if (res.ok) { router.push('/admin/mahsulotlar'); router.refresh() }
-    else setXato('Saqlashda xatolik')
+    else {
+      const errData = await res.json().catch(() => ({}))
+      setXato('Saqlashda xatolik: ' + (errData?.error || res.status))
+    }
     setSaqlash(false)
   }
 

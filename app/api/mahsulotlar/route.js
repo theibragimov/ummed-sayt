@@ -24,7 +24,12 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const data = await request.json()
-  const mahsulot = await createMahsulot(data)
-  return NextResponse.json(mahsulot, { status: 201 })
+  try {
+    const data = await request.json()
+    const mahsulot = await createMahsulot(data)
+    return NextResponse.json(mahsulot, { status: 201 })
+  } catch (err) {
+    console.error('POST /api/mahsulotlar error:', err)
+    return NextResponse.json({ error: err?.message || 'Unknown error' }, { status: 500 })
+  }
 }
