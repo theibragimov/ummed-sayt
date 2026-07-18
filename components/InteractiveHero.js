@@ -18,11 +18,11 @@ export default function InteractiveHero() {
       .catch(() => setSoz({}));
   }, []);
 
-  // Bazadan matn ol, bo'lmasa i18n fallback
-  const badge   = soz ? (soz[`hero_badge_${lang}`]   || t.hero.badge)   : t.hero.badge;
-  const title1  = soz ? (soz[`hero_title1_${lang}`]  || t.hero.title1)  : t.hero.title1;
-  const title2  = soz ? (soz[`hero_title2_${lang}`]  || t.hero.title2)  : t.hero.title2;
-  const title3  = soz ? (soz[`hero_title3_${lang}`]  || t.hero.title3)  : t.hero.title3;
+  // Bazadan matn ol, bo'lmasa i18n fallback. soz null bo'lsa (hali yuklanmagan) — bo'sh satr
+  const badge   = soz !== null ? (soz[`hero_badge_${lang}`]   || t.hero.badge)   : "";
+  const title1  = soz !== null ? (soz[`hero_title1_${lang}`]  || t.hero.title1)  : "";
+  const title2  = soz !== null ? (soz[`hero_title2_${lang}`]  || t.hero.title2)  : "";
+  const title3  = soz !== null ? (soz[`hero_title3_${lang}`]  || t.hero.title3)  : "";
 
   return (
     <section
