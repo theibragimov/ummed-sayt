@@ -605,13 +605,13 @@ function ProductCard({
 
           {cartQty === 0 ? (
             <button
-              onClick={onAdd}
+              onClick={e => { e.stopPropagation(); onAdd(); }}
               className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 3px 8px rgba(255,107,53,0.35)' }}>
               <Plus size={15} color="#fff" />
             </button>
           ) : (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
               <button
                 onClick={() => onQtyChange(cartQty - 1)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
