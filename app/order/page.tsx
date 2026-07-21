@@ -635,7 +635,7 @@ function ProductCard({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function OrderPage() {
+export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submitApiUrl?: string }) {
   const [lang, setLang] = useState<Lang>('ru');
   const t = T[lang];
 
@@ -889,7 +889,7 @@ export default function OrderPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/order/submit', {
+      const res = await fetch(submitApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1917,4 +1917,8 @@ export default function OrderPage() {
       </div>
     </div>
   );
+}
+
+export default function OrderPage() {
+  return <OrderPageContent submitApiUrl="/api/order/submit" />;
 }
