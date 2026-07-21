@@ -427,12 +427,12 @@ export default function HomePage() {
         </section>
 
         {/* DISTRIBYUTOR MAHSULOTLAR */}
-        <section className="pt-12 pb-6 sm:pt-20 sm:pb-10" style={{ backgroundColor: "var(--bg)" }}>
+        <section className="pt-8 pb-6 sm:pt-20 sm:pb-10" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
-            <Reveal variant="up" className="mb-8 sm:mb-12">
+            <Reveal variant="up" className="mb-5 sm:mb-12">
               <span className="section-label">{L("Distribyutsiya", "Дистрибуция", "Distribution")}</span>
               <h2
-                className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
+                className="text-xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-2 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
                 {L("Biz taqdim etadigan distribyutor mahsulotlar", "Дистрибьюторские продукты", "Distributor Products We Offer")}
@@ -443,12 +443,12 @@ export default function HomePage() {
         </section>
 
         {/* UMMED BRENDI OSTIDA MAHSULOTLAR */}
-        <section className="pt-6 pb-12 sm:pt-10 sm:pb-20" style={{ backgroundColor: "var(--bg)" }}>
+        <section className="pt-6 pb-8 sm:pt-10 sm:pb-20" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
-            <Reveal variant="up" className="mb-8 sm:mb-12">
+            <Reveal variant="up" className="mb-5 sm:mb-12">
               <span className="section-label">{L("Brend Ummed", "Бренд Ummed", "Ummed Brand")}</span>
               <h2
-                className="text-2xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-4 sm:mt-6"
+                className="text-xl sm:text-3xl md:text-4xl font-medium leading-[1.1] tracking-tight mt-2 sm:mt-6"
                 style={{ color: "var(--text)" }}
               >
                 {L("Ummed brendi ostidagi mahsulotlar", "Продукты под брендом Ummed", "Products Under the Ummed Brand")}
@@ -468,15 +468,15 @@ export default function HomePage() {
                 style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)" }}
               >
                 {/* Chap qism */}
-                <div className="flex-1 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-3 sm:gap-5">
+                <div className="flex-1 p-5 sm:p-10 lg:p-14 flex flex-col justify-center gap-2 sm:gap-5">
                   <h2
-                    className="text-2xl sm:text-3xl lg:text-[38px] font-medium leading-[1.1] tracking-tight"
+                    className="text-xl sm:text-3xl lg:text-[38px] font-medium leading-[1.1] tracking-tight"
                     style={{ color: "#fff" }}
                   >
                     {t.uzum.title}
                   </h2>
                   <p
-                    className="text-sm font-light leading-relaxed max-w-md"
+                    className="text-xs sm:text-sm font-light leading-relaxed max-w-md"
                     style={{ color: "rgba(255,255,255,0.75)" }}
                   >
                     {t.uzum.subtitle}
@@ -485,11 +485,11 @@ export default function HomePage() {
 
                 {/* O'ng qism — do'konlar, kengaytirilgan */}
                 <div
-                  className="lg:w-[480px] p-7 sm:p-10 lg:p-14 flex flex-col justify-center"
-                  style={{ borderLeft: "1px solid rgba(255,255,255,0.15)" }}
+                  className="lg:w-[480px] p-5 sm:p-10 lg:p-14 flex flex-col justify-center"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.15)", borderLeft: "1px solid rgba(255,255,255,0.15)" }}
                 >
                   <h3
-                    className="text-base sm:text-lg font-medium mb-4 sm:mb-6"
+                    className="text-sm sm:text-lg font-medium mb-3 sm:mb-6"
                     style={{ color: "rgba(255,255,255,0.85)" }}
                   >
                     {L("Do'konlar", "Магазины", "Stores")}

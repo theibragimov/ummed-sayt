@@ -1,4 +1,4 @@
-export const revalidate = 60
+export const revalidate = 600
 import { NextResponse } from 'next/server'
 import { getKategoriyalar, createKategoriya } from '@/lib/db'
 

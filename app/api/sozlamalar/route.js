@@ -1,4 +1,4 @@
-export const revalidate = 120 // 2 daqiqada bir yangilanadi
+export const revalidate = 3600 // 1 soatda bir yangilanadi
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 

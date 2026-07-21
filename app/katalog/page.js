@@ -103,19 +103,19 @@ function GridVariants({ imageUrl, variants, desc, nom, lang }) {
 /* ── 4×N grid (Ortopediya) ── */
 function ProductGrid({ products, lang, color }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
       {products.map((product) => {
         const url = product.asosiyRasmUrl || product.rasmlar?.[0]?.rasmUrl;
         const nom = lang === "ru" ? (product.nomRu || product.nom) : lang === "en" ? (product.nomEn || product.nom) : product.nom;
         const pillColor = (product.brend && product.brend.startsWith('#')) ? product.brend : color;
         return (
-          <div key={product.id} className="flex flex-row sm:flex-col gap-3">
-            {/* Image: mobile = 100px square, desktop = full-width square */}
-            <div className="relative rounded-2xl overflow-hidden flex-shrink-0 w-[100px] h-[100px] sm:w-full sm:h-auto sm:aspect-square"
+          <div key={product.id} className="flex flex-col gap-2">
+            {/* Image */}
+            <div className="relative rounded-2xl overflow-hidden w-full aspect-square"
               style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
               {url ? (
                 <div className="absolute inset-0 transition-transform duration-300 ease-out hover:scale-105">
-                  <Image src={url} alt={nom} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 100px, 280px" />
+                  <Image src={url} alt={nom} fill style={{ objectFit: "cover" }} sizes="(max-width: 640px) 50vw, 280px" />
                 </div>
               ) : (
                 <span className="absolute inset-0 flex items-center justify-center text-3xl opacity-20 select-none">📦</span>
@@ -126,11 +126,9 @@ function ProductGrid({ products, lang, color }) {
               )}
             </div>
             {/* Label */}
-            <div className="flex-1 flex items-center sm:block">
-              <div className="w-full px-3 py-2 rounded-xl text-left sm:text-center text-white text-xs sm:text-sm font-medium leading-snug"
-                style={{ backgroundColor: pillColor }}>
-                {nom}
-              </div>
+            <div className="w-full px-3 py-2 rounded-xl text-center text-white text-xs sm:text-sm font-medium leading-snug"
+              style={{ backgroundColor: pillColor }}>
+              {nom}
             </div>
           </div>
         );
@@ -179,45 +177,31 @@ function CategoryNav({ sections, activeKat, setActiveKat, lang }) {
         })}
       </div>
 
-      {/* Mobile: accordion dropdown */}
-      <div className="sm:hidden mb-8 relative">
+      {/* Mobile: horizontal scroll pills */}
+      <div className="sm:hidden mb-8 -mx-6 px-6 overflow-x-auto flex gap-2 pb-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
         <button
-          onClick={() => setOpen(o => !o)}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold"
-          style={{
-            backgroundColor: activeKat ? activeColor : "var(--text)",
-            color: activeKat ? "#fff" : "var(--bg)",
-          }}>
-          <span>{activeLabel}</span>
-          <span style={{ fontSize: 18, lineHeight: 1, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+          onClick={() => setActiveKat(null)}
+          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all"
+          style={!activeKat
+            ? { backgroundColor: "var(--text)", color: "var(--bg)" }
+            : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
+          {allLabel}
         </button>
-        {open && (
-          <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl overflow-hidden shadow-lg z-20"
-            style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-strong)" }}>
-            <button
-              onClick={() => { setActiveKat(null); setOpen(false); }}
-              className="w-full text-left px-4 py-3 text-sm font-medium"
-              style={!activeKat
-                ? { backgroundColor: "var(--text)", color: "var(--bg)" }
-                : { color: "var(--text)" }}>
-              {allLabel}
+        {sections.map((s) => {
+          const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
+          const active = activeKat === s.kategoriya?.slug;
+          return (
+            <button key={s.kategoriya?.slug}
+              onClick={() => setActiveKat(s.kategoriya?.slug)}
+              className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all"
+              style={active
+                ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff" }
+                : { backgroundColor: "var(--bg-soft)", color: "var(--text-muted)" }}>
+              {nom}
             </button>
-            {sections.map((s) => {
-              const nom = lang === "ru" ? (s.kategoriya?.nomRu || s.kategoriya?.nom) : lang === "en" ? (s.kategoriya?.nomEn || s.kategoriya?.nom) : s.kategoriya?.nom;
-              const active = activeKat === s.kategoriya?.slug;
-              return (
-                <button key={s.kategoriya?.slug}
-                  onClick={() => { setActiveKat(s.kategoriya?.slug); setOpen(false); }}
-                  className="w-full text-left px-4 py-3 text-sm font-medium border-t"
-                  style={active
-                    ? { backgroundColor: s.kategoriya?.rangKodi || "#E8491D", color: "#fff", borderColor: "transparent" }
-                    : { color: "var(--text)", borderColor: "var(--border-strong)" }}>
-                  {nom}
-                </button>
-              );
-            })}
-          </div>
-        )}
+          );
+        })}
       </div>
     </>
   );

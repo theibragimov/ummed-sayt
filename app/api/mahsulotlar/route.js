@@ -1,6 +1,7 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { getAllMahsulotlar, getMahsulotlar, createMahsulot } from '@/lib/db'
+
+const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -20,7 +21,7 @@ export async function GET(request) {
   } else {
     mahsulotlar = await getMahsulotlar()
   }
-  return NextResponse.json(mahsulotlar)
+  return NextResponse.json(mahsulotlar, { headers: { 'Cache-Control': CACHE } })
 }
 
 export async function POST(request) {

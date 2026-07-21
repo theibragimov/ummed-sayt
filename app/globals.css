@@ -610,3 +610,9 @@ html[data-theme="dark"] .hero-water .bg-white {
     padding-bottom: 48px !important;
   }
 }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

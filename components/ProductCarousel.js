@@ -156,9 +156,9 @@ function Card({ item, bg, imgH, lang }) {
           </div>
         )}
       </div>
-      <div className="mt-5">
-        <h3 className="text-[14px] sm:text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
-        <p className="mt-1 sm:mt-2 text-[12px] sm:text-[15px] font-light leading-relaxed line-clamp-2" style={{ color: "var(--text-muted)" }}>{desc}</p>
+      <div className="mt-3 sm:mt-5">
+        <h3 className="text-[13px] sm:text-[22px] font-medium leading-snug tracking-tight mt-1" style={{ color: "var(--text)" }}>{name}</h3>
+        <p className="mt-1 sm:mt-2 text-[11px] sm:text-[15px] font-light leading-relaxed line-clamp-2" style={{ color: "var(--text-muted)" }}>{desc}</p>
         {isDbItem && item.narx && (
           <p className="mt-2 text-base font-semibold" style={{ color: "#E8491D" }}>{item.narx.toLocaleString("uz-UZ")} so'm</p>
         )}

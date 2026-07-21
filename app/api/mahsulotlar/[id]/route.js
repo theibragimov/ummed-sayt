@@ -1,15 +1,15 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { getMahsulotById, getMahsulotBySlug, updateMahsulot, deleteMahsulot } from '@/lib/db'
 
+const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
+
 export async function GET(_, { params }) {
   const { id } = await params
-  // Agar raqam bo'lsa ID, aks holda slug sifatida qidirish
   const mahsulot = isNaN(id)
     ? await getMahsulotBySlug(id)
     : await getMahsulotById(id)
   if (!mahsulot) return NextResponse.json({ xato: 'Topilmadi' }, { status: 404 })
-  return NextResponse.json(mahsulot)
+  return NextResponse.json(mahsulot, { headers: { 'Cache-Control': CACHE } })
 }
 
 export async function PUT(request, { params }) {

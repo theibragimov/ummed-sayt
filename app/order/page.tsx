@@ -337,7 +337,7 @@ function CartQtyInput({ value, onChange }: { value: number; onChange: (v: number
       onFocus={() => { setEditing(true); setInputVal(String(value)); }}
       onChange={e => setInputVal(e.target.value)}
       onBlur={() => { setEditing(false); const v = parseInt(inputVal); if (v > 0) onChange(v); }}
-      className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
+      className="w-14 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
       style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
     />
   );
@@ -454,7 +454,7 @@ function ProductRow({
               onFocus={() => { setEditing(true); setInputVal(String(cartQty)); }}
               onChange={e => setInputVal(e.target.value)}
               onBlur={() => { setEditing(false); const v = parseInt(inputVal); if (v > 0) onQtyChange(v); }}
-              className="w-10 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
+              className="w-14 text-center text-[13px] font-bold text-gray-900 outline-none bg-transparent"
               style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' } as React.CSSProperties}
             />
             <button
