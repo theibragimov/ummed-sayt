@@ -921,6 +921,18 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
       setFormName(''); setFormCompany(''); setFormPhone(''); setFormAddress('');
       try { localStorage.removeItem('order-form'); } catch {}
       setView('success');
+      try {
+        const tg = (window as any).Telegram?.WebApp;
+        const chatId = tg?.initDataUnsafe?.user?.id;
+        if (chatId) {
+          await fetch('https://ummed-bot-production.up.railway.app/order-confirmed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId }),
+          });
+        }
+        tg?.close();
+      } catch {}
     } catch (e: any) {
       track('order_submit_failed', { item_count: cartItems.length, lang });
       console.error('order submit xato:', e);
