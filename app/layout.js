@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
@@ -33,6 +34,13 @@ export default function RootLayout({ children }) {
           href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
         />
       </head>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-NTN32PBDRR" strategy="afterInteractive" />
+      <Script id="ga4-init" strategy="afterInteractive">{`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-NTN32PBDRR');
+      `}</Script>
       <body className="min-h-screen flex flex-col font-sans">
         <ThemeProvider>
           <LanguageProvider>{children}</LanguageProvider>
