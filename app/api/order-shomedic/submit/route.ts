@@ -94,12 +94,22 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    const orderPayload = {
+    // Get "Агент" department for Владелец->Отдел
+    let agentGroup: any = null;
+    try {
+      const groupsData = await msGet('/entity/group?limit=100');
+      agentGroup = groupsData.rows?.find((g: any) => g.name === 'Агент') ?? null;
+    } catch {}
+
+    const orderPayload: any = {
       organization: { meta: org.meta },
       agent: { meta: agent.meta },
       description,
       positions,
     };
+    if (agentGroup) {
+      orderPayload.group = { meta: agentGroup.meta };
+    }
 
     const result = await msPost('/entity/customerorder', orderPayload);
 
