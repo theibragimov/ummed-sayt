@@ -1920,5 +1920,9 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
 }
 
 export default function OrderPage() {
-  return <OrderPageContent submitApiUrl="/api/order/submit" />;
+  return (
+    <div style={{ colorScheme: 'light' }}>
+      <OrderPageContent submitApiUrl="/api/order/submit" />
+    </div>
+  );
 }
