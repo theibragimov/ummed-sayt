@@ -595,30 +595,23 @@ function ProductCard({
           </div>
         </div>
 
-        {cartQty === 0 ? (
-          <div className="flex items-center justify-between gap-1 mt-auto">
-            {product.price > 0 ? (
-              <p className="text-[12px] font-bold text-gray-900 leading-tight">
-                {fmtPrice(product.price)}<br />
-                <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
-              </p>
-            ) : <div />}
+        <div className="flex items-center justify-between gap-1 mt-auto">
+          {product.price > 0 ? (
+            <p className="text-[12px] font-bold text-gray-900 leading-tight min-w-0 flex-shrink">
+              {fmtPrice(product.price)}<br />
+              <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
+            </p>
+          ) : <div />}
+
+          {cartQty === 0 ? (
             <button
               onClick={e => { e.stopPropagation(); onAdd(); }}
               className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 3px 8px rgba(255,107,53,0.35)' }}>
               <Plus size={15} color="#fff" />
             </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-end gap-1 mt-auto" onClick={e => e.stopPropagation()}>
-            {product.price > 0 && (
-              <p className="text-[12px] font-bold text-gray-900 leading-tight">
-                {fmtPrice(product.price)}<br />
-                <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
-              </p>
-            )}
-            <div className="flex items-center gap-1">
+          ) : (
+            <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
               <button
                 onClick={() => onQtyChange(cartQty - 1)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -633,8 +626,8 @@ function ProductCard({
                 <Plus size={11} color="#fff" />
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
