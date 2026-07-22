@@ -668,7 +668,7 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
   useEffect(() => {
     const style = document.createElement('style');
     style.id = 'order-input-color-fix';
-    style.textContent = 'input,textarea{color:#111111!important;-webkit-text-fill-color:#111111!important}';
+    style.textContent = 'input,textarea{color:#111111!important;-webkit-text-fill-color:#111111!important}input::placeholder,textarea::placeholder{color:#B0B0B0!important;-webkit-text-fill-color:#B0B0B0!important;font-weight:400!important;opacity:1!important}';
     document.head.appendChild(style);
     return () => { document.getElementById('order-input-color-fix')?.remove(); };
   }, []);
@@ -1752,7 +1752,7 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
           <div className="space-y-3 mb-6">
             <div>
               <div className="relative">
-                <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
                 <input type="text" placeholder={t.namePlaceholder} value={formName}
                   onChange={e => { setFormName(e.target.value); setFormErrors(p => ({ ...p, name: '' })); }}
                   className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
@@ -1761,7 +1761,7 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
               {formErrors.name && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.name}</p>}
             </div>
             <div className="relative">
-              <Building2 size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Building2 size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
               <input type="text" placeholder={t.companyPlaceholder} value={formCompany}
                 onChange={e => setFormCompany(e.target.value)}
                 className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
@@ -1769,7 +1769,7 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
             </div>
             <div>
               <div className="relative">
-                <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
                 <input type="tel" placeholder={t.phonePlaceholder} value={formPhone}
                   onChange={e => { setFormPhone(e.target.value); setFormErrors(p => ({ ...p, phone: '' })); }}
                   className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
@@ -1778,7 +1778,7 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
               {formErrors.phone && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.phone}</p>}
             </div>
             <div className="relative">
-              <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
               <input type="text" placeholder={t.addressPlaceholder as string} value={formAddress}
                 onChange={e => setFormAddress(e.target.value)}
                 className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
