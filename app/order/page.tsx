@@ -663,6 +663,16 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PRODUCT_LIMIT);
   const [displayMode, setDisplayMode] = useState<'list' | 'grid'>('grid');
+
+  // Telegram in-app browser dark mode fix: force light text on all inputs
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.id = 'order-input-color-fix';
+    style.textContent = 'input,textarea{color:#111111!important;-webkit-text-fill-color:#111111!important}';
+    document.head.appendChild(style);
+    return () => { document.getElementById('order-input-color-fix')?.remove(); };
+  }, []);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const saved = localStorage.getItem('order-display-mode') as 'list' | 'grid' | null;
