@@ -16,7 +16,7 @@ const MENU = [
   { href: '/admin/moysklad', label: 'MoySklad Sync', icon: '🔄' },
 ]
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ onClose }) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -33,28 +33,40 @@ export default function AdminSidebar() {
 
   return (
     <aside style={{
-      position: 'fixed', top: 0, left: 0, height: '100vh', width: '260px',
+      height: '100vh', width: '260px',
       background: '#ffffff',
       borderRight: '1px solid rgba(0,0,0,0.06)',
       display: 'flex', flexDirection: 'column',
-      zIndex: 50,
     }}>
       {/* Logo */}
-      <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+      <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             width: '38px', height: '38px',
             background: '#ffffff',
             borderRadius: '10px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
+            overflow: 'hidden', flexShrink: 0,
           }}>
             <Image src="/logo-icon.png" alt="Ummed logo" width={28} height={28} style={{ objectFit: 'contain' }} />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 700, fontSize: '15px', color: '#0a0a0a', letterSpacing: '-0.02em' }}>Ummed</div>
             <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Admin Panel</div>
           </div>
+          {/* Close button — only visible on mobile via CSS */}
+          <button
+            onClick={onClose}
+            className="admin-sidebar-close"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: '6px', color: '#9ca3af', alignItems: 'center', borderRadius: '6px',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
       </div>
 
