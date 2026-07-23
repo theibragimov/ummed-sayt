@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLogin() {
+  const [login, setLogin] = useState('')
   const [parol, setParol] = useState('')
   const [xato, setXato] = useState('')
   const [yuklanmoqda, setYuklanmoqda] = useState(false)
@@ -15,7 +16,7 @@ export default function AdminLogin() {
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ parol }),
+      body: JSON.stringify({ login, parol }),
     })
     if (res.ok) {
       router.push('/admin')
@@ -51,6 +52,28 @@ export default function AdminLogin() {
             boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
           }}>
             <form onSubmit={kirishHandler}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '8px', letterSpacing: '0.01em' }}>
+                  Login
+                </label>
+                <input
+                  type="email"
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
+                  placeholder="email@ummed.uz"
+                  required
+                  style={{
+                    width: '100%', padding: '11px 14px',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    borderRadius: '10px', fontSize: '14px',
+                    fontFamily: 'inherit', outline: 'none',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.15s',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#E8491D'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.12)'}
+                />
+              </div>
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '8px', letterSpacing: '0.01em' }}>
                   Parol

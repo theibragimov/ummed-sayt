@@ -1,8 +1,19 @@
+import { cookies } from 'next/headers'
+import { sessionTokenTekshir } from '@/lib/auth'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 
 export const metadata = { title: 'Ummed Admin Panel' }
 
-export default function AdminLayout({ children }) {
+export default async function AdminLayout({ children }) {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('admin_token')?.value
+  const autentifikatsiya = sessionTokenTekshir(token)
+
+  // Login sahifasida sidebar ko'rsatilmaydi
+  if (!autentifikatsiya) {
+    return <>{children}</>
+  }
+
   return (
     <>
       <style>{`

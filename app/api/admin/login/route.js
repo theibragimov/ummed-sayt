@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
-import { parolTekshir, sessionTokenYarat } from '@/lib/auth'
+import { parolTekshir, loginTekshir, sessionTokenYarat } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(request) {
@@ -11,10 +11,10 @@ export async function POST(request) {
     return NextResponse.json({ xato: 'Juda ko\'p urinish. 15 daqiqadan so\'ng qayta urining.' }, { status: 429 })
   }
 
-  const { parol } = await request.json()
+  const { login, parol } = await request.json()
 
-  if (!parol || !parolTekshir(parol)) {
-    return NextResponse.json({ xato: 'Parol noto\'g\'ri' }, { status: 401 })
+  if (!login || !parol || !loginTekshir(login) || !parolTekshir(parol)) {
+    return NextResponse.json({ xato: 'Login yoki parol noto\'g\'ri' }, { status: 401 })
   }
 
   const token = sessionTokenYarat()
