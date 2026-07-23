@@ -95,12 +95,22 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    const orderPayload = {
+    // Get "Склад Мед" store
+    let skladMed: any = null;
+    try {
+      const storesData = await msGet('/entity/store?limit=100');
+      skladMed = storesData.rows?.find((s: any) => s.name === 'Склад Мед') ?? null;
+    } catch {}
+
+    const orderPayload: any = {
       organization: { meta: org.meta },
       agent: { meta: agent.meta },
       description,
       positions,
     };
+    if (skladMed) {
+      orderPayload.store = { meta: skladMed.meta };
+    }
 
     const result = await msPost('/entity/customerorder', orderPayload);
 

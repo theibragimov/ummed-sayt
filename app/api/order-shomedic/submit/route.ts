@@ -94,11 +94,16 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    // Get "Агент" department for Владелец->Отдел
+    // Get "Агент" department and "Склад Мед" store in parallel
     let agentGroup: any = null;
+    let skladMed: any = null;
     try {
-      const groupsData = await msGet('/entity/group?limit=100');
+      const [groupsData, storesData] = await Promise.all([
+        msGet('/entity/group?limit=100'),
+        msGet('/entity/store?limit=100'),
+      ]);
       agentGroup = groupsData.rows?.find((g: any) => g.name === 'Агент') ?? null;
+      skladMed = storesData.rows?.find((s: any) => s.name === 'Склад Мед') ?? null;
     } catch {}
 
     const orderPayload: any = {
@@ -107,9 +112,8 @@ export async function POST(req: NextRequest) {
       description,
       positions,
     };
-    if (agentGroup) {
-      orderPayload.group = { meta: agentGroup.meta };
-    }
+    if (agentGroup) orderPayload.group = { meta: agentGroup.meta };
+    if (skladMed) orderPayload.store = { meta: skladMed.meta };
 
     const result = await msPost('/entity/customerorder', orderPayload);
 
