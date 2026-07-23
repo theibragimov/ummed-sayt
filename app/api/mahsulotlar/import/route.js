@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 
 function slugYarat(matn) {
   return matn
@@ -13,6 +14,8 @@ function slugYarat(matn) {
 }
 
 export async function POST(request) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   try {
     const { mahsulotlar } = await request.json()
     if (!Array.isArray(mahsulotlar) || mahsulotlar.length === 0) {

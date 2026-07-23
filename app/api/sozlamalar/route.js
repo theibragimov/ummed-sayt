@@ -1,6 +1,7 @@
-export const revalidate = 3600 // 1 soatda bir yangilanadi
+export const revalidate = 3600
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 
 export async function GET() {
   const rows = await prisma.saytSozlamalari.findMany()
@@ -10,7 +11,9 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const data = await request.json() // { kalit: qiymat, ... }
+  const authError = await requireAdmin()
+  if (authError) return authError
+  const data = await request.json()
   const updates = []
   for (const [kalit, qiymat] of Object.entries(data)) {
     updates.push(

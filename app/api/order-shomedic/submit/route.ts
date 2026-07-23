@@ -1,6 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const BASE_URL = 'https://api.moysklad.ru/api/remap/1.2';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const PHONE_RE = /^[\d\s\+\-\(\)]{7,20}$/;
+
+function validateOrder(customer: any, items: any[]): string | null {
+  if (!customer?.name || typeof customer.name !== 'string' || customer.name.trim().length < 2) {
+    return 'Ism noto\'g\'ri';
+  }
+  if (!customer?.phone || !PHONE_RE.test(customer.phone)) {
+    return 'Telefon raqami noto\'g\'ri';
+  }
+  if (!Array.isArray(items) || items.length === 0 || items.length > 200) {
+    return 'Mahsulotlar ro\'yxati noto\'g\'ri';
+  }
+  for (const item of items) {
+    if (!item.productId || !UUID_RE.test(String(item.productId))) {
+      return 'Mahsulot ID noto\'g\'ri';
+    }
+    const qty = Number(item.quantity);
+    if (!Number.isInteger(qty) || qty < 1 || qty > 9999) {
+      return 'Miqdor noto\'g\'ri (1–9999)';
+    }
+    const price = Number(item.price);
+    if (!Number.isFinite(price) || price < 0) {
+      return 'Narx noto\'g\'ri';
+    }
+  }
+  return null;
+}
 
 function getHeaders() {
   return {
@@ -39,6 +69,11 @@ async function msPost(path: string, body: object) {
 }
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!checkRateLimit(`order-shomedic:${ip}`, 3, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Juda ko\'p so\'rov. Biroz kuting.' }, { status: 429 });
+  }
+
   const startedAt = Date.now();
   const timestamp = () => new Date().toISOString();
   const requestId = crypto.randomUUID().split('-')[0];
@@ -49,10 +84,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { customer, items } = body;
 
-    if (!customer?.name || !customer?.phone || !items?.length) {
+    const validationError = validateOrder(customer, items);
+    if (validationError) {
       const duration = Date.now() - startedAt;
-      console.log(`[SHOMEDIC_ORDER_FAILED]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms\nReason: Missing required fields`);
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      console.log(`[SHOMEDIC_ORDER_FAILED]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms\nReason: ${validationError}`);
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
     // Get organization

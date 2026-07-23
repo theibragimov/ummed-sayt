@@ -6,7 +6,6 @@ const WEBHOOK_SECRET = process.env.SANITY_WEBHOOK_SECRET
 
 export async function POST(request) {
   try {
-    // Secret tekshirish (ixtiyoriy lekin tavsiya etiladi)
     if (WEBHOOK_SECRET) {
       const secret = request.headers.get('x-webhook-secret')
       if (secret !== WEBHOOK_SECRET) {

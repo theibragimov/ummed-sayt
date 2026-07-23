@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getMahsulotById, getMahsulotBySlug, updateMahsulot, deleteMahsulot } from '@/lib/db'
+import { requireAdmin } from '@/lib/admin-auth'
 
 const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
 
@@ -13,6 +14,8 @@ export async function GET(_, { params }) {
 }
 
 export async function PUT(request, { params }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { id } = await params
   const data = await request.json()
   const mahsulot = await updateMahsulot(id, data)
@@ -20,6 +23,8 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(_, { params }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { id } = await params
   await deleteMahsulot(id)
   return NextResponse.json({ success: true })

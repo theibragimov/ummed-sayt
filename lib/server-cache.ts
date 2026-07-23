@@ -1,21 +1,15 @@
-type CacheEntry<T> = {
-  expiresAt: number;
-  value: T;
-};
-
-const cache = new Map<string, CacheEntry<unknown>>();
+const cache = new Map<string, { value: unknown; expiresAt: number }>();
 
 export async function getCached<T>(
   key: string,
   ttlMs: number,
-  loader: () => Promise<T>
+  factory: () => Promise<T>
 ): Promise<T> {
-  const now = Date.now();
-  const hit = cache.get(key) as CacheEntry<T> | undefined;
-  if (hit && hit.expiresAt > now) return hit.value;
-
-  const value = await loader();
-  cache.set(key, { value, expiresAt: now + ttlMs });
+  const entry = cache.get(key);
+  if (entry && entry.expiresAt > Date.now()) {
+    return entry.value as T;
+  }
+  const value = await factory();
+  cache.set(key, { value, expiresAt: Date.now() + ttlMs });
   return value;
 }
-

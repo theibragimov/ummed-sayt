@@ -3,8 +3,11 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 
 export async function POST(request) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY

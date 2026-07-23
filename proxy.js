@@ -1,19 +1,36 @@
 import { NextResponse } from 'next/server'
-import { sessionTokenTekshir } from '@/lib/auth'
+
+// Edge Runtime-da ishlaydigan token tekshiruvi
+function base64UrlEncode(value) {
+  const bytes = new TextEncoder().encode(value)
+  let binary = ''
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
+}
+
+function getExpectedToken() {
+  const secret = process.env.ADMIN_SECRET
+  if (!secret) return null
+  return base64UrlEncode(`ummed-admin:${secret}`)
+}
 
 export function proxy(request) {
   const { pathname } = request.nextUrl
 
-  // /admin/login ga kirish har doim ruxsat
-  if (pathname === '/admin/login') {
+  if (pathname.startsWith('/admin/login')) {
     return NextResponse.next()
   }
 
-  // /admin/* himoyalangan
   if (pathname.startsWith('/admin')) {
     const token = request.cookies.get('admin_token')?.value
+    const expected = getExpectedToken()
 
-    if (!sessionTokenTekshir(token)) {
+    if (!token || !expected || token !== expected) {
       const loginUrl = new URL('/admin/login', request.url)
       loginUrl.searchParams.set('from', pathname)
       return NextResponse.redirect(loginUrl)

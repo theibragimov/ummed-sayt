@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAllMahsulotlar, getMahsulotlar, createMahsulot } from '@/lib/db'
+import { requireAdmin } from '@/lib/admin-auth'
 
 const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
 
@@ -25,6 +26,8 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   try {
     const data = await request.json()
     const mahsulot = await createMahsulot(data)
