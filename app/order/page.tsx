@@ -515,12 +515,12 @@ function ProductCard({
   const { base: baseName, variant } = parseVariant(product.name);
   const fullSrc = `/api/order/image?id=${product.id}&t=${product.type}&full=1`;
   const miniSrc = product.imageHref ? `/api/order/image?href=${encodeURIComponent(product.imageHref)}` : '';
-  const [imgSrc, setImgSrc] = useState(fullSrc);
+  const [imgSrc, setImgSrc] = useState(miniSrc || fullSrc);
   const [imgErr, setImgErr] = useState(false);
 
   function handleImgError() {
-    if (imgSrc === fullSrc && miniSrc) {
-      setImgSrc(miniSrc);
+    if (imgSrc === miniSrc && fullSrc) {
+      setImgSrc(fullSrc);
     } else {
       setImgErr(true);
     }

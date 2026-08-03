@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
 import { getAllMahsulotlar, getMahsulotlar, createMahsulot } from '@/lib/db'
 import { requireAdmin } from '@/lib/admin-auth'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
 
 export async function GET(request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  if (!checkRateLimit(`mahsulotlar:${ip}`, 120, 60_000)) {
+    return NextResponse.json({ error: 'Juda ko\'p so\'rov. Biroz kuting.' }, { status: 429 })
+  }
+
   const { searchParams } = new URL(request.url)
   const kategoriya = searchParams.get('kategoriya')
   const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : undefined

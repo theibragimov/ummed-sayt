@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchMS } from '@/lib/ms-api';
 import { getCached } from '@/lib/server-cache';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const maxDuration = 60;
 
@@ -22,6 +23,11 @@ async function safe(path: string, urinishlar = 2): Promise<any> {
 }
 
 export async function GET(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!checkRateLimit(`catalog:${ip}`, 60, 60_000)) {
+    return NextResponse.json({ error: 'Juda ko\'p so\'rov. Biroz kuting.' }, { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const priceTypeId = searchParams.get('priceTypeId') || process.env.ORDER_PRICE_TYPE_ID || '';
 

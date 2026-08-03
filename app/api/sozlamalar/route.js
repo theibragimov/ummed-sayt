@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/admin-auth'
 
 export async function GET() {
-  const rows = await prisma.saytSozlamalari.findMany()
+  const rows = await prisma.saytSozlamalari.findMany({ where: { kalit: { startsWith: 'hero_' } } })
   const obj = {}
   for (const r of rows) obj[r.kalit] = r.qiymat
   return NextResponse.json(obj)

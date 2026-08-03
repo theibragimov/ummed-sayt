@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const TOKEN = process.env.MOYSKLAD_TOKEN!;
 const BASE = 'https://api.moysklad.ru/api/remap/1.2';
 
 const ALLOWED = ['miniature-prod.moysklad.ru', 'tinyimage-prod.moysklad.ru', 'api.moysklad.ru', 'online.moysklad.ru'];
+
+// Referer bo'lmasa (to'g'ridan-to'g'ri so'rov, ba'zi brauzer/ilovalar uni yubormaydi) — ruxsat beriladi.
+// Referer boshqa domendan bo'lsa (masalan, boshqa sayt rasmni o'ziga joylab qo'ygan bo'lsa) — rad etiladi.
+function refererRuxsatEtilganmi(req: NextRequest): boolean {
+  const referer = req.headers.get('referer');
+  if (!referer) return true;
+  try {
+    return new URL(referer).origin === req.nextUrl.origin;
+  } catch {
+    return false;
+  }
+}
 
 async function proxyUrl(url: string): Promise<NextResponse> {
   let host: string;
@@ -24,6 +37,15 @@ async function proxyUrl(url: string): Promise<NextResponse> {
 }
 
 export async function GET(req: NextRequest) {
+  if (!refererRuxsatEtilganmi(req)) {
+    return new NextResponse('Forbidden', { status: 403 });
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!checkRateLimit(`order-image:${ip}`, 300, 60_000)) {
+    return new NextResponse('Too Many Requests', { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const href = searchParams.get('href');
   const id = searchParams.get('id');

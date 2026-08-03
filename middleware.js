@@ -19,7 +19,7 @@ function getExpectedToken() {
   return base64UrlEncode(`ummed-admin:${secret}`)
 }
 
-export function proxy(request) {
+export function middleware(request) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/admin/login')) {
