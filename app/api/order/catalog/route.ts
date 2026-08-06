@@ -176,11 +176,34 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // 4b. Fetch the "Названия" custom attribute — products carrying "Скидка" in it
+    // are flagged as discounted (badge + pinned to top of "Все товары").
+    // Only id + attributes are requested (no images), so this stays cheap.
+    const discountProductIds = new Set<string>();
+    {
+      let dOffset = 0;
+      while (true) {
+        const data = await safe(`/entity/product?limit=1000&offset=${dOffset}&expand=attributes`);
+        if (!data?.rows?.length) break;
+        for (const p of data.rows) {
+          if (!stockMap[p.id]) continue;
+          const hasDiscountAttr = (p.attributes || []).some((a: any) =>
+            a.name === 'Названия' && typeof a.value === 'string' && a.value.toLowerCase().includes('скидка')
+          );
+          if (hasDiscountAttr) discountProductIds.add(p.id);
+        }
+        if (data.rows.length < 1000 || dOffset >= 9000) break;
+        dOffset += 1000;
+      }
+    }
+
     // 5. Build product list
     const products = productIds
       .map(id => {
         const s = stockMap[id];
         const price = useCustomPrice ? (priceMap[id] || s.defaultPrice) : s.defaultPrice;
+        const parentProductId = variantToProduct[id] || '';
+        const discount = discountProductIds.has(id) || (!!parentProductId && discountProductIds.has(parentProductId));
         return {
           id,
           type: s.type,
@@ -195,7 +218,8 @@ export async function GET(req: NextRequest) {
           price,
           stock: s.stock,
           imageHref: s.imageHref,
-          parentProductId: variantToProduct[id] || '',
+          parentProductId,
+          discount,
         };
       })
       .filter(p => p.stock > 0);

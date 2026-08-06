@@ -21,6 +21,7 @@ interface Product {
   stock: number;
   imageHref: string;
   parentProductId?: string;
+  discount?: boolean;
 }
 
 interface Category {
@@ -95,6 +96,7 @@ const T = {
     addMoreBtn: "Mahsulot qo'shish",
     continueAnywayBtn: "Baribir davom etish",
     newArrivalBadge: "Yangilik",
+    discountBadge: "Chegirma",
     onboardingCategoryTitle: "Kategoriya tanlang",
     onboardingCategoryHint: "Kerakli mahsulotlarni tez topish uchun shu tugma orqali kategoriyalar ro'yxatini oching.",
     onboardingViewTitle: "Ko'rinishni almashtiring",
@@ -158,6 +160,7 @@ const T = {
     addMoreBtn: "Добавить товары",
     continueAnywayBtn: "Продолжить в любом случае",
     newArrivalBadge: "Новинка",
+    discountBadge: "Скидка",
     onboardingCategoryTitle: "Выберите категорию",
     onboardingCategoryHint: "Откройте список категорий, чтобы быстрее найти нужные товары.",
     onboardingViewTitle: "Смените вид",
@@ -405,6 +408,12 @@ function ProductRow({
               TOP 50
             </span>
           )}
+          {product.discount && (
+            <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
+              style={{ background: '#DC2626' }}>
+              {t.discountBadge}
+            </span>
+          )}
         </div>
         <p className="text-[13px] font-semibold text-gray-800 leading-snug"
           style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as any}>
@@ -551,7 +560,7 @@ function ProductCard({
             <Package size={32} color="#D1D5DB" />
           </div>
         )}
-        {(isNewArrival || isTop50) && (
+        {(isNewArrival || isTop50 || product.discount) && (
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
             {isNewArrival && (
               <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
@@ -563,6 +572,12 @@ function ProductCard({
               <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
                 style={{ background: '#2563EB', letterSpacing: '0.03em' }}>
                 TOP 50
+              </div>
+            )}
+            {product.discount && (
+              <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
+                style={{ background: '#DC2626', letterSpacing: '0.03em' }}>
+                {t.discountBadge}
               </div>
             )}
           </div>
@@ -877,13 +892,18 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
     // TOP 50 ko'rinishida — allaqachon eng ko'p sotilgandan kamayib boruvchi ketma-ket
     // tartibda tanlangan 50 ta mavjud mahsulot ustida qidiruv qilinadi
     const base = isTop50View ? top50DisplayList : products;
-    return base.filter(p => {
+    const filtered = base.filter(p => {
       const matchCat = isTop50View
         || !selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId));
       const q = search.toLowerCase();
       const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
+    // "Barcha mahsulotlar" ko'rinishida — chegirmali mahsulotlar doim ro'yxat boshida
+    if (!isTop50View && !selectedCat) {
+      return [...filtered].sort((a, b) => Number(!!b.discount) - Number(!!a.discount));
+    }
+    return filtered;
   }, [products, selectedCat, selectedCatDescendants, search, top50DisplayList]);
   const visibleProducts = useMemo(
     () => filteredProducts.slice(0, visibleCount),
