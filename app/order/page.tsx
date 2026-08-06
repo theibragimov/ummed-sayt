@@ -396,6 +396,12 @@ function ProductRow({
       {/* Name + code */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
+          {product.discount && (
+            <span className="px-2 py-1 rounded text-white text-[11px] font-bold flex-shrink-0"
+              style={{ background: '#DC2626' }}>
+              {t.discountBadge}
+            </span>
+          )}
           {isNewArrival && (
             <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
               style={{ background: '#3DB851' }}>
@@ -406,12 +412,6 @@ function ProductRow({
             <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
               style={{ background: '#2563EB' }}>
               TOP 50
-            </span>
-          )}
-          {product.discount && (
-            <span className="px-1.5 py-0.5 rounded text-white text-[9px] font-bold flex-shrink-0"
-              style={{ background: '#DC2626' }}>
-              {t.discountBadge}
             </span>
           )}
         </div>
@@ -562,6 +562,12 @@ function ProductCard({
         )}
         {(isNewArrival || isTop50 || product.discount) && (
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+            {product.discount && (
+              <div className="px-2 py-1 rounded-md text-white text-[11px] font-bold"
+                style={{ background: '#DC2626', letterSpacing: '0.03em' }}>
+                {t.discountBadge}
+              </div>
+            )}
             {isNewArrival && (
               <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
                 style={{ background: '#3DB851', letterSpacing: '0.03em' }}>
@@ -572,12 +578,6 @@ function ProductCard({
               <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
                 style={{ background: '#2563EB', letterSpacing: '0.03em' }}>
                 TOP 50
-              </div>
-            )}
-            {product.discount && (
-              <div className="px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold"
-                style={{ background: '#DC2626', letterSpacing: '0.03em' }}>
-                {t.discountBadge}
               </div>
             )}
           </div>
