@@ -397,7 +397,7 @@ function ProductRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
           {product.discount && (
-            <span className="px-2 py-1 rounded text-white text-[11px] font-bold flex-shrink-0"
+            <span className="px-1.5 py-0.5 rounded text-white text-[10px] font-bold flex-shrink-0"
               style={{ background: '#DC2626' }}>
               {t.discountBadge}
             </span>
@@ -563,7 +563,7 @@ function ProductCard({
         {(isNewArrival || isTop50 || product.discount) && (
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
             {product.discount && (
-              <div className="px-2 py-1 rounded-md text-white text-[11px] font-bold"
+              <div className="px-1.5 py-0.5 rounded-md text-white text-[10px] font-bold"
                 style={{ background: '#DC2626', letterSpacing: '0.03em' }}>
                 {t.discountBadge}
               </div>
