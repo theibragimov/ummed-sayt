@@ -222,7 +222,8 @@ export async function GET(req: NextRequest) {
           discount,
         };
       })
-      .filter(p => p.stock > 0);
+      // Gruppa tavarov (kategoriya) belgilanmagan mahsulotlar sotuvga chiqmaydi
+      .filter(p => p.stock > 0 && p.categoryId);
 
     // 6. Build category tree: top-level categories with subcategories
     // Only include categories that have products (direct or in subcategories)
