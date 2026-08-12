@@ -650,7 +650,13 @@ function ProductCard({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submitApiUrl?: string }) {
+export function OrderPageContent({
+  submitApiUrl = '/api/order/submit',
+  requireCompanyAddress = false,
+}: {
+  submitApiUrl?: string;
+  requireCompanyAddress?: boolean;
+}) {
   const [lang, setLang] = useState<Lang>('ru');
   const t = T[lang];
 
@@ -915,6 +921,10 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
     if (!formName.trim()) errors.name = t.nameRequired;
     if (!formPhone.trim()) errors.phone = t.phoneRequired;
     else if (formPhone.replace(/\D/g, '').length < 9) errors.phone = t.phoneInvalid;
+    if (requireCompanyAddress) {
+      if (!formCompany.trim()) errors.company = lang === 'uz' ? 'Dorixona nomi kiritish majburiy' : 'Введите название аптеки';
+      if (!formAddress.trim()) errors.address = lang === 'uz' ? 'Manzil kiritish majburiy' : 'Введите адрес доставки';
+    }
     if (Object.keys(errors).length) { setFormErrors(errors); return; }
 
     setSubmitting(true);
@@ -1792,12 +1802,17 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
               </div>
               {formErrors.name && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.name}</p>}
             </div>
-            <div className="relative">
-              <Building2 size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
-              <input type="text" placeholder={t.companyPlaceholder} value={formCompany}
-                onChange={e => setFormCompany(e.target.value)}
-                className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
-                style={{ border: '2px solid #F0F0F0', background: '#FAFAFA' }} />
+            <div>
+              <div className="relative">
+                <Building2 size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                <input type="text"
+                  placeholder={requireCompanyAddress ? (lang === 'uz' ? 'Dorixona nomi *' : 'Название аптеки *') : t.companyPlaceholder}
+                  value={formCompany}
+                  onChange={e => { setFormCompany(e.target.value); setFormErrors(p => ({ ...p, company: '' })); }}
+                  className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
+                  style={{ border: `2px solid ${formErrors.company ? '#EF4444' : '#F0F0F0'}`, background: '#FAFAFA' }} />
+              </div>
+              {formErrors.company && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.company}</p>}
             </div>
             <div>
               <div className="relative">
@@ -1809,12 +1824,17 @@ export function OrderPageContent({ submitApiUrl = '/api/order/submit' }: { submi
               </div>
               {formErrors.phone && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.phone}</p>}
             </div>
-            <div className="relative">
-              <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
-              <input type="text" placeholder={t.addressPlaceholder as string} value={formAddress}
-                onChange={e => setFormAddress(e.target.value)}
-                className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
-                style={{ border: '2px solid #F0F0F0', background: '#FAFAFA' }} />
+            <div>
+              <div className="relative">
+                <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                <input type="text"
+                  placeholder={requireCompanyAddress ? (lang === 'uz' ? 'Yetkazib berish manzili *' : 'Адрес доставки *') : t.addressPlaceholder as string}
+                  value={formAddress}
+                  onChange={e => { setFormAddress(e.target.value); setFormErrors(p => ({ ...p, address: '' })); }}
+                  className="w-full pl-10 pr-4 py-3.5 rounded-2xl text-[14px] font-medium outline-none"
+                  style={{ border: `2px solid ${formErrors.address ? '#EF4444' : '#F0F0F0'}`, background: '#FAFAFA' }} />
+              </div>
+              {formErrors.address && <p className="mt-1 ml-1 text-[11px] text-red-500 font-medium">{formErrors.address}</p>}
             </div>
           </div>
 
