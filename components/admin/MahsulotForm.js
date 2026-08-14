@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import RasmYuklash from './RasmYuklash'
 import { A } from './AdminStyles'
@@ -11,11 +11,16 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '', qisqaTavsifEn: '',
     toliqTavsif: '', toliqTavsifRu: '', toliqTavsifEn: '',
     mavjudligi: true, featured: false, belgi: '', kategoriyaId: '',
-    asosiyRasmUrl: '', turi: 'katalog', ...boshlangich,
+    asosiyRasmUrl: '', rasmlar: [], turi: 'katalog', ...boshlangich,
   })
   const [kategoriyalar, setKategoriyalar] = useState([])
   const [saqlash, setSaqlash] = useState(false)
   const [xato, setXato] = useState('')
+  const [tavsifRasmYuklanmoqda, setTavsifRasmYuklanmoqda] = useState('')
+  const tavsifInputRef = useRef()
+  const tavsifMaqsadKey = useRef('')
+  const [galereyaYuklanmoqda, setGalereyaYuklanmoqda] = useState(false)
+  const galereyaInputRef = useRef()
 
   useEffect(() => {
     fetch('/api/kategoriyalar').then(r => r.json()).then(setKategoriyalar)
@@ -26,6 +31,60 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     if (key === 'nom' && !mahsulotId) {
       setForm(f => ({ ...f, nom: val, slug: val.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') }))
     }
+  }
+
+  function tavsifgaRasmQoshish(key) {
+    tavsifMaqsadKey.current = key
+    tavsifInputRef.current?.click()
+  }
+
+  async function tavsifRasmTanlandi(e) {
+    const fayl = e.target.files[0]
+    e.target.value = ''
+    if (!fayl) return
+    const key = tavsifMaqsadKey.current
+    setTavsifRasmYuklanmoqda(key)
+    try {
+      const fd = new FormData()
+      fd.append('fayl', fayl)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json().catch(() => ({}))
+      if (data.url) {
+        oz(key, (form[key] || '') + `\n<img src="${data.url}" alt="" />\n`)
+      } else {
+        setXato('Rasm yuklashda xatolik: ' + (data.xato || res.status))
+      }
+    } catch (err) {
+      setXato('Tarmoq xatosi: ' + err.message)
+    }
+    setTavsifRasmYuklanmoqda('')
+  }
+
+  async function galereyagaRasmlarQoshish(e) {
+    const fayllar = Array.from(e.target.files || [])
+    e.target.value = ''
+    if (!fayllar.length) return
+    setGalereyaYuklanmoqda(true)
+    for (const fayl of fayllar) {
+      try {
+        const fd = new FormData()
+        fd.append('fayl', fayl)
+        const res = await fetch('/api/upload', { method: 'POST', body: fd })
+        const data = await res.json().catch(() => ({}))
+        if (data.url) {
+          setForm(f => ({ ...f, rasmlar: [...f.rasmlar, data.url] }))
+        } else {
+          setXato('Rasm yuklashda xatolik: ' + (data.xato || res.status))
+        }
+      } catch (err) {
+        setXato('Tarmoq xatosi: ' + err.message)
+      }
+    }
+    setGalereyaYuklanmoqda(false)
+  }
+
+  function galereyadanOlibTashlash(i) {
+    setForm(f => ({ ...f, rasmlar: f.rasmlar.filter((_, idx) => idx !== i) }))
   }
 
   async function yuborish(e) {
@@ -119,6 +178,36 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <RasmYuklash label="" qiymat={form.asosiyRasmUrl} onChange={v => oz('asosiyRasmUrl', v)} />
       </div>
 
+      {/* Galereya */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Qo'shimcha rasmlar (galereya)
+        </div>
+        <input ref={galereyaInputRef} type="file" accept="image/*" multiple onChange={galereyagaRasmlarQoshish} style={{ display: 'none' }} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          {form.rasmlar.map((url, i) => (
+            <div key={i} style={{ position: 'relative', width: 84, height: 112, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)' }}>
+              <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <button type="button" onClick={() => galereyadanOlibTashlash(i)}
+                style={{
+                  position: 'absolute', top: 4, right: 4,
+                  background: '#E8491D', color: '#fff', border: 'none',
+                  borderRadius: '50%', width: 22, height: 22, fontSize: 13,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', lineHeight: 1,
+                }}>×</button>
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={() => galereyaInputRef.current?.click()} disabled={galereyaYuklanmoqda}
+          style={{ ...A.btnGhost, fontSize: 12, padding: '7px 14px', opacity: galereyaYuklanmoqda ? 0.6 : 1 }}>
+          {galereyaYuklanmoqda ? '⏳ Yuklanmoqda...' : '📁 Rasmlar qo\'shish'}
+        </button>
+        <div style={{ fontSize: 10, color: '#9ca3af', marginTop: 6 }}>
+          Bir nechta rasmni birga tanlashingiz mumkin · JPG, PNG, WEBP
+        </div>
+      </div>
+
       {/* Tavsif */}
       <div style={{ ...A.cardPad, marginBottom: '24px' }}>
         <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
@@ -138,18 +227,31 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
             <textarea value={form.qisqaTavsifEn || ''} onChange={e => oz('qisqaTavsifEn', e.target.value)} rows={4} style={A.textarea} placeholder="Short description in English" />
           </div>
         </div>
+        <input ref={tavsifInputRef} type="file" accept="image/*" onChange={tavsifRasmTanlandi} style={{ display: 'none' }} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <div>
             <label style={A.label}>🇺🇿 To'liq tavsif (HTML)</label>
             <textarea value={form.toliqTavsif} onChange={e => oz('toliqTavsif', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Tavsif...</p>" />
+            <button type="button" onClick={() => tavsifgaRasmQoshish('toliqTavsif')} disabled={tavsifRasmYuklanmoqda === 'toliqTavsif'}
+              style={{ ...A.btnGhost, fontSize: 12, padding: '6px 12px', marginTop: 6, opacity: tavsifRasmYuklanmoqda === 'toliqTavsif' ? 0.6 : 1 }}>
+              {tavsifRasmYuklanmoqda === 'toliqTavsif' ? '⏳ Yuklanmoqda...' : '🖼 Rasm qo\'shish'}
+            </button>
           </div>
           <div>
             <label style={A.label}>🇷🇺 Полное описание (HTML)</label>
             <textarea value={form.toliqTavsifRu} onChange={e => oz('toliqTavsifRu', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Описание...</p>" />
+            <button type="button" onClick={() => tavsifgaRasmQoshish('toliqTavsifRu')} disabled={tavsifRasmYuklanmoqda === 'toliqTavsifRu'}
+              style={{ ...A.btnGhost, fontSize: 12, padding: '6px 12px', marginTop: 6, opacity: tavsifRasmYuklanmoqda === 'toliqTavsifRu' ? 0.6 : 1 }}>
+              {tavsifRasmYuklanmoqda === 'toliqTavsifRu' ? '⏳ Загрузка...' : '🖼 Добавить фото'}
+            </button>
           </div>
           <div>
             <label style={A.label}>🇬🇧 Full description (HTML)</label>
             <textarea value={form.toliqTavsifEn || ''} onChange={e => oz('toliqTavsifEn', e.target.value)} rows={7} style={{ ...A.textarea, fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Description...</p>" />
+            <button type="button" onClick={() => tavsifgaRasmQoshish('toliqTavsifEn')} disabled={tavsifRasmYuklanmoqda === 'toliqTavsifEn'}
+              style={{ ...A.btnGhost, fontSize: 12, padding: '6px 12px', marginTop: 6, opacity: tavsifRasmYuklanmoqda === 'toliqTavsifEn' ? 0.6 : 1 }}>
+              {tavsifRasmYuklanmoqda === 'toliqTavsifEn' ? '⏳ Uploading...' : '🖼 Add image'}
+            </button>
           </div>
         </div>
       </div>

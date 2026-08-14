@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -17,6 +17,7 @@ export default function MahsulotDetailPage({ params }) {
   const [product, setProduct] = useState(null);
   const [notFoundState, setNotFoundState] = useState(false);
   const [tanlanganRasm, setTanlanganRasm] = useState(0);
+  const touchXRef = useRef(null);
 
   useEffect(() => {
     setTanlanganRasm(0);
@@ -56,6 +57,10 @@ export default function MahsulotDetailPage({ params }) {
   const variantlar = Array.isArray(product.variantlar) ? product.variantlar : [];
   const rasmlar = product.rasmlar || [];
   const joriyRasm = rasmlar[tanlanganRasm]?.rasmUrl || product.asosiyRasmUrl;
+
+  function rasmniAlmashtir(yonalish) {
+    setTanlanganRasm((joriy) => (joriy + yonalish + rasmlar.length) % rasmlar.length);
+  }
 
   // Variantlarni xususiyat bo'yicha guruhlash
   const variantGuruhlar = {}
@@ -98,11 +103,34 @@ export default function MahsulotDetailPage({ params }) {
             {/* Chap: Rasm */}
             <div>
               <div className="w-full flex items-center justify-center overflow-hidden rounded-2xl"
-                style={{ aspectRatio: "1 / 1", position: "relative", backgroundColor: "var(--card-bg, #f9f9f7)" }}>
+                style={{ aspectRatio: "3 / 4", position: "relative", backgroundColor: "var(--card-bg, #f9f9f7)" }}
+                onTouchStart={(e) => { touchXRef.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                  if (touchXRef.current == null || rasmlar.length < 2) return;
+                  const farq = e.changedTouches[0].clientX - touchXRef.current;
+                  if (farq > 50) rasmniAlmashtir(-1);
+                  else if (farq < -50) rasmniAlmashtir(1);
+                  touchXRef.current = null;
+                }}>
                 {joriyRasm ? (
                   <Image src={joriyRasm} alt={nom} fill style={{ objectFit: "contain" }} />
                 ) : (
                   <span className="text-[120px] select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
+                )}
+
+                {rasmlar.length > 1 && (
+                  <>
+                    <button type="button" onClick={() => rasmniAlmashtir(-1)} aria-label="Oldingi rasm"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 rounded-full transition-opacity hover:opacity-80"
+                      style={{ backgroundColor: "rgba(255,255,255,0.85)", color: "#0a0a0a" }}>
+                      ‹
+                    </button>
+                    <button type="button" onClick={() => rasmniAlmashtir(1)} aria-label="Keyingi rasm"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 rounded-full transition-opacity hover:opacity-80"
+                      style={{ backgroundColor: "rgba(255,255,255,0.85)", color: "#0a0a0a" }}>
+                      ›
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -111,7 +139,7 @@ export default function MahsulotDetailPage({ params }) {
                 <div className="flex gap-2 mt-3 overflow-x-auto">
                   {rasmlar.map((r, i) => (
                     <button key={i} onClick={() => setTanlanganRasm(i)}
-                      className="flex-shrink-0 w-16 h-16 overflow-hidden transition-opacity"
+                      className="flex-shrink-0 w-14 h-[74px] overflow-hidden transition-opacity"
                       style={{
                         position: "relative",
                         border: tanlanganRasm === i ? "2px solid #E8491D" : "2px solid transparent",

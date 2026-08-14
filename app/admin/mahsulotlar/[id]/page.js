@@ -28,6 +28,7 @@ export default async function MahsulotTahrirlash({ params }) {
     featured: mahsulot.featured,
     kategoriyaId: mahsulot.kategoriyaId ? String(mahsulot.kategoriyaId) : '',
     asosiyRasmUrl: mahsulot.asosiyRasmUrl || '',
+    rasmlar: (mahsulot.rasmlar || []).map(r => r.rasmUrl),
     turi: mahsulot.turi || 'katalog',
   }
 

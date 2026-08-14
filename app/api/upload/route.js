@@ -1,10 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import sharp from 'sharp'
 import { requireAdmin } from '@/lib/admin-auth'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+const MAX_KENGLIK = 1080
+const MAX_BALANDLIK = 1440
 
 export async function POST(request) {
   const authError = await requireAdmin()
@@ -36,16 +39,26 @@ export async function POST(request) {
     }
 
     const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    let buffer = Buffer.from(bytes)
+    let contentType = file.type
+    let fileExt = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif' }[file.type] || 'jpg'
 
-    const extMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif' }
-    const fileExt = extMap[file.type] || 'jpg'
+    // Animatsiyali GIF bundan mustasno — qolgan hammasi 1080x1440 ichiga sig'diriladi va WebP'ga siqiladi
+    if (file.type !== 'image/gif') {
+      buffer = await sharp(buffer)
+        .resize({ width: MAX_KENGLIK, height: MAX_BALANDLIK, fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 82 })
+        .toBuffer()
+      contentType = 'image/webp'
+      fileExt = 'webp'
+    }
+
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
     const filePath = `rasmlar/${fileName}`
 
     const { error } = await supabase.storage
       .from('ummed')
-      .upload(filePath, buffer, { contentType: file.type, upsert: false })
+      .upload(filePath, buffer, { contentType, upsert: false })
 
     if (error) {
       console.error('Upload xatosi:', error)
