@@ -79,8 +79,8 @@ export default function AloqaPage() {
 
           {/* Asosiy grid: forma + ma'lumotlar */}
           <div
-            className="flex flex-col lg:flex-row"
-            style={{ border: "1px solid var(--border-strong, #e5e5e5)" }}
+            className="flex flex-col lg:flex-row rounded-3xl overflow-hidden"
+            style={{ border: "1px solid var(--border-frame, #ccc)" }}
           >
             {/* Chap — Forma */}
             <Reveal variant="up" className="flex-1 p-6 sm:p-8 lg:p-12">
@@ -115,9 +115,9 @@ export default function AloqaPage() {
                   </p>
                   <button
                     onClick={() => { setSent(false); setForm({ name: "", phone: "", message: "" }); }}
-                    className="self-start text-sm font-medium px-6 py-3 transition-colors"
+                    className="self-start text-sm font-medium px-6 py-3 transition-colors rounded-xl"
                     style={{
-                      border: "1px solid var(--border-strong, #e5e5e5)",
+                      border: "1px solid var(--border-frame, #ccc)",
                       color: "var(--text)",
                     }}
                   >
@@ -138,10 +138,10 @@ export default function AloqaPage() {
                       value={form.name}
                       onChange={handleChange}
                       placeholder={c.form.namePlaceholder}
-                      className="w-full px-4 py-3 text-sm font-light focus:outline-none"
+                      className="w-full px-4 py-3 text-sm font-light focus:outline-none rounded-xl"
                       style={{
                         backgroundColor: "var(--bg)",
-                        border: errors.name ? "1px solid #E8491D" : "1px solid var(--border-strong, #e5e5e5)",
+                        border: errors.name ? "1px solid #E8491D" : "1px solid var(--border-frame, #ccc)",
                         color: "var(--text)",
                         fontFamily: "inherit",
                       }}
@@ -162,10 +162,10 @@ export default function AloqaPage() {
                       onChange={handleChange}
                       type="tel"
                       placeholder="+998 90 000-00-00"
-                      className="w-full px-4 py-3 text-sm font-light focus:outline-none"
+                      className="w-full px-4 py-3 text-sm font-light focus:outline-none rounded-xl"
                       style={{
                         backgroundColor: "var(--bg)",
-                        border: errors.phone ? "1px solid #E8491D" : "1px solid var(--border-strong, #e5e5e5)",
+                        border: errors.phone ? "1px solid #E8491D" : "1px solid var(--border-frame, #ccc)",
                         color: "var(--text)",
                         fontFamily: "inherit",
                       }}
@@ -186,10 +186,10 @@ export default function AloqaPage() {
                       onChange={handleChange}
                       rows={5}
                       placeholder={c.form.messagePlaceholder}
-                      className="w-full px-4 py-3 text-sm font-light focus:outline-none resize-none"
+                      className="w-full px-4 py-3 text-sm font-light focus:outline-none resize-none rounded-xl"
                       style={{
                         backgroundColor: "var(--bg)",
-                        border: errors.message ? "1px solid #E8491D" : "1px solid var(--border-strong, #e5e5e5)",
+                        border: errors.message ? "1px solid #E8491D" : "1px solid var(--border-frame, #ccc)",
                         color: "var(--text)",
                         fontFamily: "inherit",
                       }}
@@ -221,7 +221,7 @@ export default function AloqaPage() {
               variant="up"
               delay={120}
               className="lg:w-80 xl:w-96 flex-shrink-0 p-6 sm:p-8 lg:p-12 flex flex-col gap-7 sm:gap-10"
-              style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)" }}
+              style={{ borderTop: "1px solid var(--border-frame, #ccc)" }}
             >
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
@@ -282,13 +282,12 @@ export default function AloqaPage() {
           </div>
 
           {/* Xarita */}
-          <Reveal variant="up" delay={160}>
+          <Reveal variant="up" delay={160} className="mt-4">
             <div
-              className="w-full overflow-hidden"
+              className="w-full overflow-hidden rounded-3xl"
               style={{
                 height: "clamp(240px, 36vw, 460px)",
-                border: "1px solid var(--border-strong, #e5e5e5)",
-                borderTop: "none",
+                border: "1px solid var(--border-frame, #ccc)",
               }}
             >
               <iframe
