@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getMahsulotById, getMahsulotBySlug, updateMahsulot, deleteMahsulot } from '@/lib/db'
 import { requireAdmin } from '@/lib/admin-auth'
 
-const CACHE = 'public, s-maxage=300, stale-while-revalidate=600'
+const CACHE = 'public, s-maxage=10, stale-while-revalidate=59'
 
 export async function GET(_, { params }) {
   const { id } = await params

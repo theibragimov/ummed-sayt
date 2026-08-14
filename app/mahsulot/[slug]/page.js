@@ -55,8 +55,12 @@ export default function MahsulotDetailPage({ params }) {
     : (product.kategoriya?.nom || "");
 
   const variantlar = Array.isArray(product.variantlar) ? product.variantlar : [];
-  const rasmlar = product.rasmlar || [];
-  const joriyRasm = rasmlar[tanlanganRasm]?.rasmUrl || product.asosiyRasmUrl;
+  // Asosiy rasm birinchi, keyin qo'shimcha (galereya) rasmlar
+  const rasmlar = [
+    ...(product.asosiyRasmUrl ? [{ rasmUrl: product.asosiyRasmUrl }] : []),
+    ...(product.rasmlar || []).filter((r) => r.rasmUrl !== product.asosiyRasmUrl),
+  ];
+  const joriyRasm = rasmlar[tanlanganRasm]?.rasmUrl;
 
   function rasmniAlmashtir(yonalish) {
     setTanlanganRasm((joriy) => (joriy + yonalish + rasmlar.length) % rasmlar.length);
