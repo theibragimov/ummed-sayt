@@ -274,7 +274,7 @@ export default function MahsulotDetailPage({ params }) {
                   <div className="flex flex-row gap-3">
                     <a href="https://uzum.uz/uz/shop/ummed" target="_blank" rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-85 hover:scale-[1.02]"
-                      style={{ backgroundColor: "#FFF200", color: "#3D0FA0" }}>
+                      style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)", color: "#FFF200" }}>
                       Uzum Market
                     </a>
                     <Link href="/aloqa"
