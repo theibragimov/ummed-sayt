@@ -223,7 +223,7 @@ export default function MahsulotDetailPage({ params }) {
                       </p>
                     )}
                     {toliq && (
-                      <div className="text-sm font-light leading-relaxed prose-sm max-w-none"
+                      <div className="tavsif-html text-sm font-light leading-relaxed max-w-none"
                         style={{ color: "var(--text-muted, #888)" }}
                         dangerouslySetInnerHTML={{ __html: toliq }} />
                     )}
@@ -266,6 +266,24 @@ export default function MahsulotDetailPage({ params }) {
                   style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
                   {L("Bog'lanish", "Связаться с нами", "Contact Us")}
                 </Link>
+
+                <div className="pt-2">
+                  <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
+                    {L("Harid qilish", "Купить", "Purchase")}:
+                  </p>
+                  <div className="flex flex-row gap-3">
+                    <a href="https://uzum.uz/uz/shop/ummed" target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-85 hover:scale-[1.02]"
+                      style={{ backgroundColor: "#FFF200", color: "#3D0FA0" }}>
+                      Uzum Market
+                    </a>
+                    <Link href="/aloqa"
+                      className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-70"
+                      style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
+                      {L("Hamkorlik", "Партнёрство", "Partnership")}
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
