@@ -8,6 +8,15 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { useLang } from "@/lib/i18n";
 
+// Uzum Market'da sotilmaydigan mahsulotlar
+const UZUM_YOQ = new Set([
+  "easydrip-insulin-ruchkalari-uchun-ignalar-pen-needles",
+  "gk-palma-kolopriyomniklari",
+  "makon-mirzo-ortopedik-mahsulotlari",
+]);
+// Uzum Market'da Ababil do'koni orqali sotiladigan mahsulotlar
+const UZUM_ABABIL = new Set(["matras-m007"]);
+
 export default function MahsulotDetailPage({ params }) {
   const { lang } = useLang();
   const ru = lang === "ru";
@@ -17,6 +26,7 @@ export default function MahsulotDetailPage({ params }) {
   const [product, setProduct] = useState(null);
   const [notFoundState, setNotFoundState] = useState(false);
   const [tanlanganRasm, setTanlanganRasm] = useState(0);
+  const [rasmYonalishi, setRasmYonalishi] = useState(1);
   const touchXRef = useRef(null);
 
   useEffect(() => {
@@ -63,8 +73,20 @@ export default function MahsulotDetailPage({ params }) {
   const joriyRasm = rasmlar[tanlanganRasm]?.rasmUrl;
 
   function rasmniAlmashtir(yonalish) {
+    setRasmYonalishi(yonalish);
     setTanlanganRasm((joriy) => (joriy + yonalish + rasmlar.length) % rasmlar.length);
   }
+
+  function rasmgaOt(index) {
+    setRasmYonalishi(index >= tanlanganRasm ? 1 : -1);
+    setTanlanganRasm(index);
+  }
+
+  const uzumHref = UZUM_YOQ.has(slug)
+    ? null
+    : UZUM_ABABIL.has(slug)
+    ? "https://uzum.uz/uz/shop/ababil"
+    : "https://uzum.uz/uz/shop/ummed";
 
   // Variantlarni xususiyat bo'yicha guruhlash
   const variantGuruhlar = {}
@@ -117,7 +139,8 @@ export default function MahsulotDetailPage({ params }) {
                   touchXRef.current = null;
                 }}>
                 {joriyRasm ? (
-                  <Image src={joriyRasm} alt={nom} fill style={{ objectFit: "contain" }} />
+                  <Image key={tanlanganRasm} src={joriyRasm} alt={nom} fill style={{ objectFit: "contain" }}
+                    className={rasmYonalishi === 1 ? "mahsulot-rasm-slide-right" : "mahsulot-rasm-slide-left"} />
                 ) : (
                   <span className="text-[120px] select-none">{getCategoryEmoji(product.kategoriya?.slug)}</span>
                 )}
@@ -142,7 +165,7 @@ export default function MahsulotDetailPage({ params }) {
               {rasmlar.length > 1 && (
                 <div className="flex gap-2 mt-3 overflow-x-auto">
                   {rasmlar.map((r, i) => (
-                    <button key={i} onClick={() => setTanlanganRasm(i)}
+                    <button key={i} onClick={() => rasmgaOt(i)}
                       className="flex-shrink-0 w-14 h-[74px] overflow-hidden transition-opacity"
                       style={{
                         position: "relative",
@@ -254,35 +277,24 @@ export default function MahsulotDetailPage({ params }) {
                 </div>
               )}
 
-              {/* Bog'lanish tugmasi */}
-              <div className="mt-auto pt-4 flex flex-col gap-3">
-                <a href="https://t.me/ummeduzbot" target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full py-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                  style={{ background: "#E8491D" }}>
-                  {L("Narx va mavjudlikni so'rash", "Узнать цену и наличие", "Ask for Price & Availability")}
-                </a>
-                <Link href="/aloqa"
-                  className="inline-flex items-center justify-center w-full py-3 text-sm font-medium transition-opacity hover:opacity-70"
-                  style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
-                  {L("Bog'lanish", "Связаться с нами", "Contact Us")}
-                </Link>
-
-                <div className="pt-2">
-                  <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
-                    {L("Harid qilish", "Купить", "Purchase")}:
-                  </p>
-                  <div className="flex flex-row gap-3">
-                    <a href="https://uzum.uz/uz/shop/ummed" target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-85 hover:scale-[1.02]"
+              {/* Harid qilish */}
+              <div className="mt-auto pt-4">
+                <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
+                  {L("Harid qilish", "Купить", "Purchase")}:
+                </p>
+                <div className="flex flex-row gap-3">
+                  {uzumHref && (
+                    <a href={uzumHref} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-85 hover:scale-[1.03]"
                       style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)", color: "#FFF200" }}>
                       Uzum Market
                     </a>
-                    <Link href="/aloqa"
-                      className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-70"
-                      style={{ border: "1px solid var(--border-strong, #e5e5e5)", color: "var(--text)" }}>
-                      {L("Hamkorlik", "Партнёрство", "Partnership")}
-                    </Link>
-                  </div>
+                  )}
+                  <Link href="/aloqa"
+                    className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-semibold text-white rounded-full transition-all hover:opacity-90 hover:scale-[1.03]"
+                    style={{ background: "#E8491D" }}>
+                    {L("Hamkorlik", "Партнёрство", "Partnership")}
+                  </Link>
                 </div>
               </div>
             </div>
