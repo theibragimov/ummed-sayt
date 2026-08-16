@@ -793,8 +793,10 @@ export function OrderPageContent({
       const res = await fetch(url, { cache: 'no-store' });
       const json = await res.json();
       if (json.error) throw new Error(json.error);
-      const nextProducts = json.products || [];
-      const nextCategories = (json.categories || []).filter((c: Category) => c.name !== 'Прочее');
+      const nextProducts = (json.products || []).filter((p: Product) => p.categoryName !== 'Прочее' && p.rootCategoryName !== 'Прочее');
+      const nextCategories = (json.categories || [])
+        .filter((c: Category) => c.name !== 'Прочее')
+        .map((c: Category) => ({ ...c, children: c.children.filter(ch => ch.name !== 'Прочее') }));
       const nextPriceTypes = json.priceTypes || [];
       const nextSelectedPriceType = json.selectedPriceType || null;
       setProducts(nextProducts);
