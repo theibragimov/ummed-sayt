@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import RasmYuklash from './RasmYuklash'
+import VideoYuklash from './VideoYuklash'
 import { A } from './AdminStyles'
 
 export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
@@ -11,7 +12,7 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
     brend: '', modelRaqami: '', qisqaTavsif: '', qisqaTavsifRu: '', qisqaTavsifEn: '',
     toliqTavsif: '', toliqTavsifRu: '', toliqTavsifEn: '',
     mavjudligi: true, featured: false, belgi: '', kategoriyaId: '',
-    asosiyRasmUrl: '', rasmlar: [], turi: 'katalog', ...boshlangich,
+    asosiyRasmUrl: '', rasmlar: [], videoUrl: '', turi: 'katalog', ...boshlangich,
   })
   const [kategoriyalar, setKategoriyalar] = useState([])
   const [saqlash, setSaqlash] = useState(false)
@@ -206,6 +207,14 @@ export default function MahsulotForm({ boshlangich = {}, mahsulotId }) {
         <div style={{ fontSize: 10, color: '#9ca3af', marginTop: 6 }}>
           Bir nechta rasmni birga tanlashingiz mumkin · JPG, PNG, WEBP
         </div>
+      </div>
+
+      {/* Video */}
+      <div style={{ ...A.cardPad, marginBottom: '16px' }}>
+        <div style={{ fontWeight: 700, fontSize: '14px', color: '#0a0a0a', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          Video (ixtiyoriy)
+        </div>
+        <VideoYuklash label="" qiymat={form.videoUrl} onChange={v => oz('videoUrl', v)} />
       </div>
 
       {/* Tavsif */}

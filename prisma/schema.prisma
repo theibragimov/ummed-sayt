@@ -37,6 +37,7 @@ model Mahsulot {
   kategoriyaId    Int?           @map("kategoriya_id")
   kategoriya      Kategoriya?    @relation(fields: [kategoriyaId], references: [id])
   asosiyRasmUrl   String?        @map("asosiy_rasm_url")
+  videoUrl        String?        @map("video_url")
   narx            Float?
   narxBirligi     String         @default("so'm") @map("narx_birligi")
   mavjudligi      Boolean        @default(true)

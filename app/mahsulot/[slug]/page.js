@@ -65,12 +65,14 @@ export default function MahsulotDetailPage({ params }) {
     : (product.kategoriya?.nom || "");
 
   const variantlar = Array.isArray(product.variantlar) ? product.variantlar : [];
-  // Asosiy rasm birinchi, keyin qo'shimcha (galereya) rasmlar
+  // Asosiy rasm birinchi, keyin qo'shimcha (galereya) rasmlar, oxirida video (bo'lsa)
   const rasmlar = [
     ...(product.asosiyRasmUrl ? [{ rasmUrl: product.asosiyRasmUrl }] : []),
     ...(product.rasmlar || []).filter((r) => r.rasmUrl !== product.asosiyRasmUrl),
+    ...(product.videoUrl ? [{ videoUrl: product.videoUrl }] : []),
   ];
-  const joriyRasm = rasmlar[tanlanganRasm]?.rasmUrl;
+  const joriySlayd = rasmlar[tanlanganRasm];
+  const joriyRasm = joriySlayd?.rasmUrl;
 
   function rasmniAlmashtir(yonalish) {
     setRasmYonalishi(yonalish);
@@ -138,7 +140,11 @@ export default function MahsulotDetailPage({ params }) {
                   else if (farq < -50) rasmniAlmashtir(1);
                   touchXRef.current = null;
                 }}>
-                {joriyRasm ? (
+                {joriySlayd?.videoUrl ? (
+                  <video key={tanlanganRasm} src={joriySlayd.videoUrl} controls playsInline
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    className={rasmYonalishi === 1 ? "mahsulot-rasm-slide-right" : "mahsulot-rasm-slide-left"} />
+                ) : joriyRasm ? (
                   <Image key={tanlanganRasm} src={joriyRasm} alt={nom} fill style={{ objectFit: "contain" }}
                     className={rasmYonalishi === 1 ? "mahsulot-rasm-slide-right" : "mahsulot-rasm-slide-left"} />
                 ) : (
@@ -172,7 +178,14 @@ export default function MahsulotDetailPage({ params }) {
                         border: tanlanganRasm === i ? "2px solid #E8491D" : "2px solid transparent",
                         opacity: tanlanganRasm === i ? 1 : 0.6,
                       }}>
-                      <Image src={r.rasmUrl} alt="" fill style={{ objectFit: "cover" }} />
+                      {r.videoUrl ? (
+                        <>
+                          <video src={r.videoUrl} muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <span className="absolute inset-0 flex items-center justify-center text-white text-lg" style={{ background: "rgba(0,0,0,0.25)" }}>▶</span>
+                        </>
+                      ) : (
+                        <Image src={r.rasmUrl} alt="" fill style={{ objectFit: "cover" }} />
+                      )}
                     </button>
                   ))}
                 </div>
