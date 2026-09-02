@@ -254,7 +254,7 @@ export default function MahsulotDetailPage({ params }) {
 
               {/* Qisqa tavsif — eng muhim jihatlar, rasm yonida darhol ko'rinadi */}
               {(() => {
-                const qisqa = ru ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif;
+                const qisqa = ru ? (product.qisqaTavsifRu || product.qisqaTavsif) : en ? (product.qisqaTavsifEn || product.qisqaTavsif) : product.qisqaTavsif;
                 if (!qisqa) return null;
                 return (
                   <p className="text-sm font-medium leading-relaxed mb-6" style={{ color: "var(--text)" }}>
@@ -318,7 +318,7 @@ export default function MahsulotDetailPage({ params }) {
 
               {/* To'liq tavsif (batafsil ma'lumot, video va h.k.) */}
               {(() => {
-                const toliq = ru ? (product.toliqTavsifRu || product.toliqTavsif) : product.toliqTavsif;
+                const toliq = ru ? (product.toliqTavsifRu || product.toliqTavsif) : en ? (product.toliqTavsifEn || product.toliqTavsif) : product.toliqTavsif;
                 if (!toliq) return null;
                 return (
                   <div className="tavsif-html text-sm font-light leading-relaxed max-w-none mb-6"
