@@ -16,6 +16,10 @@ const UZUM_YOQ = new Set([
 ]);
 // Uzum Market'da Ababil do'koni orqali sotiladigan mahsulotlar
 const UZUM_ABABIL = new Set(["matras-m007"]);
+// Alohida Uzum mahsulot havolasi bilan bog'langan mahsulotlar (do'kon sahifasi o'rniga)
+const UZUM_CUSTOM = {
+  "satellite-glukometrlari-va-test-poloskalari": "https://go.uzum.uz/l/upasreDK",
+};
 
 export default function MahsulotDetailPage({ params }) {
   const { lang } = useLang();
@@ -86,6 +90,8 @@ export default function MahsulotDetailPage({ params }) {
 
   const uzumHref = UZUM_YOQ.has(slug)
     ? null
+    : UZUM_CUSTOM[slug]
+    ? UZUM_CUSTOM[slug]
     : UZUM_ABABIL.has(slug)
     ? "https://uzum.uz/uz/shop/ababil"
     : "https://uzum.uz/uz/shop/ummed";
@@ -298,6 +304,15 @@ export default function MahsulotDetailPage({ params }) {
                 <div className="flex flex-row gap-3">
                   {uzumHref && (
                     <a href={uzumHref} target="_blank" rel="noopener noreferrer"
+                      onClick={() => {
+                        if (typeof window !== "undefined" && typeof window.gtag === "function") {
+                          window.gtag("event", "uzum_click", {
+                            event_category: "engagement",
+                            event_label: slug,
+                            mahsulot: product?.nom || slug,
+                          });
+                        }
+                      }}
                       className="inline-flex items-center justify-center gap-1.5 flex-1 py-3 text-sm font-medium rounded-full transition-all hover:opacity-85 hover:scale-[1.03]"
                       style={{ background: "linear-gradient(to top, #3D0FA0 0%, #5B1AC8 50%, #7B2FF7 100%)", color: "#FFF200" }}>
                       Uzum Market
