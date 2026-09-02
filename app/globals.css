@@ -75,9 +75,6 @@ html {
   line-height: 1.35;
   margin: 1.4em 0 0.6em;
 }
-.tavsif-html h2:first-child {
-  margin-top: 0;
-}
 .tavsif-html .tavsif-video {
   position: relative;
   width: 100%;
