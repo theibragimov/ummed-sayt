@@ -252,24 +252,14 @@ export default function MahsulotDetailPage({ params }) {
                 </div>
               </div>
 
-              {/* Tavsif */}
+              {/* Qisqa tavsif — eng muhim jihatlar, rasm yonida darhol ko'rinadi */}
               {(() => {
                 const qisqa = ru ? (product.qisqaTavsifRu || product.qisqaTavsif) : product.qisqaTavsif;
-                const toliq = ru ? (product.toliqTavsifRu || product.toliqTavsif) : product.toliqTavsif;
-                if (!qisqa && !toliq) return null;
+                if (!qisqa) return null;
                 return (
-                  <div className="mb-6">
-                    {qisqa && (
-                      <p className="text-sm font-medium leading-relaxed mb-3" style={{ color: "var(--text)" }}>
-                        {qisqa}
-                      </p>
-                    )}
-                    {toliq && (
-                      <div className="tavsif-html text-sm font-light leading-relaxed max-w-none"
-                        style={{ color: "var(--text-muted, #888)" }}
-                        dangerouslySetInnerHTML={{ __html: toliq }} />
-                    )}
-                  </div>
+                  <p className="text-sm font-medium leading-relaxed mb-6" style={{ color: "var(--text)" }}>
+                    {qisqa}
+                  </p>
                 );
               })()}
 
@@ -296,8 +286,8 @@ export default function MahsulotDetailPage({ params }) {
                 </div>
               )}
 
-              {/* Harid qilish */}
-              <div className="mt-auto pt-4">
+              {/* Harid qilish — darhol ko'rinishi uchun qisqa tavsifdan keyin joylashtirilgan */}
+              <div className="mb-8">
                 <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "var(--text-muted, #888)" }}>
                   {L("Harid qilish", "Купить", "Purchase")}:
                 </p>
@@ -325,6 +315,17 @@ export default function MahsulotDetailPage({ params }) {
                   </Link>
                 </div>
               </div>
+
+              {/* To'liq tavsif (batafsil ma'lumot, video va h.k.) */}
+              {(() => {
+                const toliq = ru ? (product.toliqTavsifRu || product.toliqTavsif) : product.toliqTavsif;
+                if (!toliq) return null;
+                return (
+                  <div className="tavsif-html text-sm font-light leading-relaxed max-w-none mb-6"
+                    style={{ color: "var(--text-muted, #888)" }}
+                    dangerouslySetInnerHTML={{ __html: toliq }} />
+                );
+              })()}
             </div>
           </div>
         </div>
