@@ -4,6 +4,7 @@ import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
   Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent, MapPin,
+  Link2, Check,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -111,6 +112,8 @@ const T = {
     ratingCommentTitle: "Nima yaxshilansa bo'ladi?",
     ratingCommentPlaceholder: "Izohingizni yozing...",
     ratingCommentSend: "Yuborish",
+    shareLinkTitle: "Havolani nusxalash",
+    linkCopied: "Havola nusxalandi",
   },
   ru: {
     storeName: "Онлайн Заказ",
@@ -175,6 +178,8 @@ const T = {
     ratingCommentTitle: "Что можно улучшить?",
     ratingCommentPlaceholder: "Напишите ваш комментарий...",
     ratingCommentSend: "Отправить",
+    shareLinkTitle: "Скопировать ссылку",
+    linkCopied: "Ссылка скопирована",
   },
 };
 
@@ -684,6 +689,14 @@ export function OrderPageContent({
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PRODUCT_LIMIT);
   const [displayMode, setDisplayMode] = useState<'list' | 'grid'>('grid');
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  function copyShareLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 1500);
+    }).catch(() => {});
+  }
 
   // Telegram in-app browser dark mode fix: force light text on all inputs
   useEffect(() => {
@@ -840,6 +853,35 @@ export function OrderPageContent({
       loadCatalog('');
     }
   }, [loadCatalog]);
+
+  // Ulashilgan havoladan (?cat=&q=) kategoriya/qidiruvni tiklash va katalogni ochish
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const cat = params.get('cat');
+        const q = params.get('q');
+        if (cat || q) {
+          if (cat) setSelectedCat(cat);
+          if (q) setSearch(q);
+          openCatalog();
+        }
+      } catch {}
+    }, 0);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Kategoriya/qidiruvni URL bilan sinxronlash — ulashish uchun havola shu holatni saqlaydi
+  useEffect(() => {
+    if (view !== 'catalog') return;
+    const params = new URLSearchParams();
+    if (selectedCat) params.set('cat', selectedCat);
+    if (search) params.set('q', search);
+    const qs = params.toString();
+    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, '', newUrl);
+  }, [view, selectedCat, search]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -1397,6 +1439,16 @@ export function OrderPageContent({
               {search && (
                 <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
                   <X size={13} color="#999" />
+                </button>
+              )}
+              {(search || selectedCat) && (
+                <button
+                  onClick={copyShareLink}
+                  className="absolute top-1/2 -translate-y-1/2"
+                  style={{ right: search ? 30 : 12 }}
+                  title={t.shareLinkTitle}
+                  aria-label={t.shareLinkTitle}>
+                  {linkCopied ? <Check size={14} color="#3DB851" /> : <Link2 size={14} color="#999" />}
                 </button>
               )}
             </div>
