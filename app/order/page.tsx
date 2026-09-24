@@ -23,6 +23,7 @@ interface Product {
   imageHref: string;
   parentProductId?: string;
   discount?: boolean;
+  variantLabel?: string;
 }
 
 interface Category {
@@ -366,7 +367,7 @@ function ProductRow({
   isNewArrival: boolean;
 }) {
   const t = T[lang];
-  const { base: baseName, variant } = parseVariant(product.name);
+  const { base: baseName, variant } = getVariantDisplay(product);
   const [imgErr, setImgErr] = useState(false);
   const [inputVal, setInputVal] = useState<string>('');
   const [editing, setEditing] = useState(false);
@@ -511,6 +512,18 @@ function parseVariant(name: string): { base: string; variant: string | null } {
   return { base, variant: skip ? null : v };
 }
 
+// Prefer MoySklad's structured variant characteristic (o'lcham/rang) over
+// name-parsing — falls back to parseVariant only for products without it.
+function getVariantDisplay(product: Product): { base: string; variant: string | null } {
+  if (product.variantLabel) {
+    const escaped = product.variantLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const trailingParen = new RegExp(`\\s*\\(${escaped}\\)\\s*$`, 'i');
+    const base = product.name.replace(trailingParen, '').trim() || product.name;
+    return { base, variant: product.variantLabel };
+  }
+  return parseVariant(product.name);
+}
+
 // ─── Product Card (Grid View) ─────────────────────────────────────────────────
 
 function ProductCard({
@@ -526,7 +539,7 @@ function ProductCard({
   isNewArrival: boolean;
 }) {
   const t = T[lang];
-  const { base: baseName, variant } = parseVariant(product.name);
+  const { base: baseName, variant } = getVariantDisplay(product);
   const fullSrc = `/api/order/image?id=${product.id}&t=${product.type}&full=1`;
   const miniSrc = product.imageHref ? `/api/order/image?href=${encodeURIComponent(product.imageHref)}` : '';
   const [imgSrc, setImgSrc] = useState(miniSrc || fullSrc);

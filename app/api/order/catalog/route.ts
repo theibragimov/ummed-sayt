@@ -137,6 +137,10 @@ export async function GET(req: NextRequest) {
     // 4. Build variantToProduct map (always) + price map for custom price type
     // variantToProduct: variantId -> parentProductId
     const variantToProduct: Record<string, string> = {};
+    // Variant o'lcham/rang kabi xususiyatlari — mahsulot nomidagi qavs ichidagi
+    // matnga tayanish o'rniga, to'g'ridan-to'g'ri MoySklad "characteristics"
+    // maydonidan olinadi (nom formatiga bog'liq bo'lmaydi).
+    const variantLabelMap: Record<string, string> = {};
     let priceMap: Record<string, number> = {};
     const useCustomPrice = !!selectedPriceType;
 
@@ -151,6 +155,9 @@ export async function GET(req: NextRequest) {
           if (!stockMap[v.id]) continue;
           const parentId = (v.product?.meta?.href || '').split('/').pop() || '';
           if (parentId) variantToProduct[v.id] = parentId;
+          const chars = Array.isArray(v.characteristics) ? v.characteristics : [];
+          const label = chars.map((c: any) => String(c?.value || '').trim()).filter(Boolean).join(', ');
+          if (label) variantLabelMap[v.id] = label;
           if (useCustomPrice && selectedPriceType) {
             const sp = (v.salePrices || []).find((s: any) => s.priceType?.id === selectedPriceType.id);
             if (sp && Number(sp.value) > 0) priceMap[v.id] = Number(sp.value);
@@ -220,6 +227,7 @@ export async function GET(req: NextRequest) {
           imageHref: s.imageHref,
           parentProductId,
           discount,
+          variantLabel: variantLabelMap[id] || undefined,
         };
       })
       // Gruppa tavarov (kategoriya) belgilanmagan mahsulotlar sotuvga chiqmaydi
