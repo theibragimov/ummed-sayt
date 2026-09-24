@@ -141,6 +141,10 @@ export async function GET(req: NextRequest) {
     // matnga tayanish o'rniga, to'g'ridan-to'g'ri MoySklad "characteristics"
     // maydonidan olinadi (nom formatiga bog'liq bo'lmaydi).
     const variantLabelMap: Record<string, string> = {};
+    // report/stock/all ba'zan hali qayta indekslanmagan eski nomni qaytaradi
+    // (yaqinda tahrirlangan mahsulotlarda sezilarli). Shuning uchun ko'rsatiladigan
+    // nom /entity/variant va /entity/product'dan (haqiqiy, joriy holat) olinadi.
+    const variantNameMap: Record<string, string> = {};
     let priceMap: Record<string, number> = {};
     const useCustomPrice = !!selectedPriceType;
 
@@ -155,6 +159,7 @@ export async function GET(req: NextRequest) {
           if (!stockMap[v.id]) continue;
           const parentId = (v.product?.meta?.href || '').split('/').pop() || '';
           if (parentId) variantToProduct[v.id] = parentId;
+          if (v.name) variantNameMap[v.id] = v.name;
           const chars = Array.isArray(v.characteristics) ? v.characteristics : [];
           const label = chars.map((c: any) => String(c?.value || '').trim()).filter(Boolean).join(', ');
           if (label) variantLabelMap[v.id] = label;
@@ -187,6 +192,7 @@ export async function GET(req: NextRequest) {
     // are flagged as discounted (badge + pinned to top of "Все товары").
     // Only id + attributes are requested (no images), so this stays cheap.
     const discountProductIds = new Set<string>();
+    const productNameMap: Record<string, string> = {};
     {
       let dOffset = 0;
       while (true) {
@@ -194,6 +200,7 @@ export async function GET(req: NextRequest) {
         if (!data?.rows?.length) break;
         for (const p of data.rows) {
           if (!stockMap[p.id]) continue;
+          if (p.name) productNameMap[p.id] = p.name;
           const hasDiscountAttr = (p.attributes || []).some((a: any) =>
             a.name === 'Названия' && typeof a.value === 'string' && a.value.toLowerCase().includes('скидка')
           );
@@ -214,7 +221,7 @@ export async function GET(req: NextRequest) {
         return {
           id,
           type: s.type,
-          name: s.name,
+          name: productNameMap[id] || variantNameMap[id] || s.name,
           code: s.code,
           // Use direct folder for precise filtering
           categoryId: s.folderId || null,
