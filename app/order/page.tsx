@@ -499,12 +499,18 @@ function parseVariant(name: string): { base: string; variant: string | null } {
     v = dashMatch[2].trim();
   }
   if (!v) return { base: name, variant: null };
+  // \b relies on \w, which does not match Cyrillic letters — so a plain \b
+  // right after a Cyrillic word never fires (e.g. /год\b/ never matched, and
+  // /мг|МЕ.../ without any boundary matched inside unrelated words like
+  // "6 метр" via "ме"). Use a lookahead for "not immediately followed by
+  // another letter" instead, so these only match whole abbreviations.
+  const notFollowedByLetter = '(?![а-яёА-ЯЁa-zA-Z])';
   // Only show size/color/model chips — skip expiry dates, dosage info, descriptions
   const skip =
     v.length > 40 ||                              // too long = description
-    /\d\s*(мг|МЕ|мкг|ЕПК|DGK)/i.test(v) ||      // dosage with numbers: "500 мг", "300 МЕ"
+    new RegExp(`\\d\\s*(мг|МЕ|мкг|ЕПК|DGK)${notFollowedByLetter}`, 'i').test(v) || // dosage with numbers: "500 мг", "300 МЕ"
     /D3[-–\s]/i.test(v) ||                        // "D3-300" vitamin
-    /год\b/i.test(v) ||                           // expiry year
+    new RegExp(`год${notFollowedByLetter}`, 'i').test(v) || // expiry year
     /=/.test(v) ||                                // formula "1 таб. = ..."
     /^для\s/i.test(v) ||                          // "для косметологии..."
     /таб\.|кап\.|амп\./i.test(v) ||              // dosage form abbreviations
