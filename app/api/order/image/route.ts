@@ -23,8 +23,13 @@ async function proxyUrl(url: string): Promise<NextResponse> {
   try { host = new URL(url).hostname; } catch { return new NextResponse('Invalid URL', { status: 400 }); }
   if (!ALLOWED.some(d => host === d)) return new NextResponse('Forbidden', { status: 403 });
 
+  // Miniatyura serverlari (S3 uslubidagi) Authorization sarlavhasini rad etadi (400) —
+  // ularga token yuborilmaydi, aks holda rasm ochilmay, asl katta rasmga o'tib ketadi.
+  const needsAuth = host === 'api.moysklad.ru' || host === 'online.moysklad.ru';
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${TOKEN}`, 'Accept-Encoding': 'gzip' },
+    headers: needsAuth
+      ? { Authorization: `Bearer ${TOKEN}`, 'Accept-Encoding': 'gzip' }
+      : { 'Accept-Encoding': 'gzip' },
   });
   if (!res.ok) return new NextResponse(null, { status: res.status });
   const buf = await res.arrayBuffer();
