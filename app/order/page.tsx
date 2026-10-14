@@ -49,7 +49,8 @@ interface HistoryOrder {
   name: string;
   date: string;
   total: number;
-  items: { name: string; quantity: number }[];
+  items: { name: string; quantity: number; product?: Product }[];
+  customer?: { name: string; company: string; phone: string; address: string };
 }
 type Lang = 'uz' | 'ru';
 type OnboardingStep = 'category' | 'display' | 'language';
@@ -719,6 +720,7 @@ export function OrderPageContent({
   const [successOrderName, setSuccessOrderName] = useState('');
   const [orderHistory, setOrderHistory] = useState<HistoryOrder[]>([]);
   const [historyBackView, setHistoryBackView] = useState<View>('landing');
+  const [historyDetail, setHistoryDetail] = useState<number | null>(null);
   useEffect(() => {
     const timer = window.setTimeout(() => setOrderHistory(parseHistory()), 0);
     return () => window.clearTimeout(timer);
@@ -1041,7 +1043,8 @@ export function OrderPageContent({
           name: json.orderName || '',
           date: new Date().toISOString(),
           total: cartTotal,
-          items: cartItems.map(i => ({ name: i.product.name, quantity: i.quantity })),
+          items: cartItems.map(i => ({ name: i.product.name, quantity: i.quantity, product: i.product })),
+          customer: { name: formName.trim(), company: formCompany.trim(), phone: formPhone.trim(), address: formAddress.trim() },
         };
         const next = [entry, ...parseHistory()].slice(0, HISTORY_LIMIT);
         localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(next));
@@ -1251,6 +1254,22 @@ export function OrderPageContent({
         </main>
       </div>
     );
+  }
+
+  // Tarixdagi buyurtmani savatga qaytarish: narxlar katalogdan yangilanadi, sonini savatda o'zgartirsa bo'ladi
+  function repeatOrder(o: HistoryOrder) {
+    const next: Record<string, CartItem> = {};
+    for (const it of o.items) {
+      if (it.product?.id) next[it.product.id] = { product: it.product, quantity: it.quantity };
+    }
+    if (!Object.keys(next).length) return;
+    setCart(next);
+    if (o.customer) {
+      setFormName(o.customer.name); setFormCompany(o.customer.company);
+      setFormPhone(o.customer.phone); setFormAddress(o.customer.address);
+    }
+    openCatalog();
+    setView('cart');
   }
 
   // ─── CATALOG VIEW ─────────────────────────────────────────────────────────
@@ -1739,12 +1758,16 @@ export function OrderPageContent({
         <header className="sticky top-0 z-40 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <div className="flex items-center gap-3 px-4 h-14 max-w-2xl mx-auto">
-            <button onClick={() => setView(historyBackView)}
+            <button onClick={() => { if (historyDetail !== null) setHistoryDetail(null); else setView(historyBackView); }}
               className="w-8 h-8 flex items-center justify-center rounded-full"
               style={{ background: '#F5F5F5' }}>
               <ChevronLeft size={18} color="#333" />
             </button>
-            <span className="font-bold text-gray-900 text-[15px] flex-1">{lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}</span>
+            <span className="font-bold text-gray-900 text-[15px] flex-1">
+              {historyDetail !== null && orderHistory[historyDetail]
+                ? `${lang === 'uz' ? 'Buyurtma' : 'Заказ'} ${orderHistory[historyDetail].name || ''}`
+                : (lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы')}
+            </span>
             <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
               className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold border"
               style={{ borderColor: '#E5E5E5', color: '#666' }}>
@@ -1766,23 +1789,83 @@ export function OrderPageContent({
               </button>
             </div>
           )}
-          {orderHistory.map((o, idx) => (
-            <div key={idx} className="rounded-2xl p-4" style={{ border: '1px solid #EBEBEB' }}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[14px] font-bold text-orange-500">{o.name || '—'}</span>
-                <span className="text-[12px] text-gray-400">{new Date(o.date).toLocaleDateString('ru-RU')}</span>
+          {historyDetail === null && orderHistory.map((o, idx) => (
+            <button key={idx} onClick={() => setHistoryDetail(idx)}
+              className="w-full text-left rounded-2xl p-4 flex items-center gap-3" style={{ border: '1px solid #EBEBEB' }}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[14px] font-bold text-orange-500">{o.name || '—'}</span>
+                  <span className="text-[12px] text-gray-400">{new Date(o.date).toLocaleDateString('ru-RU')}</span>
+                </div>
+                <p className="text-[12px] text-gray-500 truncate mb-1">
+                  {o.items.map(it => it.name).join(', ')}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-gray-500">{o.items.length} {t.items}</span>
+                  <span className="text-[14px] font-bold text-gray-900">{fmtPrice(o.total)} {t.sum}</span>
+                </div>
               </div>
-              <ul className="text-[13px] text-gray-700 mb-2">
-                {o.items.map((it, i) => (
-                  <li key={i} className="flex justify-between gap-3 py-0.5">
-                    <span className="truncate">{it.name}</span>
-                    <span className="flex-shrink-0 text-gray-500">× {it.quantity}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="text-[14px] font-bold text-gray-900 text-right">{fmtPrice(o.total)} {lang === 'uz' ? "so'm" : 'сум'}</div>
-            </div>
+              <ChevronRight size={16} color="#9CA3AF" className="flex-shrink-0" />
+            </button>
           ))}
+          {historyDetail !== null && orderHistory[historyDetail] && (() => {
+            const o = orderHistory[historyDetail];
+            const canRepeat = o.items.some(it => it.product?.id);
+            return (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-gray-500">{new Date(o.date).toLocaleDateString('ru-RU')}</span>
+                  <span className="text-[13px] text-gray-500">{o.items.length} {t.items}</span>
+                </div>
+                <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #F0F0F0' }}>
+                  {o.items.map((it, i) => (
+                    <div key={i} className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid #F8F8F8' }}>
+                      <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: '#F5F5F5' }}>
+                        {it.product?.imageHref ? (
+                          <img src={`/api/order/image?href=${encodeURIComponent(it.product.imageHref)}`}
+                            alt={it.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Package size={18} color="#D1D5DB" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] font-semibold text-gray-800 leading-snug"
+                          style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as any}>
+                          {it.name}
+                        </p>
+                        {it.product && it.product.price > 0 && (
+                          <p className="text-[11px] text-gray-400 mt-0.5">{fmtPrice(it.product.price)} {t.sum} × {it.quantity}</p>
+                        )}
+                      </div>
+                      <div className="flex-shrink-0 text-right">
+                        {it.product && it.product.price > 0 ? (
+                          <p className="text-[13px] font-bold text-orange-500">{fmtPrice(it.product.price * it.quantity)} <span className="text-[10px] font-normal text-gray-400">{t.sum}</span></p>
+                        ) : (
+                          <p className="text-[13px] font-bold text-gray-700">× {it.quantity}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-2xl p-4 flex items-center justify-between"
+                  style={{ background: '#FFF8F5', border: '1px solid #FFE5D9' }}>
+                  <span className="text-[14px] font-semibold text-gray-700">{t.total}</span>
+                  <span className="text-[18px] font-bold text-orange-500">
+                    {fmtPrice(o.total)} <span className="text-[12px] text-gray-400 font-normal">{t.sum}</span>
+                  </span>
+                </div>
+                {canRepeat && (
+                  <button onClick={() => repeatOrder(o)}
+                    className="w-full py-4 rounded-2xl text-[15px] font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 8px 24px rgba(255,107,53,0.35)' }}>
+                    {lang === 'uz' ? 'Buyurtmani takrorlash' : 'Повторить заказ'}
+                  </button>
+                )}
+              </>
+            );
+          })()}
         </div>
       </div>
     );
