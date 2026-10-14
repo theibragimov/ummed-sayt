@@ -1759,6 +1759,11 @@ export function OrderPageContent({
               <p className="text-[15px] font-bold text-gray-700">
                 {lang === 'uz' ? 'Buyurtmalaringiz tarixi mavjud emas' : 'История ваших заказов отсутствует'}
               </p>
+              <button onClick={openCatalog}
+                className="mt-2 px-6 py-3 rounded-2xl text-[14px] font-bold text-white"
+                style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
+                {lang === 'uz' ? 'Buyurtma berish' : 'Сделать заказ'}
+              </button>
             </div>
           )}
           {orderHistory.map((o, idx) => (
