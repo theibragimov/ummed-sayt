@@ -4,7 +4,7 @@ import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
   Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent, MapPin,
-  Link2, Check,
+  Link2, Check, History as HistoryIcon,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -718,6 +718,7 @@ export function OrderPageContent({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [successOrderName, setSuccessOrderName] = useState('');
   const [orderHistory, setOrderHistory] = useState<HistoryOrder[]>([]);
+  const [historyBackView, setHistoryBackView] = useState<View>('landing');
   useEffect(() => {
     const timer = window.setTimeout(() => setOrderHistory(parseHistory()), 0);
     return () => window.clearTimeout(timer);
@@ -1117,6 +1118,12 @@ export function OrderPageContent({
           <img src="/logo.webp" alt="Ummed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
           <span className="text-xl font-medium tracking-tight" style={{ color: '#0a0a0a' }}>Ummed</span>
           <div className="flex-1" />
+          <button onClick={() => { setHistoryBackView('landing'); setView('history'); }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold"
+            style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent' }}>
+            <HistoryIcon size={14} />
+            {lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}
+          </button>
           <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
             className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
             style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent', letterSpacing: '0.05em' }}>
@@ -1190,13 +1197,11 @@ export function OrderPageContent({
               <p className="text-center lg:text-left mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
                 {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
               </p>
-              {orderHistory.length > 0 && (
-                <button onClick={() => setView('history')}
-                  className="w-full mt-3 py-3 rounded-xl text-[14px] font-semibold"
-                  style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent' }}>
-                  {lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}
-                </button>
-              )}
+              <button onClick={() => { setHistoryBackView('landing'); setView('history'); }}
+                className="sm:hidden w-full mt-3 py-3 rounded-xl text-[14px] font-semibold"
+                style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent' }}>
+                {lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}
+              </button>
             </div>
           </div>
 
@@ -1438,6 +1443,14 @@ export function OrderPageContent({
 
             <div className="flex-1" />
 
+            <button onClick={() => { setHistoryBackView('catalog'); setView('history'); }}
+              className="h-8 min-w-8 sm:px-2.5 sm:gap-1.5 text-[12px] font-semibold rounded-xl flex items-center justify-center border mr-1 flex-shrink-0"
+              style={{ borderColor: '#E5E5E5', background: '#fff', color: '#666' }}
+              title={lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}
+              aria-label={lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}>
+              <HistoryIcon size={15} />
+              <span className="hidden sm:inline">{lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}</span>
+            </button>
             {cartCount > 0 && (
               <button onClick={() => setView('cart')}
                 className="relative flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-bold text-[13px] text-white flex-shrink-0"
@@ -1726,7 +1739,7 @@ export function OrderPageContent({
         <header className="sticky top-0 z-40 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <div className="flex items-center gap-3 px-4 h-14 max-w-2xl mx-auto">
-            <button onClick={() => setView('landing')}
+            <button onClick={() => setView(historyBackView)}
               className="w-8 h-8 flex items-center justify-center rounded-full"
               style={{ background: '#F5F5F5' }}>
               <ChevronLeft size={18} color="#333" />
@@ -1740,6 +1753,14 @@ export function OrderPageContent({
           </div>
         </header>
         <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col gap-3">
+          {orderHistory.length === 0 && (
+            <div className="flex flex-col items-center py-20 gap-4">
+              <HistoryIcon size={48} color="#D1D5DB" />
+              <p className="text-[15px] font-bold text-gray-700">
+                {lang === 'uz' ? 'Buyurtmalaringiz tarixi mavjud emas' : 'История ваших заказов отсутствует'}
+              </p>
+            </div>
+          )}
           {orderHistory.map((o, idx) => (
             <div key={idx} className="rounded-2xl p-4" style={{ border: '1px solid #EBEBEB' }}>
               <div className="flex items-center justify-between mb-2">
