@@ -43,7 +43,14 @@ interface CartItem {
   quantity: number;
 }
 
-type View = 'landing' | 'catalog' | 'cart' | 'checkout' | 'success';
+type View = 'landing' | 'catalog' | 'cart' | 'checkout' | 'success' | 'history';
+
+interface HistoryOrder {
+  name: string;
+  date: string;
+  total: number;
+  items: { name: string; quantity: number }[];
+}
 type Lang = 'uz' | 'ru';
 type OnboardingStep = 'category' | 'display' | 'language';
 
@@ -268,6 +275,18 @@ function storeCart(cart: Record<string, CartItem>) {
     return;
   }
   window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: 1, items }));
+}
+
+const HISTORY_STORAGE_KEY = 'order-history-v1';
+const HISTORY_LIMIT = 20;
+
+function parseHistory(): HistoryOrder[] {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 function reconcileCart(
@@ -698,6 +717,11 @@ export function OrderPageContent({
   const [cartHydrated, setCartHydrated] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [successOrderName, setSuccessOrderName] = useState('');
+  const [orderHistory, setOrderHistory] = useState<HistoryOrder[]>([]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setOrderHistory(parseHistory()), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
   const [rating, setRating] = useState(0);
   const [ratingHover, setRatingHover] = useState(0);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
@@ -1011,6 +1035,17 @@ export function OrderPageContent({
       if (!res.ok || json.error) throw new Error(json.error || 'Submit failed');
       track('order_submitted', { item_count: cartItems.length, lang });
       setSuccessOrderName(json.orderName || '');
+      try {
+        const entry: HistoryOrder = {
+          name: json.orderName || '',
+          date: new Date().toISOString(),
+          total: cartTotal,
+          items: cartItems.map(i => ({ name: i.product.name, quantity: i.quantity })),
+        };
+        const next = [entry, ...parseHistory()].slice(0, HISTORY_LIMIT);
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(next));
+        setOrderHistory(next);
+      } catch {}
       setCart({});
       setFormName(''); setFormCompany(''); setFormPhone(''); setFormAddress('');
       try { localStorage.removeItem('order-form'); } catch {}
@@ -1155,6 +1190,13 @@ export function OrderPageContent({
               <p className="text-center lg:text-left mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
                 {lang === 'uz' ? 'Katalogni ko\'rish uchun bosing' : 'Нажмите, чтобы открыть каталог'}
               </p>
+              {orderHistory.length > 0 && (
+                <button onClick={() => setView('history')}
+                  className="w-full mt-3 py-3 rounded-xl text-[14px] font-semibold"
+                  style={{ border: '1px solid rgba(0,0,0,0.1)', color: '#18181b', background: 'transparent' }}>
+                  {lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -1677,6 +1719,48 @@ export function OrderPageContent({
   }
 
   // ─── CART VIEW ────────────────────────────────────────────────────────────
+
+  if (view === 'history') {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="sticky top-0 z-40 bg-white"
+          style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+          <div className="flex items-center gap-3 px-4 h-14 max-w-2xl mx-auto">
+            <button onClick={() => setView('landing')}
+              className="w-8 h-8 flex items-center justify-center rounded-full"
+              style={{ background: '#F5F5F5' }}>
+              <ChevronLeft size={18} color="#333" />
+            </button>
+            <span className="font-bold text-gray-900 text-[15px] flex-1">{lang === 'uz' ? 'Buyurtmalarim' : 'Мои заказы'}</span>
+            <button onClick={() => setLang(l => l === 'uz' ? 'ru' : 'uz')}
+              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold border"
+              style={{ borderColor: '#E5E5E5', color: '#666' }}>
+              {lang === 'uz' ? 'RU' : 'UZ'}
+            </button>
+          </div>
+        </header>
+        <div className="max-w-2xl mx-auto px-4 py-4 flex flex-col gap-3">
+          {orderHistory.map((o, idx) => (
+            <div key={idx} className="rounded-2xl p-4" style={{ border: '1px solid #EBEBEB' }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[14px] font-bold text-orange-500">{o.name || '—'}</span>
+                <span className="text-[12px] text-gray-400">{new Date(o.date).toLocaleDateString('ru-RU')}</span>
+              </div>
+              <ul className="text-[13px] text-gray-700 mb-2">
+                {o.items.map((it, i) => (
+                  <li key={i} className="flex justify-between gap-3 py-0.5">
+                    <span className="truncate">{it.name}</span>
+                    <span className="flex-shrink-0 text-gray-500">× {it.quantity}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="text-[14px] font-bold text-gray-900 text-right">{fmtPrice(o.total)} {lang === 'uz' ? "so'm" : 'сум'}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (view === 'cart') {
     return (
