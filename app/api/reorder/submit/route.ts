@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
     if (customer.company) parts.push(`Firma: ${customer.company}`);
     parts.push(`Tel: ${customer.phone}`);
     if (customer.address) parts.push(`Manzil: ${customer.address}`);
+    if (body.source === 'telegram') parts.unshift('Buyurtma: Telegram botdan');
     const description = parts.join(' | ');
 
     // Build positions (support both product and variant types)

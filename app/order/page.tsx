@@ -996,6 +996,7 @@ export function OrderPageContent({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          source: (window as any).Telegram?.WebApp?.initData ? 'telegram' : 'web',
           customer: { name: formName.trim(), company: formCompany.trim(), phone: formPhone.trim(), address: formAddress.trim() },
           items: cartItems.map(i => ({
             productId: i.product.id,
