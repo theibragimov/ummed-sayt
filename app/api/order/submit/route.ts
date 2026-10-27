@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, isRateLimited } from '@/lib/rate-limit';
+
+export const maxDuration = 60;
 
 const BASE_URL = 'https://api.moysklad.ru/api/remap/1.2';
+const MAX_ITEMS = 1000;
+const RETRY_DELAYS = [500, 1500];
+const RATE_LIMIT = 3;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+const isRetryableStatus = (s: number) => s === 502 || s === 503 || s === 504;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const PHONE_RE = /^[\d\s\+\-\(\)]{7,20}$/;
@@ -13,8 +22,12 @@ function validateOrder(customer: any, items: any[]): string | null {
   if (!customer?.phone || !PHONE_RE.test(customer.phone)) {
     return 'Telefon raqami noto\'g\'ri';
   }
-  if (!Array.isArray(items) || items.length === 0 || items.length > 200) {
+  if (!Array.isArray(items) || items.length === 0) {
     return 'Mahsulotlar ro\'yxati noto\'g\'ri';
+  }
+  // MoySklad bitta hujjatda 1000 tagacha pozitsiya qabul qiladi
+  if (items.length > MAX_ITEMS) {
+    return `Bitta buyurtmada ${MAX_ITEMS} tadan ortiq mahsulot bo'lishi mumkin emas`;
   }
   for (const item of items) {
     if (!item.productId || !UUID_RE.test(String(item.productId))) {
@@ -40,38 +53,65 @@ function getHeaders() {
   };
 }
 
+// GET: 502/503/504, timeout va tarmoq xatolarida qayta urinadi
 async function msGet(path: string) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: getHeaders(),
-    cache: 'no-store',
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!res.ok) {
-    console.error(`MoySklad GET error: ${res.status} ${path}`);
-    throw new Error(`MoySklad GET error: ${res.status} ${path}`);
+  for (let attempt = 0; ; attempt++) {
+    const canRetry = attempt < RETRY_DELAYS.length;
+    let res: Response;
+    try {
+      res = await fetch(`${BASE_URL}${path}`, {
+        headers: getHeaders(),
+        cache: 'no-store',
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch (e) {
+      if (!canRetry) throw e;
+      console.warn(`MoySklad GET retry ${attempt + 1} (network) ${path}`);
+      await sleep(RETRY_DELAYS[attempt]);
+      continue;
+    }
+    if (!res.ok) {
+      if (canRetry && isRetryableStatus(res.status)) {
+        console.warn(`MoySklad GET retry ${attempt + 1} (${res.status}) ${path}`);
+        await sleep(RETRY_DELAYS[attempt]);
+        continue;
+      }
+      console.error(`MoySklad GET error: ${res.status} ${path}`);
+      throw new Error(`MoySklad GET error: ${res.status} ${path}`);
+    }
+    return res.json();
   }
-  return res.json();
 }
 
+// POST: faqat 502/503/504 da qayta urinadi. Timeoutda qayta urinmaydi —
+// buyurtma MoySkladda yaratilgan bo'lishi mumkin (dublikat xavfi).
 async function msPost(path: string, body: object) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method: 'POST',
-    headers: getHeaders(),
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error(`MoySklad POST error: ${res.status} ${path} — ${text.substring(0, 200)}`);
-    throw new Error(`MoySklad POST error: ${res.status} ${path}`);
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      if (attempt < RETRY_DELAYS.length && isRetryableStatus(res.status)) {
+        console.warn(`MoySklad POST retry ${attempt + 1} (${res.status}) ${path}`);
+        await sleep(RETRY_DELAYS[attempt]);
+        continue;
+      }
+      console.error(`MoySklad POST error: ${res.status} ${path} — ${text.substring(0, 200)}`);
+      throw new Error(`MoySklad POST error: ${res.status} ${path}`);
+    }
+    return res.json();
   }
-  return res.json();
 }
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  // 3 ta buyurtma / 10 daqiqa (bir IP dan)
-  if (!checkRateLimit(`order:${ip}`, 3, 10 * 60 * 1000)) {
+  // 3 ta muvaffaqiyatli buyurtma / 10 daqiqa (bir IP dan) — xato urinishlar hisoblanmaydi
+  const rateKey = `order:${ip}`;
+  if (isRateLimited(rateKey, RATE_LIMIT)) {
     return NextResponse.json({ error: 'Juda ko\'p so\'rov. Biroz kuting.' }, { status: 429 });
   }
 
@@ -149,6 +189,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await msPost('/entity/customerorder', orderPayload);
+    checkRateLimit(rateKey, RATE_LIMIT, RATE_WINDOW_MS);
 
     const duration = Date.now() - startedAt;
     console.log(`[ORDER_SUCCESS]\nRequestID: ${requestId}\nTimestamp: ${timestamp()}\nDuration: ${duration}ms`);

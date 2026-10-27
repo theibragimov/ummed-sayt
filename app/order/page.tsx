@@ -1034,8 +1034,13 @@ export function OrderPageContent({
           })),
         }),
       });
-      const json = await res.json();
-      if (!res.ok || json.error) throw new Error(json.error || 'Submit failed');
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.error) {
+        const err: any = new Error(json.error || 'Submit failed');
+        // 4xx (validatsiya, rate-limit) — server matnini mijozga ko'rsatamiz
+        if (res.status >= 400 && res.status < 500 && json.error) err.userMessage = json.error;
+        throw err;
+      }
       track('order_submitted', { item_count: cartItems.length, lang });
       setSuccessOrderName(json.orderName || '');
       try {
@@ -1069,7 +1074,7 @@ export function OrderPageContent({
     } catch (e: any) {
       track('order_submit_failed', { item_count: cartItems.length, lang });
       console.error('order submit xato:', e);
-      setFormErrors({ submit: t.submitError });
+      setFormErrors({ submit: e?.userMessage || t.submitError });
     } finally {
       setSubmitting(false);
     }
