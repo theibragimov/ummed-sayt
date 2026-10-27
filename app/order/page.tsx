@@ -1194,12 +1194,12 @@ export function OrderPageContent({
             <div className="w-full anim-fade-up" style={{ animationDelay: '500ms' }}>
               <button
                 onClick={openCatalog}
-                className="group w-full flex items-center justify-center gap-2 py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+                className="cta-shine group w-full flex items-center justify-center gap-2 py-4 rounded-xl text-white font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
                 style={{ background: '#E8491D', letterSpacing: '-0.01em', boxShadow: '0 10px 30px -8px rgba(232,73,29,0.55)' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#3DB851')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#E8491D')}>
                 {lang === 'uz' ? "100% to'lov uchun mahsulotlar ro'yxati" : 'Список товаров для 100% оплаты'}
-                <ChevronRight size={17} className="transition-transform duration-200 group-hover:translate-x-1" />
+                <ChevronRight size={17} className="cta-nudge transition-transform duration-200 group-hover:translate-x-1" />
               </button>
 
               <p className="text-center lg:text-left mt-4 text-[12px]" style={{ color: '#a3a3a8' }}>
