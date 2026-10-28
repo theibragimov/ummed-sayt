@@ -12,10 +12,8 @@ import { TXT, FAQ, CERTS } from "@/components/easydrip-content";
 // null bo'lsa — sahifada "Rasm uchun joy" ko'rinadi.
 const IMAGES = {
   hero: null,      // masalan: "/images/easydrip/hero.png" (mahsulot qutisi + igna)
-  problem: null,   // ukol qilayotgan odam / bemor
-  solution: null,  // igna yaqindan (macro), Hextra Tech
-  plus: null,      // EasyDrip Plus qadog'i
-  pro: null,       // EasyDrip Plus Pro qadog'i
+  product: null,   // EasyDrip Plus qadog'i va igna
+  solution: null,  // igna yaqindan (macro), Hextra Tech asosi
   pharmacy: null,  // dorixona javonida mahsulot
 };
 
@@ -144,69 +142,97 @@ export default function EasyDripLanding() {
             </div>
           </Frame>
 
-          {/* ── 01 Muammo: rasm + 2×2 kataklar ── */}
+          {/* ── 01 Mahsulot: rasm + matn + 3 fakt ── */}
+          <section id="mahsulot" className="scroll-mt-24">
+            <Heading label={t.about.label} title={t.about.title} />
+            <Frame grid="lg:grid-cols-[1fr_1.3fr]">
+              <div style={{ backgroundColor: "var(--bg)" }}>
+                <ImageSlot src={IMAGES.product} alt="EasyDrip Plus pen needles box" label={t.imgSlot} ratio="4 / 3" stretch />
+              </div>
+              <div className="flex flex-col gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                <Cell className="space-y-4 flex-1">
+                  {t.about.body.map((p) => (
+                    <p key={p} className="text-base sm:text-lg font-light leading-relaxed" style={muted}>{p}</p>
+                  ))}
+                </Cell>
+                <div className="grid sm:grid-cols-3 gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                  {t.about.facts.map(([k, v]) => (
+                    <Cell key={k} className="!py-5">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em]" style={muted}>{k}</p>
+                      <p className="text-sm font-medium mt-2 leading-snug" style={text}>{v}</p>
+                    </Cell>
+                  ))}
+                </div>
+              </div>
+            </Frame>
+          </section>
+
+          {/* ── 02 Muammo va yechim: 3 ustunli jadval-ramka ── */}
           <section id="muammo" className="scroll-mt-24">
             <Heading label={t.problem.label} title={t.problem.title} />
-            <p className="-mt-2 sm:-mt-5 mb-8 sm:mb-10 text-base font-light leading-relaxed max-w-[680px]" style={muted}>{t.problem.lead}</p>
-            <Frame grid="lg:grid-cols-[1fr_2fr]">
-              <div style={{ backgroundColor: "var(--bg)" }}>
-                <ImageSlot src={IMAGES.problem} alt="Insulin injection at home" label={t.imgSlot} ratio="4 / 3" stretch />
+            <Frame grid="grid-cols-1">
+              <div className="hidden md:grid grid-cols-[0.8fr_1fr_1fr] gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                <div style={{ backgroundColor: "var(--bg)" }} />
+                <div className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ backgroundColor: "var(--bg)", color: ORANGE }}>{t.problem.colProblem}</div>
+                <div className="px-8 py-4 text-[11px] font-bold uppercase tracking-[0.16em]" style={{ backgroundColor: "var(--bg)", color: GREEN }}>{t.problem.colSolution}</div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
-                {t.problem.items.map(([title, body], i) => (
-                  <Cell key={title}>
+              {t.problem.items.map(([title, prob, sol], i) => (
+                <div key={title} className="grid md:grid-cols-[0.8fr_1fr_1fr] gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                  <Cell>
                     <span className="text-xs font-medium tabular-nums" style={{ color: ORANGE }}>{String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="text-lg font-medium mt-3 mb-2" style={text}>{title}</h3>
+                    <h3 className="text-lg sm:text-xl font-medium tracking-tight mt-2" style={text}>{title}</h3>
+                  </Cell>
+                  <Cell>
+                    <p className="md:hidden text-[11px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: ORANGE }}>{t.problem.colProblem}</p>
+                    <p className="text-sm font-light leading-relaxed" style={muted}>{prob}</p>
+                  </Cell>
+                  <Cell>
+                    <p className="md:hidden text-[11px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: GREEN }}>{t.problem.colSolution}</p>
+                    <p className="text-sm font-light leading-relaxed" style={text}>{sol}</p>
+                  </Cell>
+                </div>
+              ))}
+            </Frame>
+          </section>
+
+          {/* ── 03 Xususiyatlar: 2×2 kataklar + rasm ── */}
+          <section id="yechim" className="scroll-mt-24">
+            <Heading label={t.features.label} title={t.features.title} />
+            <Frame grid="lg:grid-cols-[2fr_1fr]">
+              <div className="grid sm:grid-cols-2 gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                {t.features.items.map(([title, body], i) => (
+                  <Cell key={title}>
+                    <span className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium"
+                      style={i === 0 ? { background: ORANGE, color: "#fff" } : { border: FRAME, ...text }}>
+                      {i + 1}
+                    </span>
+                    <h3 className="text-lg font-medium mt-4 mb-2" style={text}>{title}</h3>
                     <p className="text-sm font-light leading-relaxed" style={muted}>{body}</p>
                   </Cell>
                 ))}
               </div>
-            </Frame>
-          </section>
-
-          {/* ── 02 Yechim: ro'yxat + rasm ── */}
-          <section id="yechim" className="scroll-mt-24">
-            <Heading label={t.solution.label} title={t.solution.title} />
-            <Frame grid="lg:grid-cols-2">
-              <div className="flex flex-col gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
-                {t.solution.items.map(([title, body], i) => (
-                  <Cell key={title} className="flex gap-5 sm:gap-8">
-                    <span className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium"
-                      style={i === 0 ? { background: ORANGE, color: "#fff" } : { border: FRAME, ...text }}>
-                      {i + 1}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-medium mb-1.5" style={text}>{title}</h3>
-                      <p className="text-sm font-light leading-relaxed" style={muted}>{body}</p>
-                    </div>
-                  </Cell>
-                ))}
-              </div>
               <div style={{ backgroundColor: "var(--bg)" }}>
-                <ImageSlot src={IMAGES.solution} alt="Hextra Tech needle close-up" label={t.imgSlot} ratio="1 / 1" stretch />
+                <ImageSlot src={IMAGES.solution} alt="Hextra Tech needle hub close-up" label={t.imgSlot} ratio="4 / 3" stretch />
               </div>
             </Frame>
-
-            {/* Plus vs Pro */}
-            <Reveal variant="up" className="mt-4 grid md:grid-cols-2 gap-4">
-              {[[t.tip.plus, IMAGES.plus, GREEN], [t.tip.pro, IMAGES.pro, ORANGE]].map(([[name, tip, desc], img, accent]) => (
-                <Frame key={name}>
-                  <div className="grid grid-cols-[120px_1fr] sm:grid-cols-[180px_1fr]">
-                    <div style={{ borderRight: FRAME }}>
-                      <ImageSlot src={img} alt={name} label={t.imgSlot} ratio="1 / 1" className="h-full" />
-                    </div>
-                    <div className="p-5 sm:p-8 flex flex-col justify-center">
-                      <span className="inline-flex self-start text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: accent }}>{tip}</span>
-                      <p className="text-xl sm:text-2xl font-medium tracking-tight mt-3" style={text}>{name}</p>
-                      <p className="text-sm font-light mt-1.5" style={muted}>{desc}</p>
-                    </div>
-                  </div>
-                </Frame>
-              ))}
-            </Reveal>
           </section>
 
-          {/* ── 03 O'lchamlar: 3 ustunli spetsifikatsiya ramkasi ── */}
+          {/* ── Nega EasyDrip: 3 ta sotuv argumenti ── */}
+          <section>
+            <Heading title={t.args.title} />
+            <Frame grid="md:grid-cols-3">
+              {t.args.items.map(([title, body, slogan], i) => (
+                <Cell key={title} className="flex flex-col">
+                  <span className="text-5xl font-medium tracking-tight" style={{ color: i === 0 ? ORANGE : "var(--border-strong, #e5e5e5)" }}>{i + 1}</span>
+                  <h3 className="text-xl font-medium tracking-tight mt-4 mb-2" style={text}>{title}</h3>
+                  <p className="text-sm font-light leading-relaxed flex-1" style={muted}>{body}</p>
+                  <p className="text-sm font-medium mt-6 pt-4" style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)", color: ORANGE }}>“{slogan}”</p>
+                </Cell>
+              ))}
+            </Frame>
+          </section>
+
+          {/* ── 04 O'lchamlar: 3 ustunli spetsifikatsiya ramkasi ── */}
           <section id="olchamlar" className="scroll-mt-24">
             <Heading label={t.sizes.label} title={t.sizes.title} />
             <Frame grid="md:grid-cols-3">
@@ -219,12 +245,33 @@ export default function EasyDripLanding() {
                   <p className="text-5xl sm:text-6xl font-medium tracking-tight mt-2" style={text}>{len}</p>
                   <p className="text-sm font-light leading-relaxed mt-5 min-h-[40px]" style={muted}>{who}</p>
                   <p className="text-xs font-light mt-5 pt-4" style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)", ...muted }}>
-                    {t.sizes.head[3]}: <span className="font-medium" style={text}>{sku}</span>
+                    {t.sizes.sku}: <span className="font-medium" style={text}>{sku}</span>
                   </p>
                 </Cell>
               ))}
             </Frame>
             <p className="mt-4 text-sm font-light" style={muted}>{t.sizes.note} {t.sizes.pack}</p>
+          </section>
+
+          {/* ── 05 Bilish muhim: igna nimani qilmaydi ── */}
+          <section>
+            <Heading label={t.honest.label} title={t.honest.title} />
+            <Frame grid="lg:grid-cols-[1fr_2fr]">
+              <Cell className="flex flex-col justify-between gap-6">
+                <p className="text-base font-light leading-relaxed" style={text}>{t.honest.lead}</p>
+                <p className="text-xs font-light leading-relaxed" style={muted}>{t.honest.note}</p>
+              </Cell>
+              <div className="flex flex-col gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
+                {t.honest.items.map(([title, body]) => (
+                  <Cell key={title} className="!py-5 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-1 sm:gap-6 items-baseline">
+                    <h3 className="text-base font-medium flex items-baseline gap-3" style={text}>
+                      <span className="text-sm flex-shrink-0" style={{ color: ORANGE }}>✕</span>{title}
+                    </h3>
+                    <p className="text-sm font-light leading-relaxed pl-6 sm:pl-0" style={muted}>{body}</p>
+                  </Cell>
+                ))}
+              </div>
+            </Frame>
           </section>
 
           {/* ── Kim uchun ── */}
