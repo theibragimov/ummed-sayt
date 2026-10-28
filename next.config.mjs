@@ -27,6 +27,12 @@ const nextConfig = {
         destination: '/mahsulot/yangi-ummed-pro-burun-aspiratori-u-08',
         permanent: true,
       },
+      {
+        source: '/mahsulot/easydrip-insulin-ruchkalari-uchun-ignalar-pen-needles',
+        destination: '/easydripplus',
+        permanent: true,
+      },
+      { source: '/easydrip', destination: '/easydripplus', permanent: true },
     ]
   },
 
