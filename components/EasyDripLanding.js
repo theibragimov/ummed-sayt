@@ -22,23 +22,24 @@ const REVIEWS = [];
 
 const ORANGE = "#E8491D";
 const GREEN = "#3DB851";
-const TILE = { backgroundColor: "var(--bg)" };
+const LINE = "1px solid var(--border-strong, #e5e5e5)";
+const text = { color: "var(--text)" };
+// Kulrang matn sayt default'idan to'qroq — o'qish oson bo'lsin
+const muted = { color: "var(--ed-muted)" };
 
-// Kulrang sahifa foni ustida yumaloq oq kataklar (ref: minimal mahsulot sahifasi)
-function Frame({ children, className = "", grid = "" }) {
-  if (grid) return <div className={`grid gap-3 ${grid} ${className}`}>{children}</div>;
-  return <div className={`rounded-3xl overflow-hidden ${className}`} style={TILE}>{children}</div>;
+// Ramkasiz ustunlar: har biri ustida ingichka chiziq
+function Cols({ children, className = "" }) {
+  return <div className={`grid gap-x-10 gap-y-10 ${className}`}>{children}</div>;
+}
+function Col({ children, className = "" }) {
+  return <div className={`pt-6 ${className}`} style={{ borderTop: LINE }}>{children}</div>;
 }
 
-function Cell({ children, className = "" }) {
-  return <div className={`rounded-3xl p-6 sm:p-8 ${className}`} style={TILE}>{children}</div>;
-}
-
-// Rasm har doim oq fonda — suratning o'z oq foni bilan qo'shilib ketadi
+// Suratlar oq fonli — oq sahifada ramkasiz qo'shilib ketadi
 function Photo({ src, alt, className = "", priority = false, sizes = "(max-width: 1024px) 100vw, 50vw" }) {
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-white ${className}`}>
-      <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-contain p-4 sm:p-8" />
+    <div className={`relative overflow-hidden ed-photo ${className}`}>
+      <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-contain" />
     </div>
   );
 }
@@ -55,31 +56,33 @@ function splitLabel(label = "") {
   return m ? [m[1], m[2]] : ["", label];
 }
 
+const BODY = "text-[17px] sm:text-lg leading-[1.7]";
+const H3 = "text-xl sm:text-[22px] font-semibold tracking-tight";
+
 function Heading({ label, title, as: Tag = "h2", className = "" }) {
   return (
-    <Reveal variant="up" className={`mb-6 sm:mb-10 ${className}`}>
+    <Reveal variant="up" className={`mb-10 sm:mb-14 ${className}`}>
       {label && <span className="section-label">{label}</span>}
-      <Tag className="text-2xl sm:text-4xl md:text-5xl font-medium leading-[1.08] tracking-tight mt-3 sm:mt-5 max-w-[900px]"
-        style={{ color: "var(--text)" }}>
+      <Tag className="text-3xl sm:text-5xl font-semibold leading-[1.08] tracking-tight mt-4 sm:mt-5 max-w-[900px]" style={text}>
         {title}
       </Tag>
     </Reveal>
   );
 }
 
-// Navbatma-navbat: rasm | raqam + sarlavha + matn
+// Navbatma-navbat: surat | raqam + sarlavha + matn
 function Row({ id, label, title, img, alt, reverse = false, children }) {
   const [num, name] = splitLabel(label);
   return (
-    <section id={id} className={`scroll-mt-24 grid gap-3 ${reverse ? "lg:grid-cols-[1fr_1.15fr]" : "lg:grid-cols-[1.15fr_1fr]"}`}>
-      <Photo src={img} alt={alt} className={`aspect-square sm:aspect-[4/3] lg:aspect-square lg:sticky lg:top-24 lg:self-start ${reverse ? "lg:order-2" : ""}`} />
-      <div className="rounded-3xl p-6 sm:p-10 lg:p-14 flex flex-col justify-center" style={TILE}>
+    <section id={id} className="scroll-mt-24 grid lg:grid-cols-2 gap-8 lg:gap-20 lg:items-start">
+      <Photo src={img} alt={alt} className={`aspect-square max-w-[560px] w-full mx-auto lg:sticky lg:top-28 ${reverse ? "lg:order-2" : ""}`} />
+      <div className="lg:py-10">
         <Reveal variant="up">
-          <span className="block text-5xl sm:text-6xl font-light tracking-tight tabular-nums" style={{ color: "var(--text)" }}>{num}</span>
-          <span className="block mt-4 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: ORANGE }}>{name}</span>
-          <h2 className="mt-2 text-2xl sm:text-4xl font-medium leading-[1.1] tracking-tight" style={{ color: "var(--text)" }}>{title}</h2>
+          <span className="block text-6xl sm:text-7xl font-light tracking-tight tabular-nums" style={text}>{num}</span>
+          <span className="block mt-5 text-[13px] font-bold uppercase tracking-[0.18em]" style={{ color: ORANGE }}>{name}</span>
+          <h2 className="mt-3 text-3xl sm:text-[44px] font-semibold leading-[1.1] tracking-tight" style={text}>{title}</h2>
         </Reveal>
-        <div className="mt-6 sm:mt-8">{children}</div>
+        <div className="mt-8 sm:mt-10">{children}</div>
       </div>
     </section>
   );
@@ -113,34 +116,32 @@ export default function EasyDripLanding() {
     }
   }
 
-  const muted = { color: "var(--text-muted, #888)" };
-  const text = { color: "var(--text)" };
-  const LINE = "1px solid var(--border-strong, #e5e5e5)";
-  const inputCls = "w-full rounded-xl px-4 py-3.5 text-[15px] outline-none bg-transparent transition-colors focus:border-[#E8491D]";
+  const inputCls = "w-full rounded-xl px-4 py-4 text-base outline-none bg-transparent transition-colors focus:border-[#E8491D]";
   const inputStyle = { border: LINE, color: "var(--text)" };
-  const pillDark = "inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:scale-[1.03]";
-  const pillLight = "inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full text-sm font-medium transition-opacity hover:opacity-70 shadow-[0_2px_14px_rgba(0,0,0,0.06)]";
+  const pillDark = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-semibold text-white transition-all hover:opacity-90 hover:scale-[1.03]";
+  const pillLight = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-medium transition-opacity hover:opacity-70";
+  const nav = t.nav.items.map(([label, href]) => ({ label, href }));
 
   return (
     <>
-      <SiteHeader />
-      <style>{`.ed-page{--ed-page:#EFEFED}html[data-theme="dark"] .ed-page{--ed-page:#0f0f0f}`}</style>
-      <main className="ed-page" style={{ backgroundColor: "var(--ed-page)" }}>
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-10 pt-6 sm:pt-10 pb-16 sm:pb-24 space-y-3">
+      <SiteHeader nav={nav} cta={{ label: t.nav.cta, href: "#buyurtma" }} />
+      <style>{`.ed-page{--ed-muted:#55555b}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be}html[data-theme="dark"] .ed-photo{border-radius:24px;background:#fff}`}</style>
+      <main className="ed-page" style={{ backgroundColor: "var(--bg)" }}>
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-10 pt-8 sm:pt-14 pb-20 sm:pb-28 space-y-24 sm:space-y-36">
 
-          {/* ── Hero: chapda katta sarlavha (qora + kulrang), o'ngda mahsulot surati ── */}
-          <section className="grid lg:grid-cols-[1fr_1.05fr] gap-3">
-            <div className="rounded-3xl p-6 sm:p-10 lg:p-14 flex flex-col justify-center" style={TILE}>
+          {/* ── Hero: chapda sarlavha (qora + kulrang), o'ngda mahsulot surati ── */}
+          <section className="grid lg:grid-cols-[1.05fr_1fr] gap-8 lg:gap-14 items-center">
+            <div>
               <span className="section-label">{t.hero.kicker}</span>
               <h1 className="mt-6 sm:mt-8 tracking-tight">
-                <span className="block text-[44px] sm:text-7xl lg:text-[64px] xl:text-[84px] font-semibold leading-[0.95]" style={text}>{t.hero.brand}</span>
-                <span className="block text-[26px] sm:text-4xl lg:text-[34px] xl:text-[42px] font-medium leading-[1.1] mt-3 sm:mt-4" style={muted}>{t.hero.title}</span>
+                <span className="block text-[40px] sm:text-6xl lg:text-[56px] xl:text-[68px] font-semibold leading-[1]" style={text}>{t.hero.brand}</span>
+                <span className="block text-[24px] sm:text-[34px] lg:text-[30px] xl:text-[36px] font-medium leading-[1.15] mt-3 sm:mt-4" style={{ color: "#8d8d93" }}>{t.hero.title}</span>
               </h1>
-              <p className="mt-6 sm:mt-8 text-xl sm:text-2xl leading-snug tracking-tight" style={text}>
+              <p className="mt-7 sm:mt-9 text-[22px] sm:text-[26px] leading-snug tracking-tight" style={text}>
                 {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
               </p>
-              <p className="mt-4 text-[15px] sm:text-base leading-relaxed max-w-[540px]" style={muted}>{rich(t.hero.lead)}</p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <p className={`mt-5 ${BODY} max-w-[560px]`} style={muted}>{rich(t.hero.lead)}</p>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
                 <a href="#buyurtma" className={pillDark} style={{ background: ORANGE }}>
                   {t.hero.cta1} <span aria-hidden>↗</span>
                 </a>
@@ -149,28 +150,30 @@ export default function EasyDripLanding() {
                   {t.hero.cta2} <span aria-hidden>↗</span>
                 </a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-2">
+              <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2">
                 {t.hero.chips.map((c) => (
-                  <span key={c} className="px-3.5 py-1.5 rounded-full text-[13px] font-medium" style={{ ...text, border: LINE }}>{c}</span>
+                  <span key={c} className="text-[15px] font-semibold" style={text}>
+                    <span className="mr-2" style={{ color: ORANGE }}>●</span>{c}
+                  </span>
                 ))}
               </div>
             </div>
             <Photo src={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar, 100 dona"
-              priority className="aspect-square lg:aspect-auto lg:min-h-[560px]" />
+              priority className="aspect-square w-full max-w-[620px] mx-auto" />
           </section>
 
           {/* ── 01 Mahsulot ── */}
           <Row id="mahsulot" label={t.about.label} title={t.about.title} img={IMG["6"]} alt="Easy Drip Plus 31G × 6 mm qadog'i">
-            <div className="space-y-4">
+            <div className="space-y-5">
               {t.about.body.map((p) => (
-                <p key={p} className="text-[15px] sm:text-base leading-relaxed" style={muted}>{rich(p)}</p>
+                <p key={p} className={BODY} style={muted}>{rich(p)}</p>
               ))}
             </div>
-            <dl className="mt-8 grid sm:grid-cols-3 gap-4 pt-6" style={{ borderTop: LINE }}>
+            <dl className="mt-10 grid sm:grid-cols-3 gap-6 pt-7" style={{ borderTop: LINE }}>
               {t.about.facts.map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-[11px] font-semibold uppercase tracking-[0.16em]" style={muted}>{k}</dt>
-                  <dd className="text-sm font-semibold mt-1.5 leading-snug" style={text}>{v}</dd>
+                  <dt className="text-xs font-bold uppercase tracking-[0.16em]" style={muted}>{k}</dt>
+                  <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
                 </div>
               ))}
             </dl>
@@ -178,16 +181,16 @@ export default function EasyDripLanding() {
 
           {/* ── 02 Muammo va yechim ── */}
           <Row id="muammo" label={t.problem.label} title={t.problem.title} img={IMG["5"]} alt="Easy Drip Plus 31G × 5 mm qadog'i" reverse>
-            <ul className="space-y-6">
+            <ul className="space-y-8">
               {t.problem.items.map(([title, prob, sol]) => (
-                <li key={title} className="pt-5 first:pt-0" style={{ borderTop: LINE }}>
-                  <h3 className="text-lg font-semibold tracking-tight" style={text}>{title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed" style={muted}>
-                    <span className="text-[11px] font-bold uppercase tracking-[0.14em] mr-2" style={{ color: ORANGE }}>{t.problem.colProblem}</span>
+                <li key={title} className="pt-7 first:pt-0 first:!border-t-0" style={{ borderTop: LINE }}>
+                  <h3 className={H3} style={text}>{title}</h3>
+                  <p className={`mt-3 ${BODY}`} style={muted}>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: ORANGE }}>{t.problem.colProblem}</span>
                     {rich(prob)}
                   </p>
-                  <p className="mt-2 text-[15px] leading-relaxed" style={text}>
-                    <span className="text-[11px] font-bold uppercase tracking-[0.14em] mr-2" style={{ color: GREEN }}>{t.problem.colSolution}</span>
+                  <p className={`mt-3 ${BODY}`} style={text}>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: GREEN }}>{t.problem.colSolution}</span>
                     {rich(sol)}
                   </p>
                 </li>
@@ -197,186 +200,175 @@ export default function EasyDripLanding() {
 
           {/* ── 03 Xususiyatlar ── */}
           <Row id="yechim" label={t.features.label} title={t.features.title} img={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm, Hextra Tech asosi">
-            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-9">
               {t.features.items.map(([title, body], i) => (
                 <div key={title}>
-                  <span className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold"
+                  <span className="w-10 h-10 rounded-full flex items-center justify-center text-base font-semibold"
                     style={i === 0 ? { background: ORANGE, color: "#fff" } : { border: LINE, ...text }}>
                     {i + 1}
                   </span>
-                  <h3 className="text-lg font-semibold mt-3 mb-1.5" style={text}>{title}</h3>
-                  <p className="text-[15px] leading-relaxed" style={muted}>{rich(body)}</p>
+                  <h3 className={`${H3} mt-4 mb-2`} style={text}>{title}</h3>
+                  <p className={BODY} style={muted}>{rich(body)}</p>
                 </div>
               ))}
             </div>
           </Row>
 
-          {/* ── 04 O'lchamlar: mahsulot kartochkalari ── */}
-          <section id="olchamlar" className="scroll-mt-24 pt-14 sm:pt-20">
+          {/* ── 04 O'lchamlar: rasm + ma'lumot, ramkasiz ── */}
+          <section id="olchamlar" className="scroll-mt-24">
             <Heading label={t.sizes.label} title={t.sizes.title} />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14">
               {t.sizes.rows.map(([g, len, who, sku], i) => (
-                <div key={sku} className="rounded-3xl overflow-hidden flex flex-col" style={TILE}>
+                <div key={sku} className="flex flex-col">
                   <div className="relative">
-                    <Photo src={SKU_IMG[sku] || IMG["4"]} alt={`Easy Drip Plus ${g} × ${len}`} className="aspect-square !rounded-none"
+                    <Photo src={SKU_IMG[sku] || IMG["4"]} alt={`Easy Drip Plus ${g} × ${len}`} className="aspect-square"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                     {i === 0 && (
-                      <span className="absolute top-4 right-4 text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: ORANGE }}>TOP</span>
+                      <span className="absolute top-3 right-3 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: ORANGE }}>TOP</span>
                     )}
                   </div>
-                  <div className="p-6 sm:p-7 flex-1 flex flex-col">
+                  <div className="mt-4 pt-5 flex-1 flex flex-col" style={{ borderTop: LINE }}>
                     <div className="flex items-baseline justify-between gap-4">
-                      <p className="text-3xl sm:text-4xl font-semibold tracking-tight" style={text}>{len}</p>
-                      <p className="text-base font-semibold" style={{ color: ORANGE }}>{g}</p>
+                      <p className="text-4xl font-semibold tracking-tight" style={text}>{len}</p>
+                      <p className="text-lg font-bold" style={{ color: ORANGE }}>{g}</p>
                     </div>
-                    <p className="text-[15px] leading-relaxed mt-3 flex-1" style={muted}>{rich(who)}</p>
-                    <p className="text-xs mt-5 pt-4" style={{ borderTop: LINE, ...muted }}>
+                    <p className={`${BODY} mt-3 flex-1`} style={muted}>{rich(who)}</p>
+                    <p className="text-[15px] mt-4" style={muted}>
                       {t.sizes.sku}: <span className="font-semibold" style={text}>{sku}</span>
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-sm" style={muted}>{t.sizes.note} {t.sizes.pack}</p>
+            <p className="mt-10 text-base" style={muted}>{t.sizes.note} {t.sizes.pack}</p>
           </section>
 
           {/* ── Nega EasyDrip: 3 ta sotuv argumenti ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading title={t.args.title} />
-            <Frame grid="md:grid-cols-3">
+            <Cols className="md:grid-cols-3">
               {t.args.items.map(([title, body, slogan], i) => (
-                <Cell key={title} className="flex flex-col">
+                <Col key={title} className="flex flex-col">
                   <span className="text-5xl font-light tracking-tight" style={{ color: i === 0 ? ORANGE : "var(--text)" }}>{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="text-xl font-semibold tracking-tight mt-5 mb-2" style={text}>{title}</h3>
-                  <p className="text-[15px] leading-relaxed flex-1" style={muted}>{rich(body)}</p>
-                  <p className="text-sm font-semibold mt-6 pt-4" style={{ borderTop: LINE, color: ORANGE }}>“{slogan}”</p>
-                </Cell>
+                  <h3 className={`${H3} mt-5 mb-3`} style={text}>{title}</h3>
+                  <p className={`${BODY} flex-1`} style={muted}>{rich(body)}</p>
+                  <p className="text-[17px] font-semibold mt-5" style={{ color: ORANGE }}>“{slogan}”</p>
+                </Col>
               ))}
-            </Frame>
+            </Cols>
           </section>
 
           {/* ── 05 Bilish muhim: igna nimani qilmaydi ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading label={t.honest.label} title={t.honest.title} />
-            <Frame grid="lg:grid-cols-[1fr_2fr]">
-              <Cell className="flex flex-col justify-between gap-6">
-                <p className="text-base sm:text-lg leading-relaxed" style={text}>{t.honest.lead}</p>
-                <p className="text-sm leading-relaxed" style={muted}>{t.honest.note}</p>
-              </Cell>
-              <Cell className="!py-2">
-                {t.honest.items.map(([title, body], i) => (
-                  <div key={title} className="py-5 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-1 sm:gap-6 items-baseline"
-                    style={i ? { borderTop: LINE } : undefined}>
-                    <h3 className="text-base font-semibold flex items-baseline gap-3" style={text}>
-                      <span className="text-sm flex-shrink-0" style={{ color: ORANGE }}>✕</span>{title}
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16">
+              <div className="space-y-6">
+                <p className="text-lg sm:text-xl leading-[1.6]" style={text}>{t.honest.lead}</p>
+                <p className="text-[15px] leading-relaxed" style={muted}>{t.honest.note}</p>
+              </div>
+              <div>
+                {t.honest.items.map(([title, body]) => (
+                  <div key={title} className="py-6 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 sm:gap-8 items-baseline"
+                    style={{ borderTop: LINE }}>
+                    <h3 className="text-lg font-semibold flex items-baseline gap-3" style={text}>
+                      <span className="flex-shrink-0" style={{ color: ORANGE }}>✕</span>{title}
                     </h3>
-                    <p className="text-[15px] leading-relaxed pl-6 sm:pl-0" style={muted}>{rich(body)}</p>
+                    <p className={`${BODY} pl-7 sm:pl-0`} style={muted}>{rich(body)}</p>
                   </div>
                 ))}
-              </Cell>
-            </Frame>
+              </div>
+            </div>
           </section>
 
           {/* ── Kim uchun ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading title={t.audience.title} />
-            <Frame grid="md:grid-cols-3">
+            <Cols className="md:grid-cols-3">
               {t.audience.items.map(([title, body]) => (
-                <Cell key={title}>
-                  <h3 className="text-lg font-semibold" style={text}>{title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed" style={muted}>{rich(body)}</p>
-                </Cell>
+                <Col key={title}>
+                  <h3 className={H3} style={text}>{title}</h3>
+                  <p className={`mt-3 ${BODY}`} style={muted}>{rich(body)}</p>
+                </Col>
               ))}
-            </Frame>
+            </Cols>
           </section>
 
           {/* ── 06 Sertifikatlar ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading label={t.certs.label} title={t.certs.title} />
-            <Frame grid="lg:grid-cols-[1fr_2fr]">
-              <Cell className="flex flex-col justify-between gap-6">
-                <p className="text-[15px] leading-relaxed" style={muted}>{t.certs.lead}</p>
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16">
+              <div className="flex flex-col gap-8">
+                <p className={BODY} style={muted}>{t.certs.lead}</p>
                 <Image src="/partners/sandstone.png" alt="Sandstone Medical" width={160} height={60} className="object-contain h-12 w-auto" style={{ width: "auto" }} />
-              </Cell>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {CERTS.map(([name, sub]) => (
-                  <Cell key={name}>
-                    <p className="text-xl sm:text-2xl font-semibold tracking-tight" style={text}>{name}</p>
-                    <p className="text-xs mt-1" style={muted}>{sub}</p>
-                  </Cell>
-                ))}
               </div>
-            </Frame>
+              <Cols className="grid-cols-2 sm:grid-cols-3 !gap-y-8">
+                {CERTS.map(([name, sub]) => (
+                  <Col key={name}>
+                    <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{name}</p>
+                    <p className="text-[15px] mt-1" style={muted}>{sub}</p>
+                  </Col>
+                ))}
+              </Cols>
+            </div>
           </section>
 
           {/* ── 07 Fikrlar ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading label={t.reviews.label} title={t.reviews.title} />
-            <Frame grid="md:grid-cols-3">
+            <Cols className="md:grid-cols-3">
               {(REVIEWS.length ? REVIEWS : [null, null, null]).map((r, i) => (
-                <Cell key={i} className="flex flex-col min-h-[220px]">
-                  <span className="text-4xl font-medium leading-none" style={{ color: ORANGE }}>“</span>
-                  <blockquote className="text-base leading-relaxed mt-3 flex-1" style={r ? text : muted}>
+                <Col key={i} className="flex flex-col">
+                  <span className="text-5xl font-medium leading-none" style={{ color: ORANGE }}>“</span>
+                  <blockquote className={`${BODY} mt-3 flex-1`} style={r ? text : muted}>
                     {r ? (r.matn[lang] || r.matn.uz) : t.reviews.placeholder}
                   </blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full flex-shrink-0" style={{ backgroundColor: "var(--ed-page)" }} />
-                    {r && (
-                      <span>
-                        <span className="block text-sm font-semibold" style={text}>{r.ism}</span>
-                        <span className="block text-xs" style={muted}>{r.rol}</span>
-                      </span>
-                    )}
-                  </figcaption>
-                </Cell>
+                  {r && (
+                    <figcaption className="mt-6">
+                      <span className="block text-base font-semibold" style={text}>{r.ism}</span>
+                      <span className="block text-sm" style={muted}>{r.rol}</span>
+                    </figcaption>
+                  )}
+                </Col>
               ))}
-            </Frame>
+            </Cols>
           </section>
 
           {/* ── Qo'llash: 4 qadam ── */}
-          <section className="pt-14 sm:pt-20">
+          <section>
             <Heading title={t.steps.title} />
-            <Frame grid="sm:grid-cols-2 lg:grid-cols-4">
+            <Cols className="sm:grid-cols-2 lg:grid-cols-4">
               {t.steps.items.map(([title, body], i) => (
-                <Cell key={title}>
+                <Col key={title}>
                   <span className="text-5xl font-light tracking-tight" style={{ color: i === 3 ? GREEN : "var(--text)" }}>{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="text-lg font-semibold mt-5 mb-2" style={text}>{title}</h3>
-                  <p className="text-[15px] leading-relaxed" style={muted}>{rich(body)}</p>
-                </Cell>
+                  <h3 className={`${H3} mt-5 mb-2`} style={text}>{title}</h3>
+                  <p className={BODY} style={muted}>{rich(body)}</p>
+                </Col>
               ))}
-            </Frame>
+            </Cols>
           </section>
 
           {/* ── 08 FAQ ── */}
-          <section id="savollar" className="scroll-mt-24 pt-14 sm:pt-20 grid lg:grid-cols-[1fr_2fr] gap-3 lg:gap-12">
+          <section id="savollar" className="scroll-mt-24 grid lg:grid-cols-[1fr_1.8fr] gap-4 lg:gap-16">
             <Heading label={t.faq.label} title={t.faq.title} />
-            <div className="space-y-3">
+            <div style={{ borderBottom: LINE }}>
               {faq.map(([q, a], i) => (
-                <div key={q} className="rounded-2xl" style={TILE}>
+                <div key={q} style={{ borderTop: LINE }}>
                   <button type="button" onClick={() => setOpen(open === i ? -1 : i)}
-                    className="w-full flex items-center justify-between gap-6 px-5 sm:px-7 py-5 text-left">
-                    <span className="text-base font-semibold" style={text}>{q}</span>
-                    <span className="text-2xl leading-none flex-shrink-0 transition-transform" style={{ color: ORANGE, transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
+                    className="w-full flex items-center justify-between gap-6 py-6 text-left">
+                    <span className="text-lg sm:text-xl font-semibold tracking-tight" style={text}>{q}</span>
+                    <span className="text-3xl leading-none flex-shrink-0 transition-transform" style={{ color: ORANGE, transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
                   </button>
-                  {open === i && <p className="px-5 sm:px-7 pb-6 -mt-1 text-[15px] leading-relaxed" style={muted}>{rich(a)}</p>}
+                  {open === i && <p className={`pb-7 -mt-1 ${BODY}`} style={muted}>{rich(a)}</p>}
                 </div>
               ))}
             </div>
           </section>
 
-          {/* ── Buyurtma: banner + forma ── */}
-          <section id="buyurtma" className="scroll-mt-24 pt-14 sm:pt-20 space-y-3">
-            <div className="rounded-3xl p-6 sm:p-10 lg:p-14 flex flex-col lg:flex-row lg:items-end justify-between gap-6" style={TILE}>
-              <div>
-                <span className="section-label">{t.order.label}</span>
-                <h2 className="mt-4 text-3xl sm:text-5xl font-medium leading-[1.05] tracking-tight max-w-[760px]" style={text}>{t.order.title}</h2>
-              </div>
-              <a href="tel:+998775504040" className={`${pillLight} self-start lg:self-auto`} style={{ ...text, border: LINE }}>
-                +998 77 550-40-40 <span aria-hidden>↗</span>
-              </a>
-            </div>
-            <div className="grid lg:grid-cols-[1.4fr_1fr] gap-3">
-              <form onSubmit={submit} className="rounded-3xl p-6 sm:p-8 lg:p-12 space-y-4" style={TILE}>
+          {/* ── Buyurtma ── */}
+          <section id="buyurtma" className="scroll-mt-24">
+            <Heading label={t.order.label} title={t.order.title} />
+            <div className="grid lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20">
+              <form onSubmit={submit} className="space-y-4">
                 <input required value={form.ism} onChange={(e) => setForm({ ...form, ism: e.target.value })}
                   placeholder={t.order.name} className={inputCls} style={inputStyle} />
                 <input required type="tel" value={form.telefon} onChange={(e) => setForm({ ...form, telefon: e.target.value })}
@@ -387,24 +379,24 @@ export default function EasyDripLanding() {
                   className={`${pillDark} w-full sm:w-auto disabled:opacity-60`} style={{ background: ORANGE }}>
                   {status === "sending" ? t.order.sending : t.order.submit} <span aria-hidden>↗</span>
                 </button>
-                {status === "ok" && <p className="text-sm" style={{ color: GREEN }}>{t.order.ok}</p>}
-                {status === "err" && <p className="text-sm" style={{ color: ORANGE }}>{t.order.err}</p>}
+                {status === "ok" && <p className="text-base" style={{ color: GREEN }}>{t.order.ok}</p>}
+                {status === "err" && <p className="text-base" style={{ color: ORANGE }}>{t.order.err}</p>}
               </form>
-              <div className="rounded-3xl p-6 sm:p-8 lg:p-12 flex flex-col justify-between gap-8" style={TILE}>
+              <div className="flex flex-col justify-between gap-10">
                 <div>
-                  <p className="text-[15px] leading-relaxed" style={muted}>{rich(t.order.lead)}</p>
-                  <ul className="mt-6 space-y-3">
+                  <p className={BODY} style={muted}>{rich(t.order.lead)}</p>
+                  <ul className="mt-7 space-y-4">
                     {t.order.perks.map((p) => (
-                      <li key={p} className="flex items-center gap-3 text-[15px] font-semibold" style={text}>
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] text-white flex-shrink-0" style={{ backgroundColor: GREEN }}>✓</span>
+                      <li key={p} className="flex items-center gap-3 text-[17px] font-semibold" style={text}>
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0" style={{ backgroundColor: GREEN }}>✓</span>
                         {p}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest" style={muted}>{t.order.call}</p>
-                  <a href="tel:+998775504040" className="block text-2xl sm:text-3xl font-semibold tracking-tight mt-2 hover:opacity-70" style={text}>+998 77 550-40-40</a>
+                <div className="pt-7" style={{ borderTop: LINE }}>
+                  <p className="text-sm font-bold uppercase tracking-widest" style={muted}>{t.order.call}</p>
+                  <a href="tel:+998775504040" className="block text-3xl sm:text-4xl font-semibold tracking-tight mt-2 hover:opacity-70" style={text}>+998 77 550-40-40</a>
                 </div>
               </div>
             </div>

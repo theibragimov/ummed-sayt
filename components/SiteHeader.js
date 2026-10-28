@@ -13,24 +13,26 @@ const LANGS = [
   { code: "en", label: "En", flag: "🇬🇧" },
 ];
 
-export default function SiteHeader() {
+// nav / cta berilsa (landing sahifalar) — sayt menyusi o'rniga shu bo'limlar ko'rinadi
+export default function SiteHeader({ nav, cta }) {
   const pathname = usePathname();
   const { lang, setLang, t } = useLang();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
-  const navItems = [
+  const navItems = nav || [
     { label: t.nav.home, href: "/" },
     { label: t.nav.about, href: "/haqimizda" },
     { label: t.nav.catalog, href: "/katalog" },
     { label: t.nav.news || "Yangiliklar", href: "/yangiliklar" },
   ];
+  const ctaItem = cta || { label: t.nav.contact, href: "/aloqa" };
 
   const current = LANGS.find((l) => l.code === lang) || LANGS[0];
 
   const isActive = (href) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href.startsWith("#") ? false : href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <header className="sticky top-0 z-50 site-header anim-fade-down">
@@ -114,10 +116,10 @@ export default function SiteHeader() {
 
           {/* Bog'lanish — pill tugma */}
           <Link
-            href="/aloqa"
+            href={ctaItem.href}
             className="hidden md:inline-flex items-center px-6 py-2.5 rounded-full text-[15px] font-medium contact-btn transition-all"
           >
-            {t.nav.contact}
+            {ctaItem.label}
           </Link>
 
           {/* Mobile burger */}
@@ -137,7 +139,7 @@ export default function SiteHeader() {
       {mobileOpen && (
         <div className="md:hidden mobile-menu anim-fade-down">
           <nav className="max-w-[1400px] mx-auto px-6 lg:px-10 py-4 flex flex-col gap-1">
-            {[...navItems, { label: t.nav.contact, href: "/aloqa" }].map((item) => {
+            {[...navItems, ctaItem].map((item) => {
               const active = isActive(item.href);
               return (
                 <Link

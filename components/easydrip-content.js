@@ -67,6 +67,7 @@ export const FAQ = {
 
 export const TXT = {
   uz: {
+    nav: { items: [["Mahsulot haqida", "#mahsulot"], ["Yechimlar", "#muammo"], ["O'lchamlar", "#olchamlar"], ["Savollar", "#savollar"]], cta: "Buyurtma berish" },
     hero: {
       kicker: "Rasmiy distribyutor · O'zbekiston",
       brand: "Easy Drip Plus",
@@ -196,6 +197,7 @@ export const TXT = {
   },
 
   ru: {
+    nav: { items: [["О продукте", "#mahsulot"], ["Решения", "#muammo"], ["Размеры", "#olchamlar"], ["Вопросы", "#savollar"]], cta: "Заказать" },
     hero: {
       kicker: "Официальный дистрибьютор · Узбекистан",
       brand: "Easy Drip Plus",
@@ -325,6 +327,7 @@ export const TXT = {
   },
 
   en: {
+    nav: { items: [["About", "#mahsulot"], ["Solutions", "#muammo"], ["Sizes", "#olchamlar"], ["FAQ", "#savollar"]], cta: "Order now" },
     hero: {
       kicker: "Official distributor · Uzbekistan",
       brand: "Easy Drip Plus",
