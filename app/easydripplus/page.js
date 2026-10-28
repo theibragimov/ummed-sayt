@@ -53,7 +53,7 @@ const jsonLd = {
       mainEntity: FAQ.uz.map(([q, a]) => ({
         "@type": "Question",
         name: q,
-        acceptedAnswer: { "@type": "Answer", text: a },
+        acceptedAnswer: { "@type": "Answer", text: a.replace(/\*\*/g, "") },
       })),
     },
   ],

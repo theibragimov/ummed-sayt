@@ -61,6 +61,12 @@ function ImageSlot({ src, alt, label, ratio = "4 / 3", stretch = false, classNam
   );
 }
 
+// Matndagi **so'z** qismlarini qalin qilib chiqaradi
+const BOLD = { color: "var(--text)", fontWeight: 600 };
+function rich(str, style = BOLD) {
+  return str.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i} style={style}>{part}</strong> : part));
+}
+
 function Heading({ label, title, as: Tag = "h2", className = "" }) {
   return (
     <Reveal variant="up" className={`mb-6 sm:mb-10 ${className}`}>
@@ -112,16 +118,21 @@ export default function EasyDripLanding() {
       <main style={{ backgroundColor: "var(--bg)" }}>
         <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-8 sm:pt-10 pb-16 sm:pb-24 space-y-16 sm:space-y-28">
 
-          {/* ── Hero: bitta katta ramka ── */}
+          {/* ── Hero: tepada keng sarlavha, pastda matn + rasm, eng pastda chiplar ── */}
           <Frame>
-            <div className="grid lg:grid-cols-[1.15fr_1fr]">
+            <div className="p-6 sm:p-10 lg:p-14">
+              <span className="section-label">{t.hero.kicker}</span>
+              <h1 className="mt-6 sm:mt-10 tracking-tight" style={text}>
+                <span className="block text-[44px] sm:text-7xl lg:text-[112px] font-bold leading-[0.95]" style={{ color: ORANGE }}>{t.hero.brand}</span>
+                <span className="block text-[24px] sm:text-4xl lg:text-[48px] font-semibold leading-[1.12] mt-3 sm:mt-5 max-w-[1050px]">{t.hero.title}</span>
+              </h1>
+            </div>
+            <div className="grid lg:grid-cols-2" style={{ borderTop: FRAME }}>
               <div className="p-6 sm:p-10 lg:p-14 flex flex-col justify-center">
-                <span className="section-label">{t.hero.kicker}</span>
-                <h1 className="text-[28px] sm:text-[40px] lg:text-[50px] font-medium leading-[1.08] tracking-tight mt-5 sm:mt-8" style={text}>
-                  {t.hero.title[0]}
-                  <span className="block mt-3 sm:mt-4 text-[0.6em] leading-[1.2]" style={{ color: ORANGE }}>{t.hero.title[1]}</span>
-                </h1>
-                <p className="mt-5 sm:mt-7 text-base sm:text-lg font-light leading-relaxed max-w-[540px]" style={muted}>{t.hero.lead}</p>
+                <p className="text-xl sm:text-2xl lg:text-[30px] font-light leading-snug tracking-tight" style={text}>
+                  {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
+                </p>
+                <p className="mt-5 sm:mt-6 text-base sm:text-lg font-light leading-relaxed max-w-[560px]" style={muted}>{rich(t.hero.lead)}</p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <a href="#buyurtma" className="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:scale-[1.03]" style={{ background: ORANGE }}>
                     {t.hero.cta1} →
@@ -132,7 +143,7 @@ export default function EasyDripLanding() {
                 </div>
               </div>
               <div className="lg:border-l" style={{ borderColor: "var(--border-frame, #ccc)" }}>
-                <ImageSlot src={IMAGES.hero} alt="EasyDrip Plus pen needles" label={t.imgSlot} ratio="1 / 1" stretch />
+                <ImageSlot src={IMAGES.hero} alt="EasyDrip Plus pen needles" label={t.imgSlot} ratio="4 / 3" stretch />
               </div>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)", borderTop: FRAME }}>
@@ -152,7 +163,7 @@ export default function EasyDripLanding() {
               <div className="flex flex-col gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
                 <Cell className="space-y-4 flex-1">
                   {t.about.body.map((p) => (
-                    <p key={p} className="text-base sm:text-lg font-light leading-relaxed" style={muted}>{p}</p>
+                    <p key={p} className="text-base sm:text-lg font-light leading-relaxed" style={muted}>{rich(p)}</p>
                   ))}
                 </Cell>
                 <div className="grid sm:grid-cols-3 gap-px" style={{ backgroundColor: "var(--border-frame, #ccc)" }}>
@@ -184,11 +195,11 @@ export default function EasyDripLanding() {
                   </Cell>
                   <Cell>
                     <p className="md:hidden text-[11px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: ORANGE }}>{t.problem.colProblem}</p>
-                    <p className="text-sm font-light leading-relaxed" style={muted}>{prob}</p>
+                    <p className="text-sm font-light leading-relaxed" style={muted}>{rich(prob)}</p>
                   </Cell>
                   <Cell>
                     <p className="md:hidden text-[11px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: GREEN }}>{t.problem.colSolution}</p>
-                    <p className="text-sm font-light leading-relaxed" style={text}>{sol}</p>
+                    <p className="text-sm font-light leading-relaxed" style={text}>{rich(sol)}</p>
                   </Cell>
                 </div>
               ))}
@@ -207,7 +218,7 @@ export default function EasyDripLanding() {
                       {i + 1}
                     </span>
                     <h3 className="text-lg font-medium mt-4 mb-2" style={text}>{title}</h3>
-                    <p className="text-sm font-light leading-relaxed" style={muted}>{body}</p>
+                    <p className="text-sm font-light leading-relaxed" style={muted}>{rich(body)}</p>
                   </Cell>
                 ))}
               </div>
@@ -225,7 +236,7 @@ export default function EasyDripLanding() {
                 <Cell key={title} className="flex flex-col">
                   <span className="text-5xl font-medium tracking-tight" style={{ color: i === 0 ? ORANGE : "var(--border-strong, #e5e5e5)" }}>{i + 1}</span>
                   <h3 className="text-xl font-medium tracking-tight mt-4 mb-2" style={text}>{title}</h3>
-                  <p className="text-sm font-light leading-relaxed flex-1" style={muted}>{body}</p>
+                  <p className="text-sm font-light leading-relaxed flex-1" style={muted}>{rich(body)}</p>
                   <p className="text-sm font-medium mt-6 pt-4" style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)", color: ORANGE }}>“{slogan}”</p>
                 </Cell>
               ))}
@@ -243,7 +254,7 @@ export default function EasyDripLanding() {
                   )}
                   <p className="text-sm font-medium" style={{ color: ORANGE }}>{g}</p>
                   <p className="text-5xl sm:text-6xl font-medium tracking-tight mt-2" style={text}>{len}</p>
-                  <p className="text-sm font-light leading-relaxed mt-5 min-h-[40px]" style={muted}>{who}</p>
+                  <p className="text-sm font-light leading-relaxed mt-5 min-h-[40px]" style={muted}>{rich(who)}</p>
                   <p className="text-xs font-light mt-5 pt-4" style={{ borderTop: "1px solid var(--border-strong, #e5e5e5)", ...muted }}>
                     {t.sizes.sku}: <span className="font-medium" style={text}>{sku}</span>
                   </p>
@@ -267,7 +278,7 @@ export default function EasyDripLanding() {
                     <h3 className="text-base font-medium flex items-baseline gap-3" style={text}>
                       <span className="text-sm flex-shrink-0" style={{ color: ORANGE }}>✕</span>{title}
                     </h3>
-                    <p className="text-sm font-light leading-relaxed pl-6 sm:pl-0" style={muted}>{body}</p>
+                    <p className="text-sm font-light leading-relaxed pl-6 sm:pl-0" style={muted}>{rich(body)}</p>
                   </Cell>
                 ))}
               </div>
@@ -285,7 +296,7 @@ export default function EasyDripLanding() {
                 {t.audience.items.map(([title, body]) => (
                   <Cell key={title} className="grid sm:grid-cols-[200px_1fr] gap-2 sm:gap-6">
                     <h3 className="text-lg font-medium" style={text}>{title}</h3>
-                    <p className="text-sm font-light leading-relaxed" style={muted}>{body}</p>
+                    <p className="text-sm font-light leading-relaxed" style={muted}>{rich(body)}</p>
                   </Cell>
                 ))}
               </div>
@@ -343,7 +354,7 @@ export default function EasyDripLanding() {
                 <Cell key={title}>
                   <span className="text-5xl font-medium tracking-tight" style={{ color: i === 3 ? GREEN : "var(--border-strong, #e5e5e5)" }}>{i + 1}</span>
                   <h3 className="text-lg font-medium mt-4 mb-2" style={text}>{title}</h3>
-                  <p className="text-sm font-light leading-relaxed" style={muted}>{body}</p>
+                  <p className="text-sm font-light leading-relaxed" style={muted}>{rich(body)}</p>
                 </Cell>
               ))}
             </Frame>
@@ -360,7 +371,7 @@ export default function EasyDripLanding() {
                     <span className="text-base font-medium" style={text}>{q}</span>
                     <span className="text-xl flex-shrink-0 transition-transform" style={{ color: ORANGE, transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
                   </button>
-                  {open === i && <p className="px-6 sm:px-8 pb-6 -mt-1 text-sm font-light leading-relaxed" style={muted}>{a}</p>}
+                  {open === i && <p className="px-6 sm:px-8 pb-6 -mt-1 text-sm font-light leading-relaxed" style={muted}>{rich(a)}</p>}
                 </div>
               ))}
             </Frame>
@@ -387,7 +398,7 @@ export default function EasyDripLanding() {
                 </form>
                 <div className="lg:w-[42%] p-6 sm:p-8 lg:p-12 flex flex-col justify-between gap-8 border-t lg:border-t-0 lg:border-l" style={{ borderColor: "var(--border-frame, #ccc)" }}>
                   <div>
-                    <p className="text-sm font-light leading-relaxed" style={muted}>{t.order.lead}</p>
+                    <p className="text-sm font-light leading-relaxed" style={muted}>{rich(t.order.lead)}</p>
                     <ul className="mt-6 space-y-3">
                       {t.order.perks.map((p) => (
                         <li key={p} className="flex items-center gap-3 text-sm font-medium" style={text}>
