@@ -900,6 +900,23 @@ export function OrderPageContent({
     }
   }, [loadCatalog]);
 
+  // Kategoriya oynasi ochiqligida orqa fon (mahsulotlar) skroll bo'lmasin
+  useEffect(() => {
+    if (!mobileCatOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = { position: body.style.position, top: body.style.top, width: body.style.width };
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      window.scrollTo(0, scrollY);
+    };
+  }, [mobileCatOpen]);
+
   // Ulashilgan havoladan (?cat=&q=) kategoriya/qidiruvni tiklash va katalogni ochish
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -1390,7 +1407,7 @@ export function OrderPageContent({
                   <X size={16} color="#666" />
                 </button>
               </div>
-              <div className="overflow-y-auto" style={{ maxHeight: '60vh' }}>
+              <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: '60vh' }}>
                 {/* All products */}
                 <button
                   onClick={() => { setSelectedCat(null); setMobileCatOpen(false); }}
