@@ -1395,10 +1395,10 @@ export function OrderPageContent({
         {/* Mobile category drawer */}
         {mobileCatOpen && (
           <>
-            <div className="lg:hidden fixed inset-0 z-50 bg-black/40" onClick={() => setMobileCatOpen(false)} />
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-white pb-8"
+            <div className="lg:hidden fixed inset-0 z-[55] bg-black/40 touch-none" onClick={() => setMobileCatOpen(false)} />
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[55] rounded-t-3xl bg-white"
               style={{ boxShadow: '0 -8px 40px rgba(0,0,0,0.15)' }}>
-              <div className="flex items-center justify-between px-5 py-4"
+              <div className="flex items-center justify-between px-5 py-4 touch-none"
                 style={{ borderBottom: '1px solid #F0F0F0' }}>
                 <span className="text-[15px] font-bold text-gray-900">{t.categories}</span>
                 <button onClick={() => setMobileCatOpen(false)}
@@ -1407,7 +1407,7 @@ export function OrderPageContent({
                   <X size={16} color="#666" />
                 </button>
               </div>
-              <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: '60vh' }}>
+              <div className="overflow-y-auto overscroll-contain pb-8" style={{ maxHeight: '60vh' }}>
                 {/* All products */}
                 <button
                   onClick={() => { setSelectedCat(null); setMobileCatOpen(false); }}
