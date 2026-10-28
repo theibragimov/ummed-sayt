@@ -8,11 +8,11 @@ import Reveal from "@/components/Reveal";
 import { useLang } from "@/lib/i18n";
 import { TXT, FAQ, CERTS } from "@/components/easydrip-content";
 
-// Mahsulot rasmlari (oq fonli qadoq suratlari) — public/images/easydrip/
+// Mahsulot rasmlari — foni olib tashlangan (shaffof PNG) qadoq suratlari
 const IMG = {
-  "4": "/images/easydrip/easydrip-plus-4mm.png",
-  "5": "/images/easydrip/easydrip-plus-5mm.png",
-  "6": "/images/easydrip/easydrip-plus-6mm.png",
+  "4": "/images/easydrip/easydrip-plus-4mm-cut.png",
+  "5": "/images/easydrip/easydrip-plus-5mm-cut.png",
+  "6": "/images/easydrip/easydrip-plus-6mm-cut.png",
 };
 const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"] };
 
@@ -22,25 +22,27 @@ const REVIEWS = [];
 
 const ORANGE = "#E8491D";
 const GREEN = "#3DB851";
-const LINE = "1px solid var(--border-strong, #e5e5e5)";
+const TILE = { backgroundColor: "var(--ed-tile)" };
 const text = { color: "var(--text)" };
 // Kulrang matn sayt default'idan to'qroq — o'qish oson bo'lsin
 const muted = { color: "var(--ed-muted)" };
 
-// Ramkasiz ustunlar: har biri ustida ingichka chiziq
-function Cols({ children, className = "" }) {
-  return <div className={`grid gap-x-10 gap-y-10 ${className}`}>{children}</div>;
-}
-function Col({ children, className = "" }) {
-  return <div className={`pt-6 ${className}`} style={{ borderTop: LINE }}>{children}</div>;
+const BODY = "text-[17px] sm:text-lg leading-[1.65]";
+const H3 = "text-xl sm:text-[22px] font-semibold tracking-tight";
+
+// Yumshoq kulrang, ramkasiz katak (ref: Orbita do'kon dizayni)
+function Tile({ children, className = "", style }) {
+  return <div className={`rounded-[28px] p-6 sm:p-8 ${className}`} style={{ ...TILE, ...style }}>{children}</div>;
 }
 
-// Suratlar oq fonli — oq sahifada ramkasiz qo'shilib ketadi
-function Photo({ src, alt, className = "", priority = false, sizes = "(max-width: 1024px) 100vw, 50vw" }) {
+// Burchakdagi dumaloq strelka tugmasi
+function Arrow({ href = "#buyurtma", light = false, label }) {
   return (
-    <div className={`relative overflow-hidden ed-photo ${className}`}>
-      <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-contain" />
-    </div>
+    <a href={href} aria-label={label}
+      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-transform hover:scale-110"
+      style={light ? { background: "#fff", color: ORANGE } : { background: "var(--bg)", color: "var(--text)" }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </a>
   );
 }
 
@@ -50,43 +52,19 @@ function rich(str, style = BOLD) {
   return str.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i} style={style}>{part}</strong> : part));
 }
 
-// "01 — Mahsulot" → ["01", "Mahsulot"]
-function splitLabel(label = "") {
-  const m = label.match(/^(\d+)\s*—\s*(.*)$/);
-  return m ? [m[1], m[2]] : ["", label];
-}
-
-const BODY = "text-[17px] sm:text-lg leading-[1.7]";
-const H3 = "text-xl sm:text-[22px] font-semibold tracking-tight";
-
-function Heading({ label, title, as: Tag = "h2", className = "" }) {
+function Heading({ title, className = "" }) {
   return (
-    <Reveal variant="up" className={`mb-10 sm:mb-14 ${className}`}>
-      {label && <span className="section-label">{label}</span>}
-      <Tag className="text-3xl sm:text-5xl font-semibold leading-[1.08] tracking-tight mt-4 sm:mt-5 max-w-[900px]" style={text}>
-        {title}
-      </Tag>
+    <Reveal variant="up" className={`mb-6 sm:mb-8 px-1 ${className}`}>
+      <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight max-w-[900px]" style={text}>{title}</h2>
     </Reveal>
   );
 }
 
-// Navbatma-navbat: surat | raqam + sarlavha + matn
-function Row({ id, label, title, img, alt, reverse = false, children }) {
-  const [num, name] = splitLabel(label);
-  return (
-    <section id={id} className="scroll-mt-24 grid lg:grid-cols-2 gap-8 lg:gap-20 lg:items-start">
-      <Photo src={img} alt={alt} className={`aspect-square max-w-[560px] w-full mx-auto lg:sticky lg:top-28 ${reverse ? "lg:order-2" : ""}`} />
-      <div className="lg:py-10">
-        <Reveal variant="up">
-          <span className="block text-6xl sm:text-7xl font-light tracking-tight tabular-nums" style={text}>{num}</span>
-          <span className="block mt-5 text-[13px] font-bold uppercase tracking-[0.18em]" style={{ color: ORANGE }}>{name}</span>
-          <h2 className="mt-3 text-3xl sm:text-[44px] font-semibold leading-[1.1] tracking-tight" style={text}>{title}</h2>
-        </Reveal>
-        <div className="mt-8 sm:mt-10">{children}</div>
-      </div>
-    </section>
-  );
-}
+const ICONS = [
+  <path key="a" d="M12 3l7 3v6c0 4.2-3 7.6-7 9-4-1.4-7-4.8-7-9V6l7-3zM9 12l2 2 4-4" />,
+  <path key="b" d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z" />,
+  <path key="c" d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" />,
+];
 
 export default function EasyDripLanding() {
   const { lang } = useLang();
@@ -116,208 +94,245 @@ export default function EasyDripLanding() {
     }
   }
 
-  const inputCls = "w-full rounded-xl px-4 py-4 text-base outline-none bg-transparent transition-colors focus:border-[#E8491D]";
-  const inputStyle = { border: LINE, color: "var(--text)" };
-  const pillDark = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-semibold text-white transition-all hover:opacity-90 hover:scale-[1.03]";
-  const pillLight = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-medium transition-opacity hover:opacity-70";
+  const inputCls = "w-full rounded-2xl px-5 py-4 text-base outline-none transition-shadow focus:shadow-[0_0_0_2px_#E8491D]";
+  const inputStyle = { backgroundColor: "var(--bg)", color: "var(--text)" };
+  const pill = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-semibold transition-all hover:opacity-90 hover:scale-[1.03]";
   const nav = t.nav.items.map(([label, href]) => ({ label, href }));
+  const [s4, s5, s6] = t.sizes.rows;
+
+  // Bento katak: nom + strelka tepada, surat pastda
+  const SizeTile = ({ row, className = "", accent = false, imgCls = "" }) => {
+    const [g, len, who, sku] = row;
+    return (
+      <div className={`relative rounded-[28px] overflow-hidden flex flex-col p-6 sm:p-7 ${className}`}
+        style={accent ? { background: ORANGE } : TILE}>
+        <div className="flex items-start justify-between gap-4 relative z-10">
+          <div>
+            <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={accent ? { color: "#fff" } : text}>
+              {len} <span className="text-lg font-semibold" style={{ color: accent ? "rgba(255,255,255,0.8)" : ORANGE }}>· {g}</span>
+            </p>
+            <p className="text-base mt-1.5 max-w-[260px]" style={accent ? { color: "rgba(255,255,255,0.92)" } : muted}>{who.replace(/\*\*/g, "")}</p>
+          </div>
+          <Arrow light={accent} label={t.hero.cta1} />
+        </div>
+        <div className={`relative flex-1 min-h-[220px] mt-4 ${imgCls}`}>
+          <Image src={SKU_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 1024px) 90vw, 33vw" className="object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.18)]" />
+        </div>
+        <p className="relative z-10 text-sm mt-3" style={accent ? { color: "rgba(255,255,255,0.85)" } : muted}>{t.sizes.sku}: <b>{sku}</b></p>
+      </div>
+    );
+  };
 
   return (
     <>
       <SiteHeader nav={nav} cta={{ label: t.nav.cta, href: "#buyurtma" }} />
-      <style>{`.ed-page{--ed-muted:#55555b}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be}html[data-theme="dark"] .ed-photo{border-radius:24px;background:#fff}`}</style>
+      <style>{`.ed-page{--ed-muted:#55555b;--ed-tile:#F1F2F5}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be;--ed-tile:#222225}`}</style>
       <main className="ed-page" style={{ backgroundColor: "var(--bg)" }}>
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-10 pt-8 sm:pt-14 pb-20 sm:pb-28 space-y-24 sm:space-y-36">
+        <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
 
-          {/* ── Hero: chapda sarlavha (qora + kulrang), o'ngda mahsulot surati ── */}
-          <section className="grid lg:grid-cols-[1.05fr_1fr] gap-8 lg:gap-14 items-center">
-            <div>
-              <span className="section-label">{t.hero.kicker}</span>
-              <h1 className="mt-6 sm:mt-8 tracking-tight">
-                <span className="block text-[40px] sm:text-6xl lg:text-[56px] xl:text-[68px] font-semibold leading-[1]" style={text}>{t.hero.brand}</span>
-                <span className="block text-[24px] sm:text-[34px] lg:text-[30px] xl:text-[36px] font-medium leading-[1.15] mt-3 sm:mt-4" style={{ color: "#8d8d93" }}>{t.hero.title}</span>
-              </h1>
-              <p className="mt-7 sm:mt-9 text-[22px] sm:text-[26px] leading-snug tracking-tight" style={text}>
-                {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
-              </p>
-              <p className={`mt-5 ${BODY} max-w-[560px]`} style={muted}>{rich(t.hero.lead)}</p>
-              <div className="mt-9 flex flex-col sm:flex-row gap-3">
-                <a href="#buyurtma" className={pillDark} style={{ background: ORANGE }}>
-                  {t.hero.cta1} <span aria-hidden>↗</span>
-                </a>
-                <a href="https://t.me/ummeduz" target="_blank" rel="noopener noreferrer" className={pillLight}
-                  style={{ ...text, border: LINE }}>
-                  {t.hero.cta2} <span aria-hidden>↗</span>
-                </a>
+          {/* ── Hero: katta kulrang katak, ulkan sarlavha + "suzib turgan" mahsulot ── */}
+          <section className="relative rounded-[32px] overflow-hidden" style={TILE}>
+            <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[640px]">
+              <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:pr-0 flex flex-col justify-center">
+                <span className="section-label">{t.hero.kicker}</span>
+                <h1 className="mt-6 sm:mt-8 tracking-tight">
+                  <span className="block text-[46px] sm:text-7xl lg:text-[84px] xl:text-[100px] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>{t.hero.brand}</span>
+                  <span className="block text-[23px] sm:text-[32px] xl:text-[36px] font-medium leading-[1.15] mt-4" style={muted}>{t.hero.title}</span>
+                </h1>
+                <p className="mt-7 text-[21px] sm:text-[25px] leading-snug tracking-tight max-w-[560px]" style={text}>
+                  {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
+                </p>
+                <p className={`mt-4 ${BODY} max-w-[520px]`} style={muted}>{rich(t.hero.lead)}</p>
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                  <a href="#buyurtma" className={`${pill} text-white`} style={{ background: ORANGE }}>{t.hero.cta1}</a>
+                  <a href="https://t.me/ummeduz" target="_blank" rel="noopener noreferrer" className={pill} style={{ background: "var(--bg)", ...text }}>{t.hero.cta2}</a>
+                </div>
               </div>
-              <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2">
-                {t.hero.chips.map((c) => (
-                  <span key={c} className="text-[15px] font-semibold" style={text}>
-                    <span className="mr-2" style={{ color: ORANGE }}>●</span>{c}
-                  </span>
-                ))}
+              <div className="relative h-[340px] sm:h-[460px] lg:h-auto">
+                <span className="hidden sm:block absolute left-[8%] bottom-[16%] w-12 h-12 sm:w-16 sm:h-16 rounded-full z-20 shadow-[inset_-6px_-8px_14px_rgba(0,0,0,0.25)]" style={{ background: ORANGE }} />
+                <div className="absolute right-[4%] top-[10%] w-[36%] aspect-square rotate-[14deg] opacity-95">
+                  <Image src={IMG["5"]} alt="Easy Drip Plus 31G × 5 mm" fill sizes="25vw" className="object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.18)]" />
+                </div>
+                <div className="absolute left-[2%] right-[2%] top-[18%] bottom-[2%] -rotate-[8deg]">
+                  <Image src={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar, 100 dona" fill priority
+                    sizes="(max-width: 1024px) 95vw, 50vw" className="object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.22)]" />
+                </div>
+                <p className="absolute right-6 sm:right-10 bottom-5 sm:bottom-8 flex items-center gap-3 text-[15px] font-medium" style={muted}>
+                  <span className="w-10 h-px" style={{ background: "currentColor" }} />32G × 4 mm · 100
+                </p>
               </div>
             </div>
-            <Photo src={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar, 100 dona"
-              priority className="aspect-square w-full max-w-[620px] mx-auto" />
           </section>
 
-          {/* ── 01 Mahsulot ── */}
-          <Row id="mahsulot" label={t.about.label} title={t.about.title} img={IMG["6"]} alt="Easy Drip Plus 31G × 6 mm qadog'i">
-            <div className="space-y-5">
-              {t.about.body.map((p) => (
-                <p key={p} className={BODY} style={muted}>{rich(p)}</p>
+          {/* ── O'lchamlar: bento (1 ta rangli katta + 3 ta kulrang) ── */}
+          <section id="olchamlar" className="scroll-mt-24 pt-16 sm:pt-24">
+            <Heading title={t.sizes.title} />
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 gap-3 lg:h-[680px]">
+              <SizeTile row={s4} accent className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
+              <SizeTile row={s5} className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
+              <SizeTile row={s6} className="min-h-[360px] lg:min-h-0" />
+              <Tile className="flex flex-col justify-between gap-6">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{t.hero.chips[3]}</p>
+                  <Arrow label={t.hero.cta1} />
+                </div>
+                <p className={BODY} style={muted}>{t.sizes.note} {t.sizes.pack}</p>
+              </Tile>
+            </div>
+          </section>
+
+          {/* ── Xususiyatlar: 4 ta kartochka ── */}
+          <section id="yechim" className="scroll-mt-24 pt-16 sm:pt-24">
+            <Heading title={t.features.title} />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {t.features.items.map(([title, body], i) => (
+                <Tile key={title} className="flex flex-col">
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className={H3} style={text}>{title}</h3>
+                    <span className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                      style={i === 0 ? { background: ORANGE, color: "#fff" } : { background: "var(--bg)", ...text }}>{i + 1}</span>
+                  </div>
+                  <p className={`mt-4 ${BODY}`} style={muted}>{rich(body)}</p>
+                </Tile>
               ))}
             </div>
-            <dl className="mt-10 grid sm:grid-cols-3 gap-6 pt-7" style={{ borderTop: LINE }}>
-              {t.about.facts.map(([k, v]) => (
-                <div key={k}>
-                  <dt className="text-xs font-bold uppercase tracking-[0.16em]" style={muted}>{k}</dt>
-                  <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </Row>
+          </section>
 
-          {/* ── 02 Muammo va yechim ── */}
-          <Row id="muammo" label={t.problem.label} title={t.problem.title} img={IMG["5"]} alt="Easy Drip Plus 31G × 5 mm qadog'i" reverse>
-            <ul className="space-y-8">
-              {t.problem.items.map(([title, prob, sol]) => (
-                <li key={title} className="pt-7 first:pt-0 first:!border-t-0" style={{ borderTop: LINE }}>
-                  <h3 className={H3} style={text}>{title}</h3>
-                  <p className={`mt-3 ${BODY}`} style={muted}>
+          {/* ── Mahsulot haqida: matn + surat ── */}
+          <section id="mahsulot" className="scroll-mt-24 pt-16 sm:pt-24">
+            <div className="grid lg:grid-cols-[1.2fr_1fr] gap-3">
+              <Tile className="sm:!p-10 lg:!p-14">
+                <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight" style={text}>{t.about.title}</h2>
+                <div className="mt-6 space-y-5">
+                  {t.about.body.map((p) => <p key={p} className={BODY} style={muted}>{rich(p)}</p>)}
+                </div>
+                <dl className="mt-8 grid sm:grid-cols-3 gap-3">
+                  {t.about.facts.map(([k, v]) => (
+                    <div key={k} className="rounded-2xl p-4" style={{ backgroundColor: "var(--bg)" }}>
+                      <dt className="text-xs font-bold uppercase tracking-[0.14em]" style={muted}>{k}</dt>
+                      <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Tile>
+              <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
+                <div className="absolute inset-6 sm:inset-10 rotate-[6deg]">
+                  <Image src={IMG["6"]} alt="Easy Drip Plus 31G × 6 mm qadog'i" fill sizes="(max-width: 1024px) 90vw, 40vw" className="object-contain drop-shadow-[0_24px_34px_rgba(0,0,0,0.2)]" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Muammo va yechim: 2×2 ── */}
+          <section id="muammo" className="scroll-mt-24 pt-16 sm:pt-24">
+            <Heading title={t.problem.title} />
+            <div className="grid md:grid-cols-2 gap-3">
+              {t.problem.items.map(([title, prob, sol], i) => (
+                <Tile key={title}>
+                  <span className="text-sm font-bold tabular-nums" style={{ color: ORANGE }}>{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className={`${H3} mt-2`} style={text}>{title}</h3>
+                  <p className={`mt-4 ${BODY}`} style={muted}>
                     <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: ORANGE }}>{t.problem.colProblem}</span>
                     {rich(prob)}
                   </p>
-                  <p className={`mt-3 ${BODY}`} style={text}>
+                  <div className="mt-4 rounded-2xl p-4 sm:p-5" style={{ backgroundColor: "var(--bg)" }}>
                     <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: GREEN }}>{t.problem.colSolution}</span>
-                    {rich(sol)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </Row>
-
-          {/* ── 03 Xususiyatlar ── */}
-          <Row id="yechim" label={t.features.label} title={t.features.title} img={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm, Hextra Tech asosi">
-            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-9">
-              {t.features.items.map(([title, body], i) => (
-                <div key={title}>
-                  <span className="w-10 h-10 rounded-full flex items-center justify-center text-base font-semibold"
-                    style={i === 0 ? { background: ORANGE, color: "#fff" } : { border: LINE, ...text }}>
-                    {i + 1}
-                  </span>
-                  <h3 className={`${H3} mt-4 mb-2`} style={text}>{title}</h3>
-                  <p className={BODY} style={muted}>{rich(body)}</p>
-                </div>
+                    <p className={BODY} style={text}>{rich(sol)}</p>
+                  </div>
+                </Tile>
               ))}
             </div>
-          </Row>
-
-          {/* ── 04 O'lchamlar: rasm + ma'lumot, ramkasiz ── */}
-          <section id="olchamlar" className="scroll-mt-24">
-            <Heading label={t.sizes.label} title={t.sizes.title} />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14">
-              {t.sizes.rows.map(([g, len, who, sku], i) => (
-                <div key={sku} className="flex flex-col">
-                  <div className="relative">
-                    <Photo src={SKU_IMG[sku] || IMG["4"]} alt={`Easy Drip Plus ${g} × ${len}`} className="aspect-square"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
-                    {i === 0 && (
-                      <span className="absolute top-3 right-3 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full text-white" style={{ backgroundColor: ORANGE }}>TOP</span>
-                    )}
-                  </div>
-                  <div className="mt-4 pt-5 flex-1 flex flex-col" style={{ borderTop: LINE }}>
-                    <div className="flex items-baseline justify-between gap-4">
-                      <p className="text-4xl font-semibold tracking-tight" style={text}>{len}</p>
-                      <p className="text-lg font-bold" style={{ color: ORANGE }}>{g}</p>
-                    </div>
-                    <p className={`${BODY} mt-3 flex-1`} style={muted}>{rich(who)}</p>
-                    <p className="text-[15px] mt-4" style={muted}>
-                      {t.sizes.sku}: <span className="font-semibold" style={text}>{sku}</span>
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="mt-10 text-base" style={muted}>{t.sizes.note} {t.sizes.pack}</p>
           </section>
 
-          {/* ── Nega EasyDrip: 3 ta sotuv argumenti ── */}
-          <section>
+          {/* ── Nega EasyDrip ── */}
+          <section className="pt-16 sm:pt-24">
             <Heading title={t.args.title} />
-            <Cols className="md:grid-cols-3">
+            <div className="grid md:grid-cols-3 gap-3">
               {t.args.items.map(([title, body, slogan], i) => (
-                <Col key={title} className="flex flex-col">
+                <Tile key={title} className="flex flex-col">
                   <span className="text-5xl font-light tracking-tight" style={{ color: i === 0 ? ORANGE : "var(--text)" }}>{String(i + 1).padStart(2, "0")}</span>
                   <h3 className={`${H3} mt-5 mb-3`} style={text}>{title}</h3>
                   <p className={`${BODY} flex-1`} style={muted}>{rich(body)}</p>
                   <p className="text-[17px] font-semibold mt-5" style={{ color: ORANGE }}>“{slogan}”</p>
-                </Col>
+                </Tile>
               ))}
-            </Cols>
+            </div>
           </section>
 
-          {/* ── 05 Bilish muhim: igna nimani qilmaydi ── */}
-          <section>
-            <Heading label={t.honest.label} title={t.honest.title} />
-            <div className="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16">
-              <div className="space-y-6">
+          {/* ── Bilish muhim ── */}
+          <section className="pt-16 sm:pt-24">
+            <Heading title={t.honest.title} />
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-3">
+              <Tile className="flex flex-col justify-between gap-6">
                 <p className="text-lg sm:text-xl leading-[1.6]" style={text}>{t.honest.lead}</p>
                 <p className="text-[15px] leading-relaxed" style={muted}>{t.honest.note}</p>
-              </div>
-              <div>
-                {t.honest.items.map(([title, body]) => (
-                  <div key={title} className="py-6 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 sm:gap-8 items-baseline"
-                    style={{ borderTop: LINE }}>
+              </Tile>
+              <Tile className="!py-3">
+                {t.honest.items.map(([title, body], i) => (
+                  <div key={title} className="py-5 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 sm:gap-8 items-baseline"
+                    style={i ? { borderTop: "1px solid var(--border-strong, #e5e5e5)" } : undefined}>
                     <h3 className="text-lg font-semibold flex items-baseline gap-3" style={text}>
                       <span className="flex-shrink-0" style={{ color: ORANGE }}>✕</span>{title}
                     </h3>
                     <p className={`${BODY} pl-7 sm:pl-0`} style={muted}>{rich(body)}</p>
                   </div>
                 ))}
-              </div>
+              </Tile>
             </div>
           </section>
 
           {/* ── Kim uchun ── */}
-          <section>
+          <section className="pt-16 sm:pt-24">
             <Heading title={t.audience.title} />
-            <Cols className="md:grid-cols-3">
+            <div className="grid md:grid-cols-3 gap-3">
               {t.audience.items.map(([title, body]) => (
-                <Col key={title}>
+                <Tile key={title}>
                   <h3 className={H3} style={text}>{title}</h3>
                   <p className={`mt-3 ${BODY}`} style={muted}>{rich(body)}</p>
-                </Col>
+                </Tile>
               ))}
-            </Cols>
-          </section>
-
-          {/* ── 06 Sertifikatlar ── */}
-          <section>
-            <Heading label={t.certs.label} title={t.certs.title} />
-            <div className="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16">
-              <div className="flex flex-col gap-8">
-                <p className={BODY} style={muted}>{t.certs.lead}</p>
-                <Image src="/partners/sandstone.png" alt="Sandstone Medical" width={160} height={60} className="object-contain h-12 w-auto" style={{ width: "auto" }} />
-              </div>
-              <Cols className="grid-cols-2 sm:grid-cols-3 !gap-y-8">
-                {CERTS.map(([name, sub]) => (
-                  <Col key={name}>
-                    <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{name}</p>
-                    <p className="text-[15px] mt-1" style={muted}>{sub}</p>
-                  </Col>
-                ))}
-              </Cols>
             </div>
           </section>
 
-          {/* ── 07 Fikrlar ── */}
-          <section>
-            <Heading label={t.reviews.label} title={t.reviews.title} />
-            <Cols className="md:grid-cols-3">
+          {/* ── Qo'llash: 4 qadam ── */}
+          <section className="pt-16 sm:pt-24">
+            <Heading title={t.steps.title} />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {t.steps.items.map(([title, body], i) => (
+                <Tile key={title}>
+                  <span className="text-5xl font-light tracking-tight" style={{ color: i === 3 ? GREEN : "var(--text)" }}>{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className={`${H3} mt-5 mb-2`} style={text}>{title}</h3>
+                  <p className={BODY} style={muted}>{rich(body)}</p>
+                </Tile>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Sertifikatlar ── */}
+          <section className="pt-16 sm:pt-24">
+            <Heading title={t.certs.title} />
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-3">
+              <Tile className="flex flex-col justify-between gap-8">
+                <p className={BODY} style={muted}>{t.certs.lead}</p>
+                <Image src="/partners/sandstone.png" alt="Sandstone Medical" width={160} height={60} className="object-contain h-12 w-auto" style={{ width: "auto" }} />
+              </Tile>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {CERTS.map(([name, sub]) => (
+                  <Tile key={name}>
+                    <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{name}</p>
+                    <p className="text-[15px] mt-1" style={muted}>{sub}</p>
+                  </Tile>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── Fikrlar ── */}
+          <section className="pt-16 sm:pt-24">
+            <Heading title={t.reviews.title} />
+            <div className="grid md:grid-cols-3 gap-3">
               {(REVIEWS.length ? REVIEWS : [null, null, null]).map((r, i) => (
-                <Col key={i} className="flex flex-col">
+                <Tile key={i} className="flex flex-col min-h-[200px]">
                   <span className="text-5xl font-medium leading-none" style={{ color: ORANGE }}>“</span>
                   <blockquote className={`${BODY} mt-3 flex-1`} style={r ? text : muted}>
                     {r ? (r.matn[lang] || r.matn.uz) : t.reviews.placeholder}
@@ -328,75 +343,69 @@ export default function EasyDripLanding() {
                       <span className="block text-sm" style={muted}>{r.rol}</span>
                     </figcaption>
                   )}
-                </Col>
+                </Tile>
               ))}
-            </Cols>
+            </div>
           </section>
 
-          {/* ── Qo'llash: 4 qadam ── */}
-          <section>
-            <Heading title={t.steps.title} />
-            <Cols className="sm:grid-cols-2 lg:grid-cols-4">
-              {t.steps.items.map(([title, body], i) => (
-                <Col key={title}>
-                  <span className="text-5xl font-light tracking-tight" style={{ color: i === 3 ? GREEN : "var(--text)" }}>{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className={`${H3} mt-5 mb-2`} style={text}>{title}</h3>
-                  <p className={BODY} style={muted}>{rich(body)}</p>
-                </Col>
-              ))}
-            </Cols>
-          </section>
-
-          {/* ── 08 FAQ ── */}
-          <section id="savollar" className="scroll-mt-24 grid lg:grid-cols-[1fr_1.8fr] gap-4 lg:gap-16">
-            <Heading label={t.faq.label} title={t.faq.title} />
-            <div style={{ borderBottom: LINE }}>
+          {/* ── FAQ ── */}
+          <section id="savollar" className="scroll-mt-24 pt-16 sm:pt-24">
+            <Heading title={t.faq.title} />
+            <div className="grid lg:grid-cols-2 gap-3 items-start">
               {faq.map(([q, a], i) => (
-                <div key={q} style={{ borderTop: LINE }}>
+                <div key={q} className="rounded-[24px]" style={TILE}>
                   <button type="button" onClick={() => setOpen(open === i ? -1 : i)}
-                    className="w-full flex items-center justify-between gap-6 py-6 text-left">
-                    <span className="text-lg sm:text-xl font-semibold tracking-tight" style={text}>{q}</span>
-                    <span className="text-3xl leading-none flex-shrink-0 transition-transform" style={{ color: ORANGE, transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
+                    className="w-full flex items-center justify-between gap-5 px-6 sm:px-7 py-5 sm:py-6 text-left">
+                    <span className="text-lg font-semibold tracking-tight" style={text}>{q}</span>
+                    <span className="w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none flex-shrink-0 transition-transform"
+                      style={{ background: "var(--bg)", color: ORANGE, transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
                   </button>
-                  {open === i && <p className={`pb-7 -mt-1 ${BODY}`} style={muted}>{rich(a)}</p>}
+                  {open === i && <p className={`px-6 sm:px-7 pb-7 -mt-1 ${BODY}`} style={muted}>{rich(a)}</p>}
                 </div>
               ))}
             </div>
           </section>
 
-          {/* ── Buyurtma ── */}
-          <section id="buyurtma" className="scroll-mt-24">
-            <Heading label={t.order.label} title={t.order.title} />
-            <div className="grid lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20">
-              <form onSubmit={submit} className="space-y-4">
-                <input required value={form.ism} onChange={(e) => setForm({ ...form, ism: e.target.value })}
-                  placeholder={t.order.name} className={inputCls} style={inputStyle} />
-                <input required type="tel" value={form.telefon} onChange={(e) => setForm({ ...form, telefon: e.target.value })}
-                  placeholder={t.order.phone} className={inputCls} style={inputStyle} />
-                <textarea rows={4} value={form.xabar} onChange={(e) => setForm({ ...form, xabar: e.target.value })}
-                  placeholder={t.order.org} className={inputCls} style={inputStyle} />
-                <button type="submit" disabled={status === "sending"}
-                  className={`${pillDark} w-full sm:w-auto disabled:opacity-60`} style={{ background: ORANGE }}>
-                  {status === "sending" ? t.order.sending : t.order.submit} <span aria-hidden>↗</span>
-                </button>
-                {status === "ok" && <p className="text-base" style={{ color: GREEN }}>{t.order.ok}</p>}
-                {status === "err" && <p className="text-base" style={{ color: ORANGE }}>{t.order.err}</p>}
-              </form>
-              <div className="flex flex-col justify-between gap-10">
-                <div>
+          {/* ── Buyurtma: pastki banner (sarlavha + afzalliklar + forma) ── */}
+          <section id="buyurtma" className="scroll-mt-24 pt-16 sm:pt-24">
+            <div className="rounded-[32px] p-6 sm:p-10 lg:p-14" style={TILE}>
+              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                <h2 className="text-[30px] sm:text-5xl font-semibold leading-[1.08] tracking-tight max-w-[640px]" style={text}>{t.order.title}</h2>
+                <a href="tel:+998775504040" className={`${pill} text-white self-start`} style={{ background: ORANGE }}>+998 77 550-40-40</a>
+              </div>
+              <div className="mt-8 grid sm:grid-cols-3 gap-5">
+                {t.order.perks.map((p, i) => (
+                  <div key={p} className="flex items-center gap-4">
+                    <span className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "var(--bg)", color: ORANGE }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[i % 3]}</svg>
+                    </span>
+                    <span className="text-[17px] font-semibold leading-snug" style={text}>{p}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-10 grid lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-14">
+                <form onSubmit={submit} className="space-y-3">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <input required value={form.ism} onChange={(e) => setForm({ ...form, ism: e.target.value })}
+                      placeholder={t.order.name} className={inputCls} style={inputStyle} />
+                    <input required type="tel" value={form.telefon} onChange={(e) => setForm({ ...form, telefon: e.target.value })}
+                      placeholder={t.order.phone} className={inputCls} style={inputStyle} />
+                  </div>
+                  <textarea rows={3} value={form.xabar} onChange={(e) => setForm({ ...form, xabar: e.target.value })}
+                    placeholder={t.order.org} className={inputCls} style={inputStyle} />
+                  <button type="submit" disabled={status === "sending"}
+                    className={`${pill} text-white w-full sm:w-auto disabled:opacity-60`} style={{ background: ORANGE }}>
+                    {status === "sending" ? t.order.sending : t.order.submit}
+                  </button>
+                  {status === "ok" && <p className="text-base" style={{ color: GREEN }}>{t.order.ok}</p>}
+                  {status === "err" && <p className="text-base" style={{ color: ORANGE }}>{t.order.err}</p>}
+                </form>
+                <div className="flex flex-col justify-between gap-6">
                   <p className={BODY} style={muted}>{rich(t.order.lead)}</p>
-                  <ul className="mt-7 space-y-4">
-                    {t.order.perks.map((p) => (
-                      <li key={p} className="flex items-center gap-3 text-[17px] font-semibold" style={text}>
-                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0" style={{ backgroundColor: GREEN }}>✓</span>
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="pt-7" style={{ borderTop: LINE }}>
-                  <p className="text-sm font-bold uppercase tracking-widest" style={muted}>{t.order.call}</p>
-                  <a href="tel:+998775504040" className="block text-3xl sm:text-4xl font-semibold tracking-tight mt-2 hover:opacity-70" style={text}>+998 77 550-40-40</a>
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-widest" style={muted}>{t.order.call}</p>
+                    <a href="tel:+998775504040" className="block text-3xl sm:text-4xl font-semibold tracking-tight mt-2 hover:opacity-70" style={text}>+998 77 550-40-40</a>
+                  </div>
                 </div>
               </div>
             </div>
