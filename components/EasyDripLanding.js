@@ -117,9 +117,9 @@ export default function EasyDripLanding() {
             <div className="grid lg:grid-cols-[1.15fr_1fr]">
               <div className="p-6 sm:p-10 lg:p-14 flex flex-col justify-center">
                 <span className="section-label">{t.hero.kicker}</span>
-                <h1 className="text-[32px] sm:text-5xl lg:text-[64px] font-medium leading-[1.02] tracking-tight mt-5 sm:mt-8" style={text}>
-                  {t.hero.title[0]}<br />
-                  <span style={{ color: ORANGE }}>{t.hero.title[1]}</span>
+                <h1 className="text-[28px] sm:text-[40px] lg:text-[50px] font-medium leading-[1.08] tracking-tight mt-5 sm:mt-8" style={text}>
+                  {t.hero.title[0]}
+                  <span className="block mt-3 sm:mt-4 text-[0.6em] leading-[1.2]" style={{ color: ORANGE }}>{t.hero.title[1]}</span>
                 </h1>
                 <p className="mt-5 sm:mt-7 text-base sm:text-lg font-light leading-relaxed max-w-[540px]" style={muted}>{t.hero.lead}</p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">

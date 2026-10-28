@@ -69,8 +69,8 @@ export const TXT = {
   uz: {
     hero: {
       kicker: "Rasmiy distribyutor · O'zbekiston",
-      title: ["Har kuni insulin.", "Har bir detal muhim."],
-      lead: "EasyDrip Plus — insulin yuborishdagi qulaylik, igna barqarorligi va foydalanish jarayoniga e'tibor bilan ishlab chiqilgan insulin ruchkasi ignalari.",
+      title: ["EasyDrip Plus — insulin shprits-ruchkalari uchun ignalar.", "Har kungi insulin ukolini xavfsizroq va osonroq qiling."],
+      lead: "Ingichka 32G igna, ignani barqaror ushlaydigan Hextra Tech asosi va ushlash oson kattaroq qopqoqlar — har kuni insulin oladigan inson uchun har bir detal o'ylangan.",
       cta1: "Ulgurji narxni so'rang",
       cta2: "Telegramda yozing",
       chips: ["32G × 4 mm", "31G × 5 mm", "31G × 6 mm", "100 dona / quti"],
@@ -196,8 +196,8 @@ export const TXT = {
   ru: {
     hero: {
       kicker: "Официальный дистрибьютор · Узбекистан",
-      title: ["Инсулин каждый день.", "Важна каждая деталь."],
-      lead: "EasyDrip Plus — иглы для инсулиновых шприц-ручек, разработанные с вниманием к удобству введения инсулина, стабильности иглы и самому процессу использования.",
+      title: ["EasyDrip Plus — иглы для инсулиновых шприц-ручек.", "Сделайте ежедневные инъекции инсулина безопаснее и проще."],
+      lead: "Тонкая игла 32G, основание Hextra Tech для стабильной фиксации иглы и увеличенные колпачки, которые легко держать, — для того, кто вводит инсулин каждый день, продумана каждая деталь.",
       cta1: "Узнать оптовую цену",
       cta2: "Написать в Telegram",
       chips: ["32G × 4 мм", "31G × 5 мм", "31G × 6 мм", "100 шт. / коробка"],
@@ -323,8 +323,8 @@ export const TXT = {
   en: {
     hero: {
       kicker: "Official distributor · Uzbekistan",
-      title: ["Insulin every day.", "Every detail matters."],
-      lead: "EasyDrip Plus — insulin pen needles designed with attention to injection comfort, needle stability and the way they are actually used.",
+      title: ["EasyDrip Plus — needles for insulin pens.", "Make your daily insulin injections safer and easier."],
+      lead: "A thin 32G needle, the Hextra Tech hub that holds the needle steady, and larger caps that are easy to grip — every detail is designed for people who inject insulin every day.",
       cta1: "Get wholesale price",
       cta2: "Message on Telegram",
       chips: ["32G × 4 mm", "31G × 5 mm", "31G × 6 mm", "100 pcs / box"],
