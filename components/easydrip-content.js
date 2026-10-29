@@ -88,10 +88,10 @@ export const TXT = {
     about: {
       label: "01 — Mahsulot",
 
-      title: "EasyDrip Plus aslida nima?",
+      title: "EasyDrip Plus **haqida**",
       body: [
-        "EasyDrip Plus — insulin yuborish uchun mo'ljallangan shprits-ruchkalarga o'rnatiladigan **bir martalik ignalar**. Ular insulin flakoni bilan ishlatiladigan **oddiy shpritslar emas**.",
-        "Ignaning vazifasi insulin miqdorini belgilash yoki qondagi glyukozani boshqarish emas. U insulinni shprits-ruchkadan teri ostiga yuborish jarayonini **qulayroq va ishonchliroq** bajarishga yordam beradi.",
+        "**EasyDrip Plus** — insulin shprits-ruchkalari uchun maxsus ishlab chiqilgan **steril, bir martalik ignalar**. Uning o‘ziga xos **Hextra Tech** keng, olti qirrali asosi insulin yuborish vaqtida ignani barqaror ushlashga yordam beradi va egilish yoki sinish xavfini kamaytirishga mo‘ljallangan.",
+        "**Kattalashtirilgan ichki va tashqi qopqoqlar** ignani ushlashni osonlashtiradi. **4, 5, 6 va 8 mm** uzunlikdagi variantlar esa insulin ruchkasidan foydalanishda mos igna o‘lchamini tanlash imkonini beradi.",
       ],
       facts: [
         ["Ishlab chiqaruvchi", "Sandstone Medical (Suzhou), Xitoy"],
@@ -232,10 +232,10 @@ export const TXT = {
     },
     about: {
       label: "01 — Продукт",
-      title: "Что такое EasyDrip Plus на самом деле?",
+      title: "О EasyDrip Plus **подробнее**",
       body: [
-        "EasyDrip Plus — **одноразовые иглы**, которые устанавливаются на шприц-ручки для введения инсулина. **Это не обычные шприцы**, которыми набирают инсулин из флакона.",
-        "Игла не определяет дозу инсулина и не управляет уровнем глюкозы в крови. Её задача — сделать введение инсулина из шприц-ручки под кожу **удобнее и надёжнее.**",
+        "**EasyDrip Plus** — **стерильные одноразовые иглы**, специально разработанные для инсулиновых шприц-ручек. Их особое широкое шестигранное основание **Hextra Tech** помогает стабильно удерживать иглу во время введения инсулина и призвано снизить риск изгиба или поломки.",
+        "**Увеличенные внутренний и внешний колпачки** облегчают обращение с иглой. Варианты длиной **4, 5, 6 и 8 мм** позволяют подобрать подходящий размер иглы для вашей шприц-ручки.",
       ],
       facts: [
         ["Производитель", "Sandstone Medical (Сучжоу), Китай"],
@@ -376,10 +376,10 @@ export const TXT = {
     },
     about: {
       label: "01 — The product",
-      title: "What exactly is EasyDrip Plus?",
+      title: "About **EasyDrip Plus**",
       body: [
-        "EasyDrip Plus are **single-use needles** that attach to insulin pens. They are **not ordinary syringes** used with an insulin vial.",
-        "The needle does not set the insulin dose or control blood glucose. Its job is to make delivering insulin from the pen under the skin **more comfortable and reliable.**",
+        "**EasyDrip Plus** are **sterile, single-use needles** designed specifically for insulin pens. Their distinctive wide, hexagonal **Hextra Tech** hub helps hold the needle steady during injection and is designed to reduce the risk of bending or breaking.",
+        "**Enlarged inner and outer caps** make the needle easier to handle, and **4, 5, 6 and 8 mm** lengths let you choose the right needle size for your insulin pen.",
       ],
       facts: [
         ["Manufacturer", "Sandstone Medical (Suzhou), China"],

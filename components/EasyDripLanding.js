@@ -157,6 +157,29 @@ export default function EasyDripLanding() {
             </div>
           </section>
 
+          {/* ── Mahsulot haqida: matn + surat ── */}
+          <section id="mahsulot" className="scroll-mt-24 pt-16 sm:pt-24">
+            <div className="grid lg:grid-cols-[1.2fr_1fr] gap-3">
+              <Tile className="sm:!p-10 lg:!p-14">
+                <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight" style={text}>{rich(t.about.title, { color: ORANGE })}</h2>
+                <div className="mt-6 space-y-5">
+                  {t.about.body.map((p) => <p key={p} className={BODY} style={muted}>{rich(p)}</p>)}
+                </div>
+                <dl className="mt-8 grid sm:grid-cols-3 gap-3">
+                  {t.about.facts.map(([k, v]) => (
+                    <div key={k} className="rounded-2xl p-4" style={{ backgroundColor: "var(--bg)" }}>
+                      <dt className="text-xs font-bold uppercase tracking-[0.14em]" style={muted}>{k}</dt>
+                      <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Tile>
+              <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
+                <Image src={PH("pen-attach-v2")} alt="EasyDrip Plus ignasini insulin shprits-ruchkasiga burab o'rnatish" fill sizes="(max-width: 1024px) 95vw, 45vw" className="object-cover" />
+              </div>
+            </div>
+          </section>
+
           {/* ── Ishonch: 4 ta raqamli kartochka ── */}
           <section className="pt-16 sm:pt-24">
             <Heading title={t.trust.title} className="!mb-4" />
@@ -213,29 +236,6 @@ export default function EasyDripLanding() {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
-
-          {/* ── Mahsulot haqida: matn + surat ── */}
-          <section id="mahsulot" className="scroll-mt-24 pt-16 sm:pt-24">
-            <div className="grid lg:grid-cols-[1.2fr_1fr] gap-3">
-              <Tile className="sm:!p-10 lg:!p-14">
-                <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight" style={text}>{t.about.title}</h2>
-                <div className="mt-6 space-y-5">
-                  {t.about.body.map((p) => <p key={p} className={BODY} style={muted}>{rich(p)}</p>)}
-                </div>
-                <dl className="mt-8 grid sm:grid-cols-3 gap-3">
-                  {t.about.facts.map(([k, v]) => (
-                    <div key={k} className="rounded-2xl p-4" style={{ backgroundColor: "var(--bg)" }}>
-                      <dt className="text-xs font-bold uppercase tracking-[0.14em]" style={muted}>{k}</dt>
-                      <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </Tile>
-              <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
-                <Image src={PH("pen-attach-v2")} alt="EasyDrip Plus ignasini insulin shprits-ruchkasiga burab o'rnatish" fill sizes="(max-width: 1024px) 95vw, 45vw" className="object-cover" />
-              </div>
             </div>
           </section>
 
