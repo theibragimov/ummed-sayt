@@ -21,7 +21,7 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
 const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
-const HERO_IMG = "hero-inject-v2";
+const HERO_IMG = "hero-inject-v3";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 const SIZE_IMG = { "02-3204": PH("size-4w"), "02-3105": PH("size-5w"), "02-3106": PH("size-6w"), "02-3108": PH("size-8w") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
