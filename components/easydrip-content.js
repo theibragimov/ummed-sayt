@@ -105,7 +105,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Muammo va yechim",
-      title: "Har kungi ukoldagi **4 ta muammo** — va EasyDrip **yechimi**.",
+      title: "Insulin yuborishdagi **asosiy muammolar** va EasyDrip Plus **yechimlari**",
       colProblem: "Muammo",
       colSolution: "EasyDrip yechimi",
       depth: {
@@ -254,7 +254,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Проблема и решение",
-      title: "**4 проблемы** ежедневных уколов — и **решение** EasyDrip.",
+      title: "**Основные проблемы** при введении инсулина и **решения** EasyDrip Plus",
       colProblem: "Проблема",
       colSolution: "Решение EasyDrip",
       depth: {
@@ -403,7 +403,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Problem & solution",
-      title: "**4 problems** of daily injections — and the EasyDrip **solution**.",
+      title: "**Common problems** with insulin injections and EasyDrip Plus **solutions**",
       colProblem: "Problem",
       colSolution: "EasyDrip solution",
       depth: {
