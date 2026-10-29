@@ -128,20 +128,17 @@ export default function EasyDripLanding() {
             <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[640px]">
               <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:pr-0 flex flex-col justify-center">
                 <span className="section-label">{t.hero.kicker}</span>
-                <h1 className="mt-6 sm:mt-8 tracking-tight">
-                  <span className="block whitespace-nowrap text-[min(10vw,84px)] lg:text-[min(5.2vw,78px)] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>
-                    {t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span>
-                  </span>
-                  <span className="block text-[23px] sm:text-[32px] xl:text-[36px] font-medium leading-[1.15] mt-4" style={muted}>{t.hero.title}</span>
+                <h1 className="mt-6 sm:mt-8 text-[min(9vw,40px)] sm:text-[50px] lg:text-[min(3.7vw,56px)] font-semibold leading-[1.05] tracking-[-0.03em] max-w-[640px]" style={text}>
+                  {rich(t.hero.sub, { color: ORANGE })}
                 </h1>
-                <p className="mt-6 text-[21px] sm:text-[25px] leading-snug tracking-tight max-w-[560px]" style={text}>
-                  {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
+                <p className="mt-5 text-[20px] sm:text-[24px] leading-snug tracking-tight max-w-[600px]" style={muted}>
+                  <strong className="font-bold" style={text}>{t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span></strong> {t.hero.title}
                 </p>
-                {/* Belgili afzalliklar (ref: "без боли · гарантия") */}
-                <ul className="mt-6 flex flex-wrap gap-2 max-w-[560px]">
+                {/* Asosiy afzalliklar: ramkali, ko'zga tashlanadigan kataklar */}
+                <ul className="mt-7 grid grid-cols-2 gap-2.5 sm:gap-3 max-w-[600px]">
                   {t.hero.checks.map((c) => (
-                    <li key={c} className="inline-flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5 text-[15px] font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>
-                      <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs" style={{ background: ORANGE }}>✓</span>{c}
+                    <li key={c} className="flex items-center gap-2.5 sm:gap-3 rounded-2xl px-3 sm:px-4 py-3 sm:py-3.5 text-[15px] sm:text-[18px] font-bold leading-tight" style={{ backgroundColor: "var(--bg)", border: `2px solid ${ORANGE}`, ...text }}>
+                      <span className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white text-sm" style={{ background: ORANGE }}>✓</span>{c}
                     </li>
                   ))}
                 </ul>
