@@ -6,7 +6,7 @@ const URL_PATH = "/easydripplus";
 
 const TITLE = "EasyDrip Plus — insulin shprits-ruchka ignalari (pen needles) | Ummed";
 const DESCRIPTION =
-  "EasyDrip Plus insulin shprits-ruchkalari uchun ignalar: 32G 4 mm, 31G 5 mm, 31G 6 mm. Hextra Tech asosi, kattaroq qopqoqlar, ISO 13485, CE, FDA. O'zbekistonda rasmiy distribyutor — Ummed. Ulgurji narx dorixonalar uchun.";
+  "EasyDrip Plus insulin shprits-ruchkalari uchun ignalar: 32G 4 mm, 31G 5 mm, 31G 6 mm, 31G 8 mm. Hextra Tech asosi, kattaroq qopqoqlar, ISO 13485, CE, FDA. O'zbekistonda rasmiy distribyutor — Ummed. Ulgurji narx dorixonalar uchun.";
 
 export const metadata = {
   metadataBase: new URL(SITE),
@@ -28,7 +28,7 @@ export const metadata = {
     alternateLocale: ["ru_RU", "en_US"],
     title: "EasyDrip Plus — har kuni insulin. Har bir detal muhim.",
     description: DESCRIPTION,
-    images: [{ url: "/logo-full.png" }],
+    images: [{ url: "/images/easydrip/photo/hero.jpg" }],
   },
   robots: { index: true, follow: true },
 };
@@ -42,7 +42,7 @@ const jsonLd = {
       alternateName: ["Easy Drip", "Иглы для шприц-ручек EasyDrip Plus"],
       description: DESCRIPTION,
       url: SITE + URL_PATH,
-      image: SITE + "/logo-full.png",
+      image: SITE + "/images/easydrip/photo/hero.jpg",
       brand: { "@type": "Brand", name: "EasyDrip" },
       manufacturer: { "@type": "Organization", name: "Suzhou Sandstone Medical Devices Co., Ltd." },
       category: "Insulin pen needles",

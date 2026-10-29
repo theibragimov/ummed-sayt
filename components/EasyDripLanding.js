@@ -13,8 +13,14 @@ const IMG = {
   "4": "/images/easydrip/easydrip-plus-4mm-cut.png",
   "5": "/images/easydrip/easydrip-plus-5mm-cut.png",
   "6": "/images/easydrip/easydrip-plus-6mm-cut.png",
+  "8": "/images/easydrip/easydrip-plus-8mm-cut.png",
 };
-const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"] };
+const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"], "02-3108": IMG["8"] };
+
+// Mavzuga mos real suratlar (Nano Banana, asl qadoq va igna suratlari asosida)
+const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
+// Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
+const FEATURE_IMG = ["needle-macro", "hub", "skin-contact", "caps-hands"];
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
 // Bo'sh bo'lsa — 3 ta bo'sh joy ko'rinadi.
@@ -98,7 +104,7 @@ export default function EasyDripLanding() {
   const inputStyle = { backgroundColor: "var(--bg)", color: "var(--text)" };
   const pill = "inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-base font-semibold transition-all hover:opacity-90 hover:scale-[1.03]";
   const nav = t.nav.items.map(([label, href]) => ({ label, href }));
-  const [s4, s5, s6] = t.sizes.rows;
+  const [s4, s5, s6, s8] = t.sizes.rows;
 
   // Bento katak: nom + strelka tepada, surat pastda
   const SizeTile = ({ row, className = "", accent = false, imgCls = "" }) => {
@@ -136,7 +142,7 @@ export default function EasyDripLanding() {
               <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:pr-0 flex flex-col justify-center">
                 <span className="section-label">{t.hero.kicker}</span>
                 <h1 className="mt-6 sm:mt-8 tracking-tight">
-                  <span className="block text-[46px] sm:text-7xl lg:text-[84px] xl:text-[100px] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>{t.hero.brand}</span>
+                  <span className="block whitespace-nowrap text-[min(10vw,84px)] lg:text-[min(5.2vw,78px)] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>{t.hero.brand}</span>
                   <span className="block text-[23px] sm:text-[32px] xl:text-[36px] font-medium leading-[1.15] mt-4" style={muted}>{t.hero.title}</span>
                 </h1>
                 <p className="mt-7 text-[21px] sm:text-[25px] leading-snug tracking-tight max-w-[560px]" style={text}>
@@ -148,18 +154,10 @@ export default function EasyDripLanding() {
                   <a href="https://t.me/ummeduz" target="_blank" rel="noopener noreferrer" className={pill} style={{ background: "var(--bg)", ...text }}>{t.hero.cta2}</a>
                 </div>
               </div>
-              <div className="relative h-[340px] sm:h-[460px] lg:h-auto">
-                <span className="hidden sm:block absolute left-[8%] bottom-[16%] w-12 h-12 sm:w-16 sm:h-16 rounded-full z-20 shadow-[inset_-6px_-8px_14px_rgba(0,0,0,0.25)]" style={{ background: ORANGE }} />
-                <div className="absolute right-[4%] top-[10%] w-[36%] aspect-square rotate-[14deg] opacity-95">
-                  <Image src={IMG["5"]} alt="Easy Drip Plus 31G × 5 mm" fill sizes="25vw" className="object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.18)]" />
-                </div>
-                <div className="absolute left-[2%] right-[2%] top-[18%] bottom-[2%] -rotate-[8deg]">
-                  <Image src={IMG["4"]} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar, 100 dona" fill priority
-                    sizes="(max-width: 1024px) 95vw, 50vw" className="object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.22)]" />
-                </div>
-                <p className="absolute right-6 sm:right-10 bottom-5 sm:bottom-8 flex items-center gap-3 text-[15px] font-medium" style={muted}>
-                  <span className="w-10 h-px" style={{ background: "currentColor" }} />32G × 4 mm · 100
-                </p>
+              <div className="relative h-[420px] sm:h-[560px] lg:h-auto m-3 sm:m-4 lg:ml-0 rounded-[24px] overflow-hidden">
+                <Image src={PH("hero")} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar: qadoq, igna asosi va qopqoqlar" fill priority
+                  sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover" />
+                <span className="absolute left-5 bottom-5 rounded-full px-4 py-2 text-[15px] font-semibold text-white" style={{ background: ORANGE }}>32G × 4 mm · 100</span>
               </div>
             </div>
           </section>
@@ -171,6 +169,13 @@ export default function EasyDripLanding() {
               <SizeTile row={s4} accent className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
               <SizeTile row={s5} className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
               <SizeTile row={s6} className="min-h-[360px] lg:min-h-0" />
+              <SizeTile row={s8} className="min-h-[360px] lg:min-h-0" />
+            </div>
+            {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
+            <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
+              <div className="relative rounded-[28px] overflow-hidden aspect-[16/9]" style={TILE}>
+                <Image src={PH("sizes-lineup")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-cover" />
+              </div>
               <Tile className="flex flex-col justify-between gap-6">
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{t.hero.chips[3]}</p>
@@ -186,13 +191,18 @@ export default function EasyDripLanding() {
             <Heading title={t.features.title} />
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {t.features.items.map(([title, body], i) => (
-                <Tile key={title} className="flex flex-col">
+                <Tile key={title} className="flex flex-col !p-3 sm:!p-3">
+                  <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden mb-5" style={{ backgroundColor: "var(--bg)" }}>
+                    <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
+                  </div>
+                  <div className="px-3 pb-3 sm:px-4 sm:pb-4 flex-1 flex flex-col">
                   <div className="flex items-start justify-between gap-4">
                     <h3 className={H3} style={text}>{title}</h3>
                     <span className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
                       style={i === 0 ? { background: ORANGE, color: "#fff" } : { background: "var(--bg)", ...text }}>{i + 1}</span>
                   </div>
                   <p className={`mt-4 ${BODY}`} style={muted}>{rich(body)}</p>
+                  </div>
                 </Tile>
               ))}
             </div>
@@ -216,9 +226,7 @@ export default function EasyDripLanding() {
                 </dl>
               </Tile>
               <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
-                <div className="absolute inset-6 sm:inset-10 rotate-[6deg]">
-                  <Image src={IMG["6"]} alt="Easy Drip Plus 31G × 6 mm qadog'i" fill sizes="(max-width: 1024px) 90vw, 40vw" className="object-contain drop-shadow-[0_24px_34px_rgba(0,0,0,0.2)]" />
-                </div>
+                <Image src={PH("pen-attach")} alt="EasyDrip Plus ignasini insulin shprits-ruchkasiga burab o'rnatish" fill sizes="(max-width: 1024px) 95vw, 45vw" className="object-cover" />
               </div>
             </div>
           </section>
@@ -284,6 +292,9 @@ export default function EasyDripLanding() {
           {/* ── Kim uchun ── */}
           <section className="pt-16 sm:pt-24">
             <Heading title={t.audience.title} />
+            <div className="relative rounded-[28px] overflow-hidden aspect-[4/3] sm:aspect-[21/9] mb-3" style={TILE}>
+              <Image src={PH("pharmacy")} alt="Dorixona javonida EasyDrip Plus ignalari" fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
+            </div>
             <div className="grid md:grid-cols-3 gap-3">
               {t.audience.items.map(([title, body]) => (
                 <Tile key={title}>
@@ -304,6 +315,13 @@ export default function EasyDripLanding() {
                   <h3 className={`${H3} mt-5 mb-2`} style={text}>{title}</h3>
                   <p className={BODY} style={muted}>{rich(body)}</p>
                 </Tile>
+              ))}
+            </div>
+            <div className="mt-3 grid sm:grid-cols-2 gap-3">
+              {[["parts", "Igna asosi, ichki va tashqi qopqoq"], ["disposal", "Ishlatilgan ignani maxsus idishga tashlash"]].map(([n, alt]) => (
+                <div key={n} className="relative rounded-[28px] overflow-hidden aspect-[4/3]" style={TILE}>
+                  <Image src={PH(n)} alt={alt} fill sizes="(max-width: 640px) 95vw, 48vw" className="object-cover" />
+                </div>
               ))}
             </div>
           </section>
