@@ -20,12 +20,12 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 // Mavzuga mos real suratlar (Nano Banana, asl qadoq va igna suratlari asosida)
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
-const FEATURE_IMG = ["needle-macro", "hub-hextra", "skin-contact-v2", "caps-real"];
+const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-inject";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 const SIZE_IMG = { "02-3204": PH("size-4w"), "02-3105": PH("size-5w"), "02-3106": PH("size-6w"), "02-3108": PH("size-8w") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
-const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub-hextra"], ["depth-bad", "depth-good"], ["problem-caps", "caps-real"]];
+const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v2", "depth-good-v2"], ["problem-caps-v2", "caps-real"]];
 const RED = "#E5383B";
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
@@ -202,7 +202,7 @@ export default function EasyDripLanding() {
             {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
             <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
               <div className="relative rounded-[28px] overflow-hidden min-h-[200px] sm:min-h-[280px] bg-white">
-                <Image src={PH("sizes-lineup-white")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-4" />
+                <Image src={PH("sizes-lineup-spill")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-4" />
               </div>
               <Tile className="flex flex-col justify-between gap-6">
                 <div className="flex items-start justify-between gap-4">
@@ -249,7 +249,7 @@ export default function EasyDripLanding() {
                 </dl>
               </Tile>
               <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
-                <Image src={PH("pen-attach")} alt="EasyDrip Plus ignasini insulin shprits-ruchkasiga burab o'rnatish" fill sizes="(max-width: 1024px) 95vw, 45vw" className="object-cover" />
+                <Image src={PH("pen-attach-v2")} alt="EasyDrip Plus ignasini insulin shprits-ruchkasiga burab o'rnatish" fill sizes="(max-width: 1024px) 95vw, 45vw" className="object-cover" />
               </div>
             </div>
           </section>
@@ -288,7 +288,7 @@ export default function EasyDripLanding() {
             <Tile className="mt-3 !p-3">
               <h3 className={`${H3} px-3 pt-3 pb-5 sm:px-5 sm:pt-5`} style={text}>{t.problem.depth.title}</h3>
               <div className="relative rounded-[20px] overflow-hidden aspect-[16/9] sm:aspect-[21/9]" style={{ backgroundColor: "var(--bg)" }}>
-                <Image src={PH("depth-compare")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
+                <Image src={PH("depth-compare-v2")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
               </div>
               <div className="grid sm:grid-cols-2 gap-3 mt-3">
                 {[[t.problem.depth.left, ORANGE, "✕"], [t.problem.depth.right, GREEN, "✓"]].map(([s, c, mark]) => (
