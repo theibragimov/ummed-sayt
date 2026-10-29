@@ -24,9 +24,9 @@ const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-4k";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 // Oq studiya fonidagi, bir xil holatdagi qadoq suratlari
-const SIZE_IMG = { "02-3204": PH("size-4-studio"), "02-3105": PH("size-5-studio"), "02-3106": PH("size-6-studio"), "02-3108": PH("size-8-studio") };
+const SIZE_IMG = { "02-3204": PH("size-4-studio-v2"), "02-3105": PH("size-5-studio-v2"), "02-3106": PH("size-6-studio-v2"), "02-3108": PH("size-8-studio-v2") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
-const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v2", "depth-good-v2"], ["problem-caps-v2", "caps-real"]];
+const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v3", "depth-good-v3"], ["problem-caps-v2", "caps-real"]];
 const RED = "#E5383B";
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
@@ -140,16 +140,15 @@ export default function EasyDripLanding() {
       <SiteHeader nav={nav} cta={{ label: t.nav.cta, href: "#buyurtma" }} />
       <style>{`.ed-page{--ed-muted:#55555b;--ed-tile:#F1F2F5}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be;--ed-tile:#222225}`}</style>
       <main className="ed-page" style={{ backgroundColor: "var(--bg)" }}>
-        <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
-
           {/* ── Hero: to'liq rasm, asosiy obyekt o'ngda, chap tomon oq — matn shu yerda (rasm doim oq, shuning uchun ranglar qat'iy) ── */}
-          <section className="relative rounded-[32px] overflow-hidden bg-white lg:min-h-[640px] flex flex-col lg:block" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
+          <section className="relative overflow-hidden bg-white lg:h-[min(calc(100vh-80px),860px)] lg:min-h-[620px] flex flex-col lg:block">
             <div className="relative h-[280px] sm:h-[420px] lg:absolute lg:inset-0 lg:h-auto">
               <Image src={PH(HERO_IMG)} alt="Easy Drip Plus ignalari va insulin shprits-ruchkasi" fill priority
-                sizes="100vw" className="object-cover object-[72%_50%] lg:object-[60%_50%]" />
-              <span className="hidden lg:block absolute inset-0" style={{ background: "linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.92) 30%, rgba(255,255,255,0.55) 46%, rgba(255,255,255,0) 62%)" }} />
+                sizes="100vw" className="object-cover object-[72%_50%] lg:object-[100%_50%]" />
+              <span className="hidden lg:block absolute inset-0" style={{ background: "linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.95) 28%, rgba(255,255,255,0.6) 44%, rgba(255,255,255,0) 58%)" }} />
             </div>
-            <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:max-w-[640px] lg:min-h-[640px] flex flex-col justify-center">
+            <div className="relative z-10 max-w-[1320px] mx-auto w-full h-full px-5 sm:px-10 lg:px-12 py-8 sm:py-12 flex flex-col justify-center">
+              <div className="lg:max-w-[600px]">
               <h1 className="text-[32px] sm:text-[44px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em]" style={{ color: "#141414" }}>
                 {rich(t.hero.sub, { color: ORANGE })}
               </h1>
@@ -172,8 +171,11 @@ export default function EasyDripLanding() {
                 </a>
                 <a href="https://t.me/ummeduz" target="_blank" rel="noopener noreferrer" className={pill} style={{ background: "#fff", color: "#141414", boxShadow: "inset 0 0 0 1.5px rgba(0,0,0,0.12)" }}>{t.hero.cta2}</a>
               </div>
+              </div>
             </div>
           </section>
+
+        <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
 
           {/* ── Mahsulot haqida: matn + surat ── */}
           <section id="mahsulot" className="scroll-mt-24 pt-16 sm:pt-24">
@@ -275,7 +277,7 @@ export default function EasyDripLanding() {
 
           {/* ── Muammo (qizil ramka) → Yechim (yashil ramka), har biri suratli ── */}
           <section id="muammo" className="scroll-mt-24 pt-16 sm:pt-24">
-            <Heading title={t.problem.title} />
+            <Heading title={t.problem.title} className="lg:[&_h2]:max-w-none lg:[&_h2]:text-[34px] xl:[&_h2]:text-[36px]" />
             <div className="space-y-10 sm:space-y-12">
               {t.problem.items.map(([title, prob, sol], i) => (
                 <div key={title}>
@@ -307,7 +309,7 @@ export default function EasyDripLanding() {
             <Tile className="mt-3 !p-3">
               <h3 className={`${H3} px-3 pt-3 pb-5 sm:px-5 sm:pt-5`} style={text}>{t.problem.depth.title}</h3>
               <div className="relative rounded-[20px] overflow-hidden aspect-[16/9] sm:aspect-[21/9]" style={{ backgroundColor: "var(--bg)" }}>
-                <Image src={PH("depth-compare-v2")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
+                <Image src={PH("depth-compare-v3")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
               </div>
               <div className="grid sm:grid-cols-2 gap-3 mt-3">
                 {[[t.problem.depth.left, ORANGE, "✕"], [t.problem.depth.right, GREEN, "✓"]].map(([s, c, mark]) => (
