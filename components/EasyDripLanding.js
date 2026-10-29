@@ -245,11 +245,19 @@ export default function EasyDripLanding() {
           {/* ── Xususiyatlar: 4 ta kartochka ── */}
           <section id="yechim" className="scroll-mt-24 pt-16 sm:pt-24">
             <Heading title={t.features.title} />
-            {/* Suratli kartochkalar (ref: "Услуги" bo'limi): surat to'liq, matn ustida, burchakda strelka */}
+            {/* Suratli kartochkalar: sichqoncha ustida surat yaqinlashadi va kursor turgan joyni kattalashtiradi */}
             <div className="grid md:grid-cols-2 gap-3">
               {t.features.items.map(([title, body], i) => (
-                <div key={title} className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}>
-                  <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover" />
+                <div key={title} className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}
+                  onMouseMove={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+                    e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+                  }}>
+                  <div className="absolute inset-0 group-hover:scale-[1.6] motion-reduce:group-hover:scale-100"
+                    style={{ transformOrigin: "var(--mx, 50%) var(--my, 50%)", transition: "scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform-origin 0.3s ease-out" }}>
+                    <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover" />
+                  </div>
                   <span className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.78) 100%)" }} />
                   <h3 className="relative text-[24px] sm:text-[28px] font-semibold tracking-tight text-white max-w-[80%]">{title}</h3>
                   <div className="relative">

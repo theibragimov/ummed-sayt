@@ -131,12 +131,12 @@ export const TXT = {
     },
     features: {
       label: "03 — Xususiyatlar",
-      title: "Har bir xususiyat — xaridor uchun **amaliy foyda**.",
+      title: "Har bir detal — **kundalik foydalanish** uchun o‘ylangan.",
       items: [
-        ["32G × 4 mm igna", "Ingichka va qisqa igna: qulaylik hamda **mushak ichiga tasodifiy yuborish xavfini kamaytirish nuqtayi** nazaridan muhim."],
-        ["Hextra Tech asosi", "Ignaning **barqarorligini oshirish** va egilish xavfini kamaytirishga qaratilgan konstruksiya."],
-        ["Teriga tegadigan kengaytirilgan yuza", "Ishlab chiqaruvchi ta'rifiga ko'ra, igna **kirish chuqurligini nazorat qilishga yordam beradi.**"],
-        ["Kattaroq qopqoqlar", "Ignani tayyorlash va **qopqoqlarni ushlashni osonlashtiradi**."],
+        ["Ingichka va qisqa igna", "Ingichka, qisqa igna **kundalik insulin yuborish** uchun mo‘ljallangan. 4 mm uzunlik **mushak ichiga yuborish xavfini kamaytirishga** yordam berishi mumkin."],
+        ["Hextra Tech — barqaror asos", "Maxsus olti qirrali asos **ignani barqaror ushlashga** yordam beradi va uning **egilishi yoki sinishi xavfini** kamaytirishga mo‘ljallangan."],
+        ["Inyeksiya chuqurligiga e’tibor", "Igna uzunligi **teri ostiga yuborishga mos chuqurlikni** hisobga olgan holda tanlanadi. To‘g‘ri o‘lcham va texnikani **tibbiyot mutaxassisi** tavsiya qilishi kerak."],
+        ["Kattalashtirilgan qopqoqlar", "Kattaroq ichki va tashqi qopqoqlar **ignani ushlashni** hamda **tayyorlash jarayonini** osonlashtirish uchun ishlab chiqilgan."],
       ],
     },
     args: {
@@ -280,12 +280,12 @@ export const TXT = {
     },
     features: {
       label: "03 — Характеристики",
-      title: "Каждая характеристика — **практическая польза** для покупателя.",
+      title: "Каждая деталь продумана для **ежедневного использования**.",
       items: [
-        ["Игла 32G × 4 мм", "Тонкая и короткая игла: важна с точки зрения комфорта и снижения риска случайного внутримышечного введения."],
-        ["Основание Hextra Tech", "Конструкция, направленная на **повышение стабильности иглы** и снижение риска её изгиба."],
-        ["Расширенная поверхность контакта с кожей", "По описанию производителя, **помогает контролировать глубину введения иглы.**"],
-        ["Увеличенные колпачки", "**Облегчают подготовку иглы** и удержание колпачков."],
+        ["Тонкая и короткая игла", "Тонкая короткая игла предназначена для **ежедневного введения инсулина**. Длина 4 мм может помочь **снизить риск внутримышечного введения**."],
+        ["Hextra Tech — стабильное основание", "Особое шестигранное основание помогает **стабильно удерживать иглу** и призвано снизить **риск её изгиба или поломки**."],
+        ["Внимание к глубине инъекции", "Длина иглы подбирается с учётом **подходящей глубины для подкожного введения**. Правильный размер и технику должен рекомендовать **медицинский специалист**."],
+        ["Увеличенные колпачки", "Увеличенные внутренний и внешний колпачки разработаны, чтобы облегчить **обращение с иглой** и **процесс подготовки**."],
       ],
     },
     args: {
@@ -429,12 +429,12 @@ export const TXT = {
     },
     features: {
       label: "03 — Features",
-      title: "Every feature means **a practical benefit** for the buyer.",
+      title: "Every detail is designed for **everyday use**.",
       items: [
-        ["32G × 4 mm needle", "Thin and short: important for comfort and for **reducing the risk of accidental intramuscular injection.**"],
-        ["Hextra Tech hub", "A design aimed at **increasing needle stability** and reducing the risk of bending."],
-        ["Enlarged skin-contact surface", "According to the manufacturer, **helps control needle penetration depth.**"],
-        ["Larger caps", "**Make preparing the needle** and handling the caps easier."],
+        ["Thin, short needle", "A thin, short needle designed for **daily insulin injections**. The 4 mm length may help **reduce the risk of intramuscular injection**."],
+        ["Hextra Tech — a stable hub", "A special hexagonal hub helps **hold the needle steady** and is designed to reduce the **risk of bending or breaking**."],
+        ["Attention to injection depth", "Needle length is chosen with **the right depth for subcutaneous injection** in mind. The correct size and technique should be recommended by **a healthcare professional**."],
+        ["Enlarged caps", "Larger inner and outer caps are designed to make **handling the needle** and **preparation** easier."],
       ],
     },
     args: {
