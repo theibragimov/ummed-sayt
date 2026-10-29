@@ -124,25 +124,25 @@ export default function EasyDripLanding() {
         <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
 
           {/* ── Hero: katta kulrang katak, ulkan sarlavha + "suzib turgan" mahsulot ── */}
-          <section className="relative rounded-[32px] overflow-hidden lg:left-1/2 lg:-translate-x-1/2 lg:w-[calc(100vw-64px)] lg:max-w-[1760px]" style={TILE}>
-            <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[640px]">
-              <div className="relative z-10 p-6 sm:p-10 lg:p-14 xl:pl-20 lg:pr-10 flex flex-col justify-center">
-                <h1 className="text-[min(9vw,40px)] sm:text-[50px] lg:text-[min(3.7vw,60px)] font-semibold leading-[1.05] tracking-[-0.03em] max-w-[780px]" style={text}>
+          <section className="relative rounded-[32px] overflow-hidden" style={TILE}>
+            <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[560px]">
+              <div className="relative z-10 p-6 sm:p-10 lg:p-12 lg:pr-8 flex flex-col justify-center">
+                <h1 className="text-[min(9vw,40px)] sm:text-[42px] lg:text-[min(3.1vw,42px)] font-semibold leading-[1.1] tracking-[-0.03em] max-w-[680px]" style={text}>
                   {rich(t.hero.sub, { color: ORANGE })}
                 </h1>
-                <p className="mt-5 text-[20px] sm:text-[24px] leading-snug tracking-tight max-w-[600px]" style={muted}>
+                <p className="mt-4 text-[17px] sm:text-[19px] leading-snug tracking-tight max-w-[600px]" style={muted}>
                   <strong className="font-bold" style={text}>{t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span></strong> {t.hero.title}
                 </p>
                 {/* Asosiy afzalliklar: ramkali, ko'zga tashlanadigan kataklar */}
-                <ul className="mt-7 grid grid-cols-2 gap-2.5 sm:gap-3 max-w-[600px]">
+                <ul className="mt-6 grid grid-cols-2 gap-2.5 max-w-[600px]">
                   {t.hero.checks.map((c) => (
-                    <li key={c} className="flex items-center gap-2.5 sm:gap-3 rounded-2xl px-3 sm:px-4 py-3 sm:py-3.5 text-[15px] sm:text-[18px] font-bold leading-tight" style={{ backgroundColor: "var(--bg)", border: `2px solid ${ORANGE}`, ...text }}>
-                      <span className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white text-sm" style={{ background: ORANGE }}>✓</span>{c}
+                    <li key={c} className="flex items-center gap-2.5 sm:gap-3 rounded-2xl px-3 py-2.5 sm:py-3 text-[14px] sm:text-[16px] font-bold leading-tight" style={{ backgroundColor: "color-mix(in srgb, " + GREEN + " 8%, var(--bg))", border: `2px solid ${GREEN}`, ...text }}>
+                      <span className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 rounded-full flex items-center justify-center text-white text-sm" style={{ background: GREEN }}>✓</span>{c}
                     </li>
                   ))}
                 </ul>
-                <p className={`mt-5 ${BODY} max-w-[520px]`} style={muted}>{rich(t.hero.lead)}</p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
+                <p className="mt-5 text-[15px] sm:text-[16px] leading-relaxed max-w-[600px]" style={muted}>{rich(t.hero.lead)}</p>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
                   <a href="#buyurtma" className={`${pill} text-white`} style={{ background: ORANGE }}>{t.hero.cta1}</a>
                   <a href="#buyurtma" aria-label={t.hero.cta1} className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110" style={{ background: ORANGE }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
@@ -165,13 +165,27 @@ export default function EasyDripLanding() {
                 <div className="mt-6 space-y-5">
                   {t.about.body.map((p) => <p key={p} className={BODY} style={muted}>{rich(p)}</p>)}
                 </div>
-                <dl className="mt-8 grid sm:grid-cols-3 gap-3">
-                  {t.about.facts.map(([k, v]) => (
-                    <div key={k} className="rounded-2xl p-4" style={{ backgroundColor: "var(--bg)" }}>
-                      <dt className="text-xs font-bold uppercase tracking-[0.14em]" style={muted}>{k}</dt>
-                      <dd className="text-base font-semibold mt-2 leading-snug" style={text}>{v}</dd>
-                    </div>
-                  ))}
+                {/* Faktlar: "·" bilan ajratilgan qiymat (o'lchamlar) alohida yashil belgilarga bo'linadi */}
+                <dl className="mt-8 grid sm:grid-cols-2 gap-3">
+                  {t.about.facts.map(([k, v]) => {
+                    const parts = v.split(" · ");
+                    return (
+                      <div key={k} className={`rounded-2xl p-5 ${parts.length > 1 ? "sm:col-span-2 order-last" : ""}`}
+                        style={{ backgroundColor: "var(--bg)", borderLeft: `4px solid ${parts.length > 1 ? GREEN : ORANGE}` }}>
+                        <dt className="text-sm font-semibold" style={{ color: parts.length > 1 ? GREEN : ORANGE }}>{k}</dt>
+                        {parts.length > 1 ? (
+                          <dd className="mt-3 flex flex-wrap gap-2">
+                            {parts.map((x) => (
+                              <span key={x} className="rounded-full px-3.5 py-1.5 text-[15px] sm:text-base font-bold whitespace-nowrap"
+                                style={{ backgroundColor: "color-mix(in srgb, " + GREEN + " 12%, var(--bg))", ...text }}>{x}</span>
+                            ))}
+                          </dd>
+                        ) : (
+                          <dd className="text-[17px] sm:text-lg font-bold mt-1.5 leading-snug" style={text}>{v}</dd>
+                        )}
+                      </div>
+                    );
+                  })}
                 </dl>
               </Tile>
               <div className="relative rounded-[28px] overflow-hidden min-h-[340px] lg:min-h-0" style={TILE}>
