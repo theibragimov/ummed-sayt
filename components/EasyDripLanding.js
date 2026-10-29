@@ -23,9 +23,8 @@ const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-inject-v3";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
-// Asl (effektsiz, fonsiz) qadoq suratlari
-const CUT = (n) => `/images/easydrip/easydrip-plus-${n}mm-cut.png`;
-const SIZE_IMG = { "02-3204": CUT(4), "02-3105": CUT(5), "02-3106": CUT(6), "02-3108": CUT(8) };
+// Oq studiya fonidagi, bir xil holatdagi qadoq suratlari
+const SIZE_IMG = { "02-3204": PH("size-4-studio"), "02-3105": PH("size-5-studio"), "02-3106": PH("size-6-studio"), "02-3108": PH("size-8-studio") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
 const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v2", "depth-good-v2"], ["problem-caps-v2", "caps-real"]];
 const RED = "#E5383B";
@@ -77,6 +76,15 @@ const DIFF_ICONS = [
   <><path d="M20.2 3.8a6 6 0 00-8.5 0L5 10.5V19h8.5l6.7-6.7a6 6 0 000-8.5zM16 8L3 21M17.5 15H9" /></>,
 ];
 
+// Sichqoncha ustida surat yaqinlashadi va kursor turgan joyni kattalashtiradi (.group ichida)
+const trackCursor = (e) => {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+  e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+};
+const ZOOM_CLS = "absolute inset-0 motion-reduce:group-hover:scale-100";
+const ZOOM_STYLE = { transformOrigin: "var(--mx, 50%) var(--my, 50%)", transition: "scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform-origin 0.3s ease-out" };
+
 export default function EasyDripLanding() {
   const { lang } = useLang();
   const t = TXT[lang] || TXT.uz;
@@ -111,17 +119,18 @@ export default function EasyDripLanding() {
   const nav = t.nav.items.map(([label, href]) => ({ label, href }));
   const [s4, s5, s6, s8] = t.sizes.rows;
 
-  // O'lcham kartochkasi: kulrang ramka, tepada nom, pastda asl qadoq surati
+  // O'lcham kartochkasi: oq studiya surati, aniq ramka, tepada nom; sichqoncha ustida yaqinlashadi
   const SizeTile = ({ row }) => {
     const [g, len, , sku] = row;
     return (
-      <div className="rounded-[28px] aspect-square flex flex-col p-6 sm:p-7" style={{ ...TILE, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
-        <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none" style={text}>
+      <div className="group relative rounded-[28px] overflow-hidden aspect-square p-6 sm:p-7 bg-white" style={{ boxShadow: "inset 0 0 0 1.5px rgba(0,0,0,0.09)" }} onMouseMove={trackCursor}>
+        <div className={`${ZOOM_CLS} group-hover:scale-[1.8]`} style={ZOOM_STYLE}>
+          <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
+        </div>
+        <span className="absolute inset-x-0 top-0 h-[34%] pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%)" }} />
+        <p className="relative text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none" style={{ color: "#1a1a1a" }}>
           {len} <span style={{ color: ORANGE }}>· {g}</span>
         </p>
-        <div className="relative flex-1 mt-4">
-          <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 22vw" className="object-contain" />
-        </div>
       </div>
     );
   };
@@ -232,8 +241,10 @@ export default function EasyDripLanding() {
             </div>
             {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
             <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
-              <div className="relative rounded-[28px] overflow-hidden min-h-[160px] sm:min-h-[260px]" style={{ ...TILE, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
-                <Image src="/images/easydrip/photo/sizes-lineup-orig.png" alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-5 sm:p-8" />
+              <div className="group relative rounded-[28px] overflow-hidden min-h-[220px] sm:min-h-[300px] bg-white" style={{ boxShadow: "inset 0 0 0 1.5px rgba(0,0,0,0.09)" }} onMouseMove={trackCursor}>
+                <div className={`${ZOOM_CLS} group-hover:scale-[1.8]`} style={ZOOM_STYLE}>
+                  <Image src={PH("sizes-lineup-studio")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-cover" />
+                </div>
               </div>
               <Tile className="flex flex-col justify-between gap-6">
                 <p className="text-[32px] sm:text-[44px] font-semibold tracking-tight leading-[1.05]" style={text}>{rich(t.sizes.packTitle, { color: ORANGE })}</p>
@@ -249,13 +260,8 @@ export default function EasyDripLanding() {
             <div className="grid md:grid-cols-2 gap-3">
               {t.features.items.map(([title, body], i) => (
                 <div key={title} className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}
-                  onMouseMove={(e) => {
-                    const r = e.currentTarget.getBoundingClientRect();
-                    e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
-                    e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
-                  }}>
-                  <div className="absolute inset-0 group-hover:scale-[1.6] motion-reduce:group-hover:scale-100"
-                    style={{ transformOrigin: "var(--mx, 50%) var(--my, 50%)", transition: "scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform-origin 0.3s ease-out" }}>
+                  onMouseMove={trackCursor}>
+                  <div className={`${ZOOM_CLS} group-hover:scale-[1.6]`} style={ZOOM_STYLE}>
                     <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover" />
                   </div>
                   <span className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.78) 100%)" }} />
