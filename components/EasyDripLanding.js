@@ -21,7 +21,9 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
 const FEATURE_IMG = ["needle-macro", "hub", "skin-contact", "caps-hands"];
-const HERO_IMG = "hero-person";
+const HERO_IMG = "hero-inject";
+// O'lcham kartochkalari uchun bir xil studiya suratlari
+const SIZE_IMG = { "02-3204": PH("size-4"), "02-3105": PH("size-5"), "02-3106": PH("size-6"), "02-3108": PH("size-8") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
 const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub"], ["depth-bad", "depth-good"], ["problem-caps", "caps-hands"]];
 const RED = "#E5383B";
@@ -110,25 +112,21 @@ export default function EasyDripLanding() {
   const nav = t.nav.items.map(([label, href]) => ({ label, href }));
   const [s4, s5, s6, s8] = t.sizes.rows;
 
-  // Bento katak: nom + strelka tepada, surat pastda
-  const SizeTile = ({ row, className = "", accent = false, imgCls = "" }) => {
-    const [g, len, who, sku] = row;
+  // O'lcham kartochkasi: hammasi bir xil ramka — studiya surati to'liq, nom va strelka tepada
+  const SizeTile = ({ row }) => {
+    const [g, len, , sku] = row;
     return (
-      <div className={`relative rounded-[28px] overflow-hidden flex flex-col p-6 sm:p-7 ${className}`}
-        style={accent ? { background: ORANGE } : TILE}>
-        <div className="flex items-start justify-between gap-4 relative z-10">
-          <div>
-            <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={accent ? { color: "#fff" } : text}>
-              {len} <span className="text-lg font-semibold" style={{ color: accent ? "rgba(255,255,255,0.8)" : ORANGE }}>· {g}</span>
-            </p>
-            <p className="text-base mt-1.5 max-w-[260px]" style={accent ? { color: "rgba(255,255,255,0.92)" } : muted}>{who.replace(/\*\*/g, "")}</p>
-          </div>
-          <Arrow light={accent} label={t.hero.cta1} />
+      <div className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col justify-between p-6 sm:p-7" style={{ background: "#F1F2F5", color: "#1a1a1a" }}>
+        <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
+        <div className="relative flex items-start justify-between gap-4">
+          <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none">
+            {len} <span className="text-lg font-semibold" style={{ color: ORANGE }}>· {g}</span>
+          </p>
+          <span className="w-11 h-11 rounded-full flex items-center justify-center bg-white flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </span>
         </div>
-        <div className={`relative flex-1 min-h-[220px] mt-4 ${imgCls}`}>
-          <Image src={SKU_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 1024px) 90vw, 33vw" className="object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.18)]" />
-        </div>
-        <p className="relative z-10 text-sm mt-3" style={accent ? { color: "rgba(255,255,255,0.85)" } : muted}>{t.sizes.sku}: <b>{sku}</b></p>
+        <p className="relative text-sm" style={{ color: "#55555b" }}>{t.sizes.sku}: <b>{sku}</b></p>
       </div>
     );
   };
@@ -173,7 +171,7 @@ export default function EasyDripLanding() {
               </div>
               <div className="relative h-[460px] sm:h-[600px] lg:h-auto m-3 sm:m-4 lg:ml-0 rounded-[24px] overflow-hidden">
                 <Image src={PH(HERO_IMG)} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar" fill priority
-                  sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover object-top" />
+                  sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover object-[50%_45%]" />
                 {/* Suzib turgan kartochka (ref: sovg'a kartochkasi) */}
                 <a href="#buyurtma" className="absolute left-4 right-4 sm:left-auto sm:right-5 bottom-4 sm:bottom-5 sm:max-w-[340px] flex items-center gap-3 rounded-[20px] p-3 pr-3 backdrop-blur-md shadow-[0_12px_30px_rgba(0,0,0,0.12)]"
                   style={{ background: "rgba(255,255,255,0.82)", color: "#1a1a1a" }}>
@@ -211,11 +209,10 @@ export default function EasyDripLanding() {
           {/* ── O'lchamlar: bento (1 ta rangli katta + 3 ta kulrang) ── */}
           <section id="olchamlar" className="scroll-mt-24 pt-16 sm:pt-24">
             <Heading title={t.sizes.title} />
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 gap-3 lg:h-[680px]">
-              <SizeTile row={s4} accent className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
-              <SizeTile row={s5} className="lg:row-span-2 min-h-[440px]" imgCls="lg:mx-[-10%]" />
-              <SizeTile row={s6} className="min-h-[360px] lg:min-h-0" />
-              <SizeTile row={s8} className="min-h-[360px] lg:min-h-0" />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[s4, s5, s6, s8].map((row) => (
+                <a key={row[3]} href="#buyurtma" aria-label={t.hero.cta1} className="block transition-transform hover:-translate-y-1"><SizeTile row={row} /></a>
+              ))}
             </div>
             {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
             <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
