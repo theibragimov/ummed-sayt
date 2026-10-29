@@ -20,12 +20,12 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 // Mavzuga mos real suratlar (Nano Banana, asl qadoq va igna suratlari asosida)
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
-const FEATURE_IMG = ["needle-macro", "hub", "skin-contact", "caps-hands"];
+const FEATURE_IMG = ["needle-macro", "hub-hextra", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-inject";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 const SIZE_IMG = { "02-3204": PH("size-4"), "02-3105": PH("size-5"), "02-3106": PH("size-6"), "02-3108": PH("size-8") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
-const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub"], ["depth-bad", "depth-good"], ["problem-caps", "caps-hands"]];
+const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub-hextra"], ["depth-bad", "depth-good"], ["problem-caps", "caps-real"]];
 const RED = "#E5383B";
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
@@ -45,17 +45,6 @@ const H3 = "text-xl sm:text-[22px] font-semibold tracking-tight";
 // Yumshoq kulrang, ramkasiz katak (ref: Orbita do'kon dizayni)
 function Tile({ children, className = "", style }) {
   return <div className={`rounded-[28px] p-6 sm:p-8 ${className}`} style={{ ...TILE, ...style }}>{children}</div>;
-}
-
-// Burchakdagi dumaloq strelka tugmasi
-function Arrow({ href = "#buyurtma", light = false, label }) {
-  return (
-    <a href={href} aria-label={label}
-      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-transform hover:scale-110"
-      style={light ? { background: "#fff", color: ORANGE } : { background: "var(--bg)", color: "var(--text)" }}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-    </a>
-  );
 }
 
 // Matndagi **so'z** qismlarini qalin qilib chiqaradi
@@ -122,9 +111,6 @@ export default function EasyDripLanding() {
           <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none">
             {len} <span className="text-lg font-semibold" style={{ color: ORANGE }}>· {g}</span>
           </p>
-          <span className="w-11 h-11 rounded-full flex items-center justify-center bg-white flex-shrink-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </span>
         </div>
         <p className="relative text-sm" style={{ color: "#55555b" }}>{t.sizes.sku}: <b>{sku}</b></p>
       </div>
@@ -206,77 +192,26 @@ export default function EasyDripLanding() {
             </div>
           </section>
 
-          {/* ── O'lchamlar: bento (1 ta rangli katta + 3 ta kulrang) ── */}
+          {/* ── O'lchamlar: 4 ta bir xil kartochka ── */}
           <section id="olchamlar" className="scroll-mt-24 pt-16 sm:pt-24">
             <Heading title={t.sizes.title} />
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[s4, s5, s6, s8].map((row) => (
-                <a key={row[3]} href="#buyurtma" aria-label={t.hero.cta1} className="block transition-transform hover:-translate-y-1"><SizeTile row={row} /></a>
+                <SizeTile key={row[3]} row={row} />
               ))}
             </div>
             {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
             <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
-              <div className="relative rounded-[28px] overflow-hidden aspect-[16/9]" style={TILE}>
-                <Image src={PH("sizes-lineup")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-cover" />
+              <div className="relative rounded-[28px] overflow-hidden min-h-[200px] sm:min-h-[280px] bg-white">
+                <Image src={PH("sizes-lineup-white")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-4" />
               </div>
               <Tile className="flex flex-col justify-between gap-6">
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{t.hero.chips[3]}</p>
-                  <Arrow label={t.hero.cta1} />
                 </div>
                 <p className={BODY} style={muted}>{t.sizes.note} {t.sizes.pack}</p>
               </Tile>
             </div>
-
-            {/* Texnik jadval: artikul, igna rasmi, yo'g'onlik, uzunlik, qadoq */}
-            <Tile className="mt-3 !p-3 sm:!p-4">
-              <h3 className={`${H3} px-3 pt-3 pb-4 sm:px-4`} style={text}>{t.sizes.table.title}</h3>
-              {/* Kompyuter: jadval */}
-              <table className="hidden md:table w-full border-separate border-spacing-0 rounded-[20px] overflow-hidden text-center" style={{ backgroundColor: "var(--bg)" }}>
-                <thead>
-                  <tr className="text-white" style={{ background: ORANGE }}>
-                    {t.sizes.table.cols.map((c, i) => (
-                      <th key={c} className="px-4 py-4 text-[15px] font-semibold leading-snug">
-                        {c}{i === 0 && <span className="block text-xs font-medium opacity-85 mt-0.5">{t.sizes.table.sub}</span>}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {t.sizes.rows.map(([g, len, , sku], i) => (
-                    <tr key={sku} className="text-[17px]" style={text}>
-                      <td className="px-4 py-3 font-semibold tabular-nums" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{sku}</td>
-                      <td className="px-4 py-3" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>
-                        <Image src={`/images/easydrip/caps/cap-${len.replace(/\D/g, "")}mm.jpg`} alt={`${g} × ${len}`} width={52} height={78} className="mx-auto rounded-lg object-cover" />
-                      </td>
-                      <td className="px-4 py-3" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{g} {t.sizes.table.needle}</td>
-                      <td className="px-4 py-3 font-semibold" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{len}</td>
-                      {i === 0 && (
-                        <td rowSpan={t.sizes.rows.length} className="px-4 py-3 font-semibold leading-loose" style={{ ...TILE, borderLeft: "1px solid var(--border-strong, #e5e5e5)" }}>
-                          {t.sizes.table.pack.map((p) => <span key={p} className="block">{p}</span>)}
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {/* Telefon: har bir o'lcham — alohida qator-kartochka */}
-              <div className="md:hidden space-y-2">
-                {t.sizes.rows.map(([g, len, , sku]) => (
-                  <div key={sku} className="flex items-center gap-4 rounded-2xl p-3" style={{ backgroundColor: "var(--bg)" }}>
-                    <Image src={`/images/easydrip/caps/cap-${len.replace(/\D/g, "")}mm.jpg`} alt={`${g} × ${len}`} width={48} height={72} className="rounded-lg object-cover flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-xl font-semibold" style={text}>{len} <span className="text-base" style={{ color: ORANGE }}>· {g}</span></p>
-                      <p className="text-[15px]" style={muted}>{t.sizes.table.cols[0]}: <b style={text}>{sku}</b></p>
-                    </div>
-                  </div>
-                ))}
-                <p className="rounded-2xl p-4 text-[17px] font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>{t.sizes.table.cols[4]}: {t.sizes.table.pack.join(" · ")}</p>
-              </div>
-              <ol className="px-3 sm:px-4 pt-4 pb-2 space-y-1 text-[15px] leading-relaxed list-decimal list-inside" style={muted}>
-                {t.sizes.table.notes.map((n) => <li key={n}>{n}</li>)}
-              </ol>
-            </Tile>
           </section>
 
           {/* ── Xususiyatlar: 4 ta kartochka ── */}
@@ -285,18 +220,14 @@ export default function EasyDripLanding() {
             {/* Suratli kartochkalar (ref: "Услуги" bo'limi): surat to'liq, matn ustida, burchakda strelka */}
             <div className="grid md:grid-cols-2 gap-3">
               {t.features.items.map(([title, body], i) => (
-                <a key={title} href="#buyurtma" className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}>
-                  <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                <div key={title} className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}>
+                  <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover" />
                   <span className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.78) 100%)" }} />
                   <h3 className="relative text-[24px] sm:text-[28px] font-semibold tracking-tight text-white max-w-[80%]">{title}</h3>
-                  <div className="relative flex items-end justify-between gap-5">
+                  <div className="relative">
                     <p className="text-[17px] leading-[1.55] text-white/90 max-w-[460px]">{rich(body, { color: "#fff", fontWeight: 700 })}</p>
-                    <span className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
-                      style={i % 2 ? { background: "#fff", color: ORANGE } : { background: ORANGE, color: "#fff" }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
-                    </span>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           </section>
