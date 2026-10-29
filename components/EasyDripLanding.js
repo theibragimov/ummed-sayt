@@ -23,7 +23,9 @@ const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-inject-v3";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
-const SIZE_IMG = { "02-3204": PH("size-4w"), "02-3105": PH("size-5w"), "02-3106": PH("size-6w"), "02-3108": PH("size-8w") };
+// Asl (effektsiz, fonsiz) qadoq suratlari
+const CUT = (n) => `/images/easydrip/easydrip-plus-${n}mm-cut.png`;
+const SIZE_IMG = { "02-3204": CUT(4), "02-3105": CUT(5), "02-3106": CUT(6), "02-3108": CUT(8) };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
 const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v2", "depth-good-v2"], ["problem-caps-v2", "caps-real"]];
 const RED = "#E5383B";
@@ -67,6 +69,14 @@ const ICONS = [
   <path key="c" d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" />,
 ];
 
+// "Farqi" kartochkalari: olti qirrali asos, chuqurlik, qopqoq, yumshoq kiritish (pat)
+const DIFF_ICONS = [
+  <><path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z" /><circle cx="12" cy="12" r="2.6" /></>,
+  <><path d="M12 3v10.5M9.5 3h5M4 15h16M4 19.5h16" /><path d="M10.2 11.7L12 13.5l1.8-1.8" /></>,
+  <><path d="M9 10l1.2-6h3.6L15 10M8 10h8l1 11H7z" /><path d="M10 14h4M10 17.5h4" /></>,
+  <><path d="M20.2 3.8a6 6 0 00-8.5 0L5 10.5V19h8.5l6.7-6.7a6 6 0 000-8.5zM16 8L3 21M17.5 15H9" /></>,
+];
+
 export default function EasyDripLanding() {
   const { lang } = useLang();
   const t = TXT[lang] || TXT.uz;
@@ -101,16 +111,16 @@ export default function EasyDripLanding() {
   const nav = t.nav.items.map(([label, href]) => ({ label, href }));
   const [s4, s5, s6, s8] = t.sizes.rows;
 
-  // O'lcham kartochkasi: hammasi bir xil ramka — studiya surati to'liq, nom va strelka tepada
+  // O'lcham kartochkasi: kulrang ramka, tepada nom, pastda asl qadoq surati
   const SizeTile = ({ row }) => {
     const [g, len, , sku] = row;
     return (
-      <div className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col p-6 sm:p-7" style={{ background: "#ffffff", color: "#1a1a1a", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
-        <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
-        <div className="relative flex items-start justify-between gap-4">
-          <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none">
-            {len} <span style={{ color: ORANGE }}>· {g}</span>
-          </p>
+      <div className="rounded-[28px] aspect-square flex flex-col p-6 sm:p-7" style={{ ...TILE, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
+        <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none" style={text}>
+          {len} <span style={{ color: ORANGE }}>· {g}</span>
+        </p>
+        <div className="relative flex-1 mt-4">
+          <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 22vw" className="object-contain" />
         </div>
       </div>
     );
@@ -124,13 +134,13 @@ export default function EasyDripLanding() {
         <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
 
           {/* ── Hero: katta kulrang katak, ulkan sarlavha + "suzib turgan" mahsulot ── */}
+          <h1 className="px-1 pt-4 sm:pt-8 mb-6 sm:mb-8 text-[32px] sm:text-[48px] lg:text-[56px] font-semibold leading-[1.08] tracking-[-0.03em] max-w-[1000px]" style={text}>
+            {rich(t.hero.sub, { color: ORANGE })}
+          </h1>
           <section className="relative rounded-[32px] overflow-hidden" style={TILE}>
-            <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[560px]">
+            <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[520px]">
               <div className="relative z-10 p-6 sm:p-10 lg:p-12 lg:pr-8 flex flex-col justify-center">
-                <h1 className="text-[min(9vw,40px)] sm:text-[42px] lg:text-[min(3.1vw,42px)] font-semibold leading-[1.1] tracking-[-0.03em] max-w-[680px]" style={text}>
-                  {rich(t.hero.sub, { color: ORANGE })}
-                </h1>
-                <p className="mt-4 text-[17px] sm:text-[19px] leading-snug tracking-tight max-w-[600px]" style={muted}>
+                <p className="text-[17px] sm:text-[19px] leading-snug tracking-tight max-w-[600px]" style={muted}>
                   <strong className="font-bold" style={text}>{t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span></strong> {t.hero.title}
                 </p>
                 {/* Asosiy afzalliklar: ramkali, ko'zga tashlanadigan kataklar */}
@@ -159,10 +169,10 @@ export default function EasyDripLanding() {
 
           {/* ── Mahsulot haqida: matn + surat ── */}
           <section id="mahsulot" className="scroll-mt-24 pt-16 sm:pt-24">
+            <Heading title={t.about.title} />
             <div className="grid lg:grid-cols-[1.2fr_1fr] gap-3">
               <Tile className="sm:!p-10 lg:!p-14">
-                <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight" style={text}>{rich(t.about.title, { color: ORANGE })}</h2>
-                <div className="mt-6 space-y-5">
+                <div className="space-y-5">
                   {t.about.body.map((p) => <p key={p} className={BODY} style={muted}>{rich(p)}</p>)}
                 </div>
                 {/* Faktlar: "·" bilan ajratilgan qiymat (o'lchamlar) alohida yashil belgilarga bo'linadi */}
@@ -200,7 +210,9 @@ export default function EasyDripLanding() {
             <div className="grid sm:grid-cols-2 gap-3">
               {t.trust.items.map(([title, body], i) => (
                 <Tile key={title} className="sm:!p-10 flex gap-5 sm:gap-6 items-start">
-                  <span className="w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 rounded-full flex items-center justify-center text-white text-lg font-bold" style={{ background: ORANGE }}>{i + 1}</span>
+                  <span className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-2xl flex items-center justify-center text-white" style={{ background: ORANGE }}>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{DIFF_ICONS[i % 4]}</svg>
+                  </span>
                   <div>
                     <h3 className="text-[21px] sm:text-[26px] font-semibold leading-[1.2] tracking-tight" style={text}>{title}</h3>
                     <p className={`mt-3 ${BODY}`} style={muted}>{body}</p>
@@ -220,8 +232,8 @@ export default function EasyDripLanding() {
             </div>
             {/* Taqqoslash: 4 ta o'lcham yonma-yon */}
             <div className="mt-3 grid lg:grid-cols-[1.6fr_1fr] gap-3">
-              <div className="relative rounded-[28px] overflow-hidden min-h-[200px] sm:min-h-[280px] bg-white">
-                <Image src={PH("sizes-lineup-spill")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-4" />
+              <div className="relative rounded-[28px] overflow-hidden min-h-[160px] sm:min-h-[260px]" style={{ ...TILE, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
+                <Image src="/images/easydrip/photo/sizes-lineup-orig.png" alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-5 sm:p-8" />
               </div>
               <Tile className="flex flex-col justify-between gap-6">
                 <p className="text-[32px] sm:text-[44px] font-semibold tracking-tight leading-[1.05]" style={text}>{rich(t.sizes.packTitle, { color: ORANGE })}</p>
