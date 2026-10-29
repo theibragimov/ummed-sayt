@@ -21,9 +21,11 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
 const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
-const HERO_IMG = "hero-4k";
+const HERO_IMG = "hero-4k-v2";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 // Oq studiya fonidagi, bir xil holatdagi qadoq suratlari
+// Qadoq ranglari: kartochka yozuvi va gradienti shu rangda
+const SIZE_COLOR = { "02-3204": "#22A447", "02-3105": "#7A2E9A", "02-3106": "#EE7A1A", "02-3108": "#1E9E9B" };
 const SIZE_IMG = { "02-3204": PH("size-4-studio-v2"), "02-3105": PH("size-5-studio-v2"), "02-3106": PH("size-6-studio-v2"), "02-3108": PH("size-8-studio-v2") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
 const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v3", "depth-good-v3"], ["problem-caps-v2", "caps-real"]];
@@ -57,7 +59,7 @@ function rich(str, style = BOLD) {
 function Heading({ title, className = "" }) {
   return (
     <Reveal variant="up" className={`mb-6 sm:mb-8 px-1 ${className}`}>
-      <h2 className="text-[30px] sm:text-[44px] font-semibold leading-[1.1] tracking-tight max-w-[960px]" style={text}>{rich(title, { color: ORANGE, fontWeight: 600 })}</h2>
+      <h2 className="text-[30px] sm:text-[44px] font-semibold leading-[1.1] tracking-tight max-w-[960px] lg:max-w-none" style={text}>{rich(title, { color: ORANGE, fontWeight: 600 })}</h2>
     </Reveal>
   );
 }
@@ -127,9 +129,9 @@ export default function EasyDripLanding() {
         <div className={`${ZOOM_CLS} group-hover:scale-[1.8]`} style={ZOOM_STYLE}>
           <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
         </div>
-        <span className="absolute inset-x-0 top-0 h-[34%] pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%)" }} />
-        <p className="relative text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none" style={{ color: "#1a1a1a" }}>
-          {len} <span style={{ color: ORANGE }}>· {g}</span>
+        <span className="absolute inset-x-0 top-0 h-[40%] pointer-events-none" style={{ background: `linear-gradient(180deg, color-mix(in srgb, ${SIZE_COLOR[sku]} 14%, #fff) 0%, color-mix(in srgb, ${SIZE_COLOR[sku]} 6%, rgba(255,255,255,0.6)) 55%, rgba(255,255,255,0) 100%)` }} />
+        <p className="relative text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none" style={{ color: SIZE_COLOR[sku] }}>
+          {len} · {g}
         </p>
       </div>
     );
@@ -138,33 +140,33 @@ export default function EasyDripLanding() {
   return (
     <>
       <SiteHeader nav={nav} cta={{ label: t.nav.cta, href: "#buyurtma" }} />
-      <style>{`.ed-page{--ed-muted:#55555b;--ed-tile:#F1F2F5}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be;--ed-tile:#222225}`}</style>
+      <style>{`.ed-page{--ed-muted:#55555b;--ed-tile:#F1F2F5}html[data-theme="dark"] .ed-page{--ed-muted:#b9b9be;--ed-tile:#222225}@keyframes edUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}@keyframes edZoom{from{transform:scale(1.1)}to{transform:scale(1)}}.ed-up{animation:edUp .9s cubic-bezier(.2,.7,.2,1) both}.ed-zoom{animation:edZoom 2.6s cubic-bezier(.2,.7,.2,1) both}@media (prefers-reduced-motion:reduce){.ed-up,.ed-zoom{animation:none}}`}</style>
       <main className="ed-page" style={{ backgroundColor: "var(--bg)" }}>
           {/* ── Hero: to'liq rasm, asosiy obyekt o'ngda, chap tomon oq — matn shu yerda (rasm doim oq, shuning uchun ranglar qat'iy) ── */}
           <section className="relative overflow-hidden bg-white lg:h-[min(calc(100vh-80px),860px)] lg:min-h-[620px] flex flex-col lg:block">
             <div className="relative h-[280px] sm:h-[420px] lg:absolute lg:inset-0 lg:h-auto">
               <Image src={PH(HERO_IMG)} alt="Easy Drip Plus ignalari va insulin shprits-ruchkasi" fill priority
-                sizes="100vw" className="object-cover object-[72%_50%] lg:object-[100%_50%]" />
+                sizes="100vw" className="ed-zoom object-cover object-[72%_50%] lg:object-[100%_50%]" />
               <span className="hidden lg:block absolute inset-0" style={{ background: "linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.95) 28%, rgba(255,255,255,0.6) 44%, rgba(255,255,255,0) 58%)" }} />
             </div>
-            <div className="relative z-10 max-w-[1320px] mx-auto w-full h-full px-5 sm:px-10 lg:px-12 py-8 sm:py-12 flex flex-col justify-center">
+            <div className="relative z-10 w-full h-full px-5 sm:px-10 lg:pl-14 xl:pl-20 2xl:pl-28 py-8 sm:py-12 flex flex-col justify-center">
               <div className="lg:max-w-[600px]">
-              <h1 className="text-[32px] sm:text-[44px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em]" style={{ color: "#141414" }}>
+              <h1 className="ed-up text-[32px] sm:text-[44px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em]" style={{ color: "#141414" }}>
                 {rich(t.hero.sub, { color: ORANGE })}
               </h1>
-              <p className="mt-4 text-[17px] sm:text-[19px] leading-snug tracking-tight" style={{ color: "#55555b" }}>
+              <p className="ed-up mt-4 text-[17px] sm:text-[19px] leading-snug tracking-tight" style={{ color: "#55555b", animationDelay: "120ms" }}>
                 <strong className="font-bold" style={{ color: "#141414" }}>{t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span></strong> {t.hero.title}
               </p>
               {/* Asosiy afzalliklar: ramkali, ko'zga tashlanadigan kataklar */}
-              <ul className="mt-6 grid grid-cols-2 gap-2.5 max-w-[560px]">
+              <ul className="ed-up mt-6 grid grid-cols-2 gap-2.5 max-w-[560px]" style={{ animationDelay: "240ms" }}>
                 {t.hero.checks.map((c) => (
                   <li key={c} className="flex items-center gap-2.5 sm:gap-3 rounded-2xl px-3 py-2.5 sm:py-3 text-[14px] sm:text-[16px] font-bold leading-tight" style={{ backgroundColor: "color-mix(in srgb, " + GREEN + " 8%, #fff)", border: `2px solid ${GREEN}`, color: "#141414" }}>
                     <span className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 rounded-full flex items-center justify-center text-white text-sm" style={{ background: GREEN }}>✓</span>{c}
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 text-[15px] sm:text-[16px] leading-relaxed max-w-[560px]" style={{ color: "#55555b" }}>{rich(t.hero.lead, { color: "#141414", fontWeight: 700 })}</p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <p className="ed-up mt-5 text-[15px] sm:text-[16px] leading-relaxed max-w-[560px]" style={{ color: "#55555b", animationDelay: "360ms" }}>{rich(t.hero.lead, { color: "#141414", fontWeight: 700 })}</p>
+              <div className="ed-up mt-7 flex flex-wrap items-center gap-3" style={{ animationDelay: "480ms" }}>
                 <a href="#buyurtma" className={`${pill} text-white`} style={{ background: ORANGE }}>{t.hero.cta1}</a>
                 <a href="#buyurtma" aria-label={t.hero.cta1} className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110" style={{ background: ORANGE }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
