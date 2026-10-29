@@ -77,9 +77,17 @@ export const TXT = {
       cta1: "Ulgurji narxni so'rang",
       cta2: "Telegramda yozing",
       chips: ["32G × 4 mm", "31G × 5 mm", "31G × 6 mm", "100 dona / quti"],
+      checks: ["Ingichka 32G igna", "Hextra Tech asosi", "Kattaroq qopqoqlar", "4 / 5 / 6 / 8 mm"],
+      badge: ["Rasmiy distribyutor", "Sertifikatlar to'plami bilan ulgurji yetkazib beramiz"],
+    },
+    trust: {
+      title: "Nega EasyDrip Plus'ga **ishonishadi**",
+      lead: "Ishlab chiqaruvchi — Sandstone Medical (Suzhou), Xitoy. Ummed — O'zbekistondagi rasmiy distribyutor: dorixona va klinikalarga sertifikatlar to'plami bilan yetkazib beramiz.",
+      items: [["O'lchamlar", "4", "4 / 5 / 6 / 8 mm igna"], ["Eng ingichka", "32G", "4 mm igna uchun"], ["Qadoq", "100", "steril igna bir qutida"], ["Sertifikatlar", "6", "ISO 13485, CE, FDA 510(k) va boshq."]],
     },
     about: {
       label: "01 — Mahsulot",
+
       title: "EasyDrip Plus aslida nima?",
       body: [
         "EasyDrip Plus — insulin yuborish uchun mo'ljallangan shprits-ruchkalarga o'rnatiladigan **bir martalik ignalar**. Ular insulin flakoni bilan ishlatiladigan **oddiy shpritslar emas**.",
@@ -93,7 +101,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Muammo va yechim",
-      title: "Har kungi ukoldagi 4 ta muammo — va EasyDrip ularga qanday yondashadi.",
+      title: "Har kungi ukoldagi **4 ta muammo** — va EasyDrip **yechimi**.",
       colProblem: "Muammo",
       colSolution: "EasyDrip yechimi",
       depth: {
@@ -119,7 +127,7 @@ export const TXT = {
     },
     features: {
       label: "03 — Xususiyatlar",
-      title: "Har bir xususiyat — xaridor uchun amaliy foyda.",
+      title: "Har bir xususiyat — xaridor uchun **amaliy foyda**.",
       items: [
         ["32G × 4 mm igna", "Ingichka va qisqa igna: qulaylik hamda **mushak ichiga tasodifiy yuborish xavfini kamaytirish nuqtayi** nazaridan muhim."],
         ["Hextra Tech asosi", "Ignaning **barqarorligini oshirish** va egilish xavfini kamaytirishga qaratilgan konstruksiya."],
@@ -137,7 +145,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — O'lchamlar",
-      title: "To'g'ri igna tanlash — to'g'ri ukolning boshlanishi.",
+      title: "To'g'ri igna tanlash — **to'g'ri ukolning** boshlanishi.",
       note: "G raqami qancha katta bo'lsa, igna shuncha ingichka. Mos o'lchamni shifokoringiz bilan tanlang.",
       sku: "Artikul",
       rows: [
@@ -222,6 +230,13 @@ export const TXT = {
       cta1: "Узнать оптовую цену",
       cta2: "Написать в Telegram",
       chips: ["32G × 4 мм", "31G × 5 мм", "31G × 6 мм", "100 шт. / коробка"],
+      checks: ["Тонкая игла 32G", "Основание Hextra Tech", "Увеличенные колпачки", "4 / 5 / 6 / 8 мм"],
+      badge: ["Официальный дистрибьютор", "Оптовые поставки с полным пакетом сертификатов"],
+    },
+    trust: {
+      title: "Почему EasyDrip Plus **доверяют**",
+      lead: "Производитель — Sandstone Medical (Сучжоу), Китай. Ummed — официальный дистрибьютор в Узбекистане: поставляем аптекам и клиникам с полным пакетом сертификатов.",
+      items: [["Размеры", "4", "иглы 4 / 5 / 6 / 8 мм"], ["Самая тонкая", "32G", "у иглы 4 мм"], ["Упаковка", "100", "стерильных игл в коробке"], ["Сертификаты", "6", "ISO 13485, CE, FDA 510(k) и др."]],
     },
     about: {
       label: "01 — Продукт",
@@ -238,7 +253,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Проблема и решение",
-      title: "4 проблемы ежедневных уколов — и как EasyDrip к ним подходит.",
+      title: "**4 проблемы** ежедневных уколов — и **решение** EasyDrip.",
       colProblem: "Проблема",
       colSolution: "Решение EasyDrip",
       depth: {
@@ -264,7 +279,7 @@ export const TXT = {
     },
     features: {
       label: "03 — Характеристики",
-      title: "Каждая характеристика — практическая польза для покупателя.",
+      title: "Каждая характеристика — **практическая польза** для покупателя.",
       items: [
         ["Игла 32G × 4 мм", "Тонкая и короткая игла: важна с точки зрения комфорта и снижения риска случайного внутримышечного введения."],
         ["Основание Hextra Tech", "Конструкция, направленная на **повышение стабильности иглы** и снижение риска её изгиба."],
@@ -282,7 +297,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — Размеры",
-      title: "Правильный выбор иглы — начало правильного укола.",
+      title: "Правильный выбор иглы — начало **правильного укола**.",
       note: "Чем больше число G, тем тоньше игла. Подходящий размер выбирайте вместе с врачом.",
       sku: "Артикул",
       rows: [
@@ -367,6 +382,13 @@ export const TXT = {
       cta1: "Get wholesale price",
       cta2: "Message on Telegram",
       chips: ["32G × 4 mm", "31G × 5 mm", "31G × 6 mm", "100 pcs / box"],
+      checks: ["Thin 32G needle", "Hextra Tech hub", "Larger caps", "4 / 5 / 6 / 8 mm"],
+      badge: ["Official distributor", "Wholesale supply with a full set of certificates"],
+    },
+    trust: {
+      title: "Why people **trust** EasyDrip Plus",
+      lead: "Manufactured by Sandstone Medical (Suzhou), China. Ummed is the official distributor in Uzbekistan, supplying pharmacies and clinics with a full set of certificates.",
+      items: [["Sizes", "4", "4 / 5 / 6 / 8 mm needles"], ["Thinnest", "32G", "on the 4 mm needle"], ["Pack", "100", "sterile needles per box"], ["Certificates", "6", "ISO 13485, CE, FDA 510(k) and more"]],
     },
     about: {
       label: "01 — The product",
@@ -383,7 +405,7 @@ export const TXT = {
     },
     problem: {
       label: "02 — Problem & solution",
-      title: "4 problems of daily injections — and how EasyDrip addresses them.",
+      title: "**4 problems** of daily injections — and the EasyDrip **solution**.",
       colProblem: "Problem",
       colSolution: "EasyDrip solution",
       depth: {
@@ -409,7 +431,7 @@ export const TXT = {
     },
     features: {
       label: "03 — Features",
-      title: "Every feature means a practical benefit for the buyer.",
+      title: "Every feature means **a practical benefit** for the buyer.",
       items: [
         ["32G × 4 mm needle", "Thin and short: important for comfort and for **reducing the risk of accidental intramuscular injection.**"],
         ["Hextra Tech hub", "A design aimed at **increasing needle stability** and reducing the risk of bending."],
@@ -427,7 +449,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — Sizes",
-      title: "Choosing the right needle is where a good injection starts.",
+      title: "Choosing the right needle is where **a good injection** starts.",
       note: "The higher the G number, the thinner the needle. Choose the right size with your doctor.",
       sku: "Reorder #",
       rows: [

@@ -21,6 +21,10 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
 const FEATURE_IMG = ["needle-macro", "hub", "skin-contact", "caps-hands"];
+const HERO_IMG = "hero-person";
+// Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
+const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub"], ["depth-bad", "depth-good"], ["problem-caps", "caps-hands"]];
+const RED = "#E5383B";
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
 // Bo'sh bo'lsa — 3 ta bo'sh joy ko'rinadi.
@@ -61,7 +65,7 @@ function rich(str, style = BOLD) {
 function Heading({ title, className = "" }) {
   return (
     <Reveal variant="up" className={`mb-6 sm:mb-8 px-1 ${className}`}>
-      <h2 className="text-[28px] sm:text-[40px] font-semibold leading-[1.1] tracking-tight max-w-[900px]" style={text}>{title}</h2>
+      <h2 className="text-[30px] sm:text-[44px] font-semibold leading-[1.1] tracking-tight max-w-[960px]" style={text}>{rich(title, { color: ORANGE, fontWeight: 600 })}</h2>
     </Reveal>
   );
 }
@@ -142,23 +146,65 @@ export default function EasyDripLanding() {
               <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:pr-0 flex flex-col justify-center">
                 <span className="section-label">{t.hero.kicker}</span>
                 <h1 className="mt-6 sm:mt-8 tracking-tight">
-                  <span className="block whitespace-nowrap text-[min(10vw,84px)] lg:text-[min(5.2vw,78px)] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>{t.hero.brand}</span>
+                  <span className="block whitespace-nowrap text-[min(10vw,84px)] lg:text-[min(5.2vw,78px)] font-semibold leading-[0.95] tracking-[-0.03em]" style={text}>
+                    {t.hero.brand.replace(/\s*Plus$/, "")} <span style={{ color: ORANGE }}>Plus</span>
+                  </span>
                   <span className="block text-[23px] sm:text-[32px] xl:text-[36px] font-medium leading-[1.15] mt-4" style={muted}>{t.hero.title}</span>
                 </h1>
-                <p className="mt-7 text-[21px] sm:text-[25px] leading-snug tracking-tight max-w-[560px]" style={text}>
+                <p className="mt-6 text-[21px] sm:text-[25px] leading-snug tracking-tight max-w-[560px]" style={text}>
                   {rich(t.hero.sub, { color: ORANGE, fontWeight: 700 })}
                 </p>
-                <p className={`mt-4 ${BODY} max-w-[520px]`} style={muted}>{rich(t.hero.lead)}</p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                {/* Belgili afzalliklar (ref: "без боли · гарантия") */}
+                <ul className="mt-6 flex flex-wrap gap-2 max-w-[560px]">
+                  {t.hero.checks.map((c) => (
+                    <li key={c} className="inline-flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5 text-[15px] font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>
+                      <span className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs" style={{ background: ORANGE }}>✓</span>{c}
+                    </li>
+                  ))}
+                </ul>
+                <p className={`mt-5 ${BODY} max-w-[520px]`} style={muted}>{rich(t.hero.lead)}</p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
                   <a href="#buyurtma" className={`${pill} text-white`} style={{ background: ORANGE }}>{t.hero.cta1}</a>
+                  <a href="#buyurtma" aria-label={t.hero.cta1} className="w-14 h-14 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110" style={{ background: ORANGE }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
+                  </a>
                   <a href="https://t.me/ummeduz" target="_blank" rel="noopener noreferrer" className={pill} style={{ background: "var(--bg)", ...text }}>{t.hero.cta2}</a>
                 </div>
               </div>
-              <div className="relative h-[420px] sm:h-[560px] lg:h-auto m-3 sm:m-4 lg:ml-0 rounded-[24px] overflow-hidden">
-                <Image src={PH("hero")} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar: qadoq, igna asosi va qopqoqlar" fill priority
-                  sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover" />
-                <span className="absolute left-5 bottom-5 rounded-full px-4 py-2 text-[15px] font-semibold text-white" style={{ background: ORANGE }}>32G × 4 mm · 100</span>
+              <div className="relative h-[460px] sm:h-[600px] lg:h-auto m-3 sm:m-4 lg:ml-0 rounded-[24px] overflow-hidden">
+                <Image src={PH(HERO_IMG)} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar" fill priority
+                  sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover object-top" />
+                {/* Suzib turgan kartochka (ref: sovg'a kartochkasi) */}
+                <a href="#buyurtma" className="absolute left-4 right-4 sm:left-auto sm:right-5 bottom-4 sm:bottom-5 sm:max-w-[340px] flex items-center gap-3 rounded-[20px] p-3 pr-3 backdrop-blur-md shadow-[0_12px_30px_rgba(0,0,0,0.12)]"
+                  style={{ background: "rgba(255,255,255,0.82)", color: "#1a1a1a" }}>
+                  <span className="relative w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-white">
+                    <Image src={IMG["4"]} alt="" fill sizes="56px" className="object-contain p-1" />
+                  </span>
+                  <span className="flex-1 text-[14px] leading-snug"><b className="block text-[15px]">{t.hero.badge[0]}</b>{t.hero.badge[1]}</span>
+                  <span className="w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ background: ORANGE }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
+                  </span>
+                </a>
               </div>
+            </div>
+          </section>
+
+          {/* ── Ishonch: 4 ta raqamli kartochka ── */}
+          <section className="pt-16 sm:pt-24">
+            <Heading title={t.trust.title} className="!mb-4" />
+            <p className={`${BODY} max-w-[760px] px-1 mb-8`} style={muted}>{t.trust.lead}</p>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {t.trust.items.map(([label, value, sub]) => (
+                <Tile key={label} className="flex flex-col justify-between gap-8 sm:gap-10 min-h-[180px] sm:min-h-[220px]">
+                  <span className="self-start inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>
+                    {label}<span className="w-1.5 h-1.5 rounded-full" style={{ background: ORANGE }} />
+                  </span>
+                  <div>
+                    <p className="text-[44px] sm:text-[64px] font-light leading-none tracking-tight" style={text}>{value}</p>
+                    <p className="text-[15px] mt-2" style={muted}>{sub}</p>
+                  </div>
+                </Tile>
+              ))}
             </div>
           </section>
 
@@ -239,21 +285,21 @@ export default function EasyDripLanding() {
           {/* ── Xususiyatlar: 4 ta kartochka ── */}
           <section id="yechim" className="scroll-mt-24 pt-16 sm:pt-24">
             <Heading title={t.features.title} />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Suratli kartochkalar (ref: "Услуги" bo'limi): surat to'liq, matn ustida, burchakda strelka */}
+            <div className="grid md:grid-cols-2 gap-3">
               {t.features.items.map(([title, body], i) => (
-                <Tile key={title} className="flex flex-col !p-3 sm:!p-3">
-                  <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden mb-5" style={{ backgroundColor: "var(--bg)" }}>
-                    <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
+                <a key={title} href="#buyurtma" className="group relative rounded-[28px] overflow-hidden min-h-[380px] sm:min-h-[420px] flex flex-col justify-between p-6 sm:p-8" style={TILE}>
+                  <Image src={PH(FEATURE_IMG[i])} alt={title} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                  <span className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.78) 100%)" }} />
+                  <h3 className="relative text-[24px] sm:text-[28px] font-semibold tracking-tight text-white max-w-[80%]">{title}</h3>
+                  <div className="relative flex items-end justify-between gap-5">
+                    <p className="text-[17px] leading-[1.55] text-white/90 max-w-[460px]">{rich(body, { color: "#fff", fontWeight: 700 })}</p>
+                    <span className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110"
+                      style={i % 2 ? { background: "#fff", color: ORANGE } : { background: ORANGE, color: "#fff" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
+                    </span>
                   </div>
-                  <div className="px-3 pb-3 sm:px-4 sm:pb-4 flex-1 flex flex-col">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className={H3} style={text}>{title}</h3>
-                    <span className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                      style={i === 0 ? { background: ORANGE, color: "#fff" } : { background: "var(--bg)", ...text }}>{i + 1}</span>
-                  </div>
-                  <p className={`mt-4 ${BODY}`} style={muted}>{rich(body)}</p>
-                  </div>
-                </Tile>
+                </a>
               ))}
             </div>
           </section>
@@ -281,23 +327,34 @@ export default function EasyDripLanding() {
             </div>
           </section>
 
-          {/* ── Muammo va yechim: 2×2 ── */}
+          {/* ── Muammo (qizil ramka) → Yechim (yashil ramka), har biri suratli ── */}
           <section id="muammo" className="scroll-mt-24 pt-16 sm:pt-24">
             <Heading title={t.problem.title} />
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="space-y-10 sm:space-y-12">
               {t.problem.items.map(([title, prob, sol], i) => (
-                <Tile key={title}>
-                  <span className="text-sm font-bold tabular-nums" style={{ color: ORANGE }}>{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className={`${H3} mt-2`} style={text}>{title}</h3>
-                  <p className={`mt-4 ${BODY}`} style={muted}>
-                    <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: ORANGE }}>{t.problem.colProblem}</span>
-                    {rich(prob)}
-                  </p>
-                  <div className="mt-4 rounded-2xl p-4 sm:p-5" style={{ backgroundColor: "var(--bg)" }}>
-                    <span className="block text-xs font-bold uppercase tracking-[0.14em] mb-1" style={{ color: GREEN }}>{t.problem.colSolution}</span>
-                    <p className={BODY} style={text}>{rich(sol)}</p>
+                <div key={title}>
+                  <h3 className="flex items-center gap-3 text-[24px] sm:text-[30px] font-semibold tracking-tight mb-4 px-1" style={text}>
+                    <span className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold text-white flex-shrink-0" style={{ background: ORANGE }}>{i + 1}</span>
+                    {title}
+                  </h3>
+                  <div className="relative grid md:grid-cols-2 gap-3 md:gap-5">
+                    {[[prob, RED, t.problem.colProblem, PROBLEM_IMG[i][0], "✕"], [sol, GREEN, t.problem.colSolution, PROBLEM_IMG[i][1], "✓"]].map(([body, c, label, img, mark], k) => (
+                      <div key={k} className="rounded-[28px] overflow-hidden flex flex-col" style={{ border: `2.5px solid ${c}`, backgroundColor: k ? "rgba(61,184,81,0.06)" : "rgba(229,56,59,0.05)" }}>
+                        <div className="relative aspect-[16/10]">
+                          <Image src={PH(img)} alt={`${title} — ${label}`} fill sizes="(max-width: 768px) 95vw, 48vw" className="object-cover" />
+                          <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5 text-sm font-bold text-white shadow-md" style={{ background: c }}>
+                            <span className="w-6 h-6 rounded-full flex items-center justify-center bg-white text-xs" style={{ color: c }}>{mark}</span>{label}
+                          </span>
+                        </div>
+                        <p className={`p-5 sm:p-7 ${BODY}`} style={k ? text : muted}>{rich(body, { color: k ? GREEN : RED, fontWeight: 700 })}</p>
+                      </div>
+                    ))}
+                    {/* Muammodan yechimga o'q */}
+                    <span className="hidden md:flex absolute left-1/2 top-[calc(50%-24px)] -translate-x-1/2 w-12 h-12 rounded-full items-center justify-center text-white shadow-lg z-10" style={{ background: GREEN }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </span>
                   </div>
-                </Tile>
+                </div>
               ))}
             </div>
             {/* Kirish chuqurligi: tor asos va Hextra Tech asosi taqqoslovi */}
