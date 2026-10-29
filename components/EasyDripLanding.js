@@ -21,7 +21,7 @@ const SKU_IMG = { "02-3204": IMG["4"], "02-3105": IMG["5"], "02-3106": IMG["6"],
 const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 // Xususiyatlar kartochkalari tartibida: igna uchi, Hextra asos, teriga tegadigan yuza, qopqoqlar
 const FEATURE_IMG = ["needle-macro", "hub-top", "skin-contact-v2", "caps-real"];
-const HERO_IMG = "hero-inject";
+const HERO_IMG = "hero-inject-v2";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
 const SIZE_IMG = { "02-3204": PH("size-4w"), "02-3105": PH("size-5w"), "02-3106": PH("size-6w"), "02-3108": PH("size-8w") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
@@ -157,17 +157,6 @@ export default function EasyDripLanding() {
               <div className="relative h-[460px] sm:h-[600px] lg:h-auto m-3 sm:m-4 lg:ml-0 rounded-[24px] overflow-hidden">
                 <Image src={PH(HERO_IMG)} alt="Easy Drip Plus 32G × 4 mm — insulin shprits-ruchkalari uchun ignalar" fill priority
                   sizes="(max-width: 1024px) 95vw, 50vw" className="object-cover object-[50%_45%]" />
-                {/* Suzib turgan kartochka (ref: sovg'a kartochkasi) */}
-                <a href="#buyurtma" className="absolute left-4 right-4 sm:left-auto sm:right-5 bottom-4 sm:bottom-5 sm:max-w-[340px] flex items-center gap-3 rounded-[20px] p-3 pr-3 backdrop-blur-md shadow-[0_12px_30px_rgba(0,0,0,0.12)]"
-                  style={{ background: "rgba(255,255,255,0.82)", color: "#1a1a1a" }}>
-                  <span className="relative w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-white">
-                    <Image src={IMG["4"]} alt="" fill sizes="56px" className="object-contain p-1" />
-                  </span>
-                  <span className="flex-1 text-[14px] leading-snug"><b className="block text-[15px]">{t.hero.badge[0]}</b>{t.hero.badge[1]}</span>
-                  <span className="w-9 h-9 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ background: ORANGE }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M9 7h8v8" /></svg>
-                  </span>
-                </a>
               </div>
             </div>
           </section>
