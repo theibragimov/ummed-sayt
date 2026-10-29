@@ -147,11 +147,10 @@ export default function EasyDripLanding() {
             <div className="relative h-[280px] sm:h-[420px] lg:absolute lg:inset-0 lg:h-auto">
               <Image src={PH(HERO_IMG)} alt="Easy Drip Plus ignalari va insulin shprits-ruchkasi" fill priority
                 sizes="100vw" className="ed-zoom object-cover object-[72%_50%] lg:object-[100%_50%]" />
-              <span className="hidden lg:block absolute inset-0" style={{ background: "linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.95) 28%, rgba(255,255,255,0.6) 44%, rgba(255,255,255,0) 58%)" }} />
             </div>
             <div className="relative z-10 w-full h-full px-5 sm:px-10 lg:pl-14 xl:pl-20 2xl:pl-28 py-8 sm:py-12 flex flex-col justify-center">
-              <div className="lg:max-w-[600px]">
-              <h1 className="ed-up text-[32px] sm:text-[44px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em]" style={{ color: "#141414" }}>
+              <div className="lg:max-w-[min(48vw,720px)]">
+              <h1 className="ed-up text-[36px] sm:text-[52px] lg:text-[min(4.6vw,68px)] font-semibold leading-[1.04] tracking-[-0.035em]" style={{ color: "#141414" }}>
                 {rich(t.hero.sub, { color: ORANGE })}
               </h1>
               <p className="ed-up mt-4 text-[17px] sm:text-[19px] leading-snug tracking-tight" style={{ color: "#55555b", animationDelay: "120ms" }}>
