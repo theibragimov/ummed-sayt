@@ -23,7 +23,7 @@ const PH = (n) => `/images/easydrip/photo/${n}.jpg`;
 const FEATURE_IMG = ["needle-macro", "hub-hextra", "skin-contact-v2", "caps-real"];
 const HERO_IMG = "hero-inject";
 // O'lcham kartochkalari uchun bir xil studiya suratlari
-const SIZE_IMG = { "02-3204": PH("size-4"), "02-3105": PH("size-5"), "02-3106": PH("size-6"), "02-3108": PH("size-8") };
+const SIZE_IMG = { "02-3204": PH("size-4w"), "02-3105": PH("size-5w"), "02-3106": PH("size-6w"), "02-3108": PH("size-8w") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
 const PROBLEM_IMG = [["problem-pain", "needle-macro"], ["problem-bent", "hub-hextra"], ["depth-bad", "depth-good"], ["problem-caps", "caps-real"]];
 const RED = "#E5383B";
@@ -105,14 +105,13 @@ export default function EasyDripLanding() {
   const SizeTile = ({ row }) => {
     const [g, len, , sku] = row;
     return (
-      <div className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col justify-between p-6 sm:p-7" style={{ background: "#F1F2F5", color: "#1a1a1a" }}>
+      <div className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col p-6 sm:p-7" style={{ background: "#ffffff", color: "#1a1a1a", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)" }}>
         <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
         <div className="relative flex items-start justify-between gap-4">
           <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none">
             {len} <span className="text-lg font-semibold" style={{ color: ORANGE }}>· {g}</span>
           </p>
         </div>
-        <p className="relative text-sm" style={{ color: "#55555b" }}>{t.sizes.sku}: <b>{sku}</b></p>
       </div>
     );
   };
