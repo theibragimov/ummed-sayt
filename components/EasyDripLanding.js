@@ -28,7 +28,7 @@ const HERO_IMG = "hero-4k-v2";
 const SIZE_COLOR = { "02-3204": "#22A447", "02-3105": "#7A2E9A", "02-3106": "#EE7A1A", "02-3108": "#1E9E9B" };
 const SIZE_IMG = { "02-3204": PH("size-4-studio-v2"), "02-3105": PH("size-5-studio-v2"), "02-3106": PH("size-6-studio-v2"), "02-3108": PH("size-8-studio-v2") };
 // Muammo (qizil ramka) va yechim (yashil ramka) suratlari — t.problem.items tartibida
-const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v3", "depth-good-v3"], ["problem-caps-v2", "caps-real"]];
+const PROBLEM_IMG = [["problem-pain-v2", "needle-macro"], ["problem-bent", "hub-top"], ["depth-bad-v4", "depth-good-v4"], ["problem-caps-v2", "caps-real"]];
 const RED = "#E5383B";
 
 // Haqiqiy mijoz fikrlari: { ism: "...", rol: "...", matn: { uz, ru, en } }
@@ -311,7 +311,7 @@ export default function EasyDripLanding() {
             <Tile className="mt-3 !p-3">
               <h3 className={`${H3} px-3 pt-3 pb-5 sm:px-5 sm:pt-5`} style={text}>{t.problem.depth.title}</h3>
               <div className="relative rounded-[20px] overflow-hidden aspect-[16/9] sm:aspect-[21/9]" style={{ backgroundColor: "var(--bg)" }}>
-                <Image src={PH("depth-compare-v3")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
+                <Image src={PH("depth-compare-v4")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
               </div>
               <div className="grid sm:grid-cols-2 gap-3 mt-3">
                 {[[t.problem.depth.left, ORANGE, "✕"], [t.problem.depth.right, GREEN, "✓"]].map(([s, c, mark]) => (
