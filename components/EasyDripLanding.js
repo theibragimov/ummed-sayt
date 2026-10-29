@@ -124,11 +124,10 @@ export default function EasyDripLanding() {
         <div className="max-w-[1320px] mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-20 sm:pb-28">
 
           {/* ── Hero: katta kulrang katak, ulkan sarlavha + "suzib turgan" mahsulot ── */}
-          <section className="relative rounded-[32px] overflow-hidden" style={TILE}>
+          <section className="relative rounded-[32px] overflow-hidden lg:left-1/2 lg:-translate-x-1/2 lg:w-[calc(100vw-64px)] lg:max-w-[1760px]" style={TILE}>
             <div className="grid lg:grid-cols-[1.1fr_1fr] lg:min-h-[640px]">
-              <div className="relative z-10 p-6 sm:p-10 lg:p-14 lg:pr-0 flex flex-col justify-center">
-                <span className="section-label">{t.hero.kicker}</span>
-                <h1 className="mt-6 sm:mt-8 text-[min(9vw,40px)] sm:text-[50px] lg:text-[min(3.7vw,56px)] font-semibold leading-[1.05] tracking-[-0.03em] max-w-[640px]" style={text}>
+              <div className="relative z-10 p-6 sm:p-10 lg:p-14 xl:pl-20 lg:pr-10 flex flex-col justify-center">
+                <h1 className="text-[min(9vw,40px)] sm:text-[50px] lg:text-[min(3.7vw,60px)] font-semibold leading-[1.05] tracking-[-0.03em] max-w-[780px]" style={text}>
                   {rich(t.hero.sub, { color: ORANGE })}
                 </h1>
                 <p className="mt-5 text-[20px] sm:text-[24px] leading-snug tracking-tight max-w-[600px]" style={muted}>
