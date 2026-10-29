@@ -250,6 +250,21 @@ export default function EasyDripLanding() {
                 </Tile>
               ))}
             </div>
+            {/* Kirish chuqurligi: tor asos va Hextra Tech asosi taqqoslovi */}
+            <Tile className="mt-3 !p-3">
+              <h3 className={`${H3} px-3 pt-3 pb-5 sm:px-5 sm:pt-5`} style={text}>{t.problem.depth.title}</h3>
+              <div className="relative rounded-[20px] overflow-hidden aspect-[16/9] sm:aspect-[21/9]" style={{ backgroundColor: "var(--bg)" }}>
+                <Image src={PH("depth-compare")} alt={`${t.problem.depth.left}. ${t.problem.depth.right}`} fill sizes="(max-width: 1320px) 95vw, 1260px" className="object-cover" />
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                {[[t.problem.depth.left, ORANGE, "✕"], [t.problem.depth.right, GREEN, "✓"]].map(([s, c, mark]) => (
+                  <p key={s} className="rounded-2xl p-4 sm:p-5 flex gap-3 text-[17px] font-semibold leading-snug" style={{ backgroundColor: "var(--bg)", ...text }}>
+                    <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm text-white" style={{ background: c }}>{mark}</span>{s}
+                  </p>
+                ))}
+              </div>
+              <p className="px-3 pt-4 pb-2 sm:px-5 text-[15px] leading-relaxed" style={muted}>{t.problem.depth.note}</p>
+            </Tile>
           </section>
 
           {/* ── Nega EasyDrip ── */}

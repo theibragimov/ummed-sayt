@@ -96,6 +96,12 @@ export const TXT = {
       title: "Har kungi ukoldagi 4 ta muammo — va EasyDrip ularga qanday yondashadi.",
       colProblem: "Muammo",
       colSolution: "EasyDrip yechimi",
+      depth: {
+        title: "Kirish chuqurligi: asosning kengligi nega muhim?",
+        left: "Tor asos teriga botadi — igna chuqurroq, mushakkacha kirishi mumkin",
+        right: "Hextra Tech: kengaytirilgan asos teriga tekis tegadi — igna yog' qatlamida qoladi",
+        note: "Ishlab chiqaruvchi ta'rifiga ko'ra, teriga tegadigan kengaytirilgan yuza ignaning kirish chuqurligini nazorat qilishga yordam beradi. Rasm tushuntirish uchun, o'lchamlar shartli.",
+      },
       items: [
         ["Og'riq va noqulaylik",
           "Har kuni insulin yuboradigan inson igna kirishida **og'riq yoki achishishni** his qilishi mumkin. Bu ukol qilishni ruhiy jihatdan ham qiyinlashtiradi.",
@@ -227,6 +233,12 @@ export const TXT = {
       title: "4 проблемы ежедневных уколов — и как EasyDrip к ним подходит.",
       colProblem: "Проблема",
       colSolution: "Решение EasyDrip",
+      depth: {
+        title: "Глубина введения: почему важна ширина основания?",
+        left: "Узкое основание продавливает кожу — игла может войти глубже, вплоть до мышцы",
+        right: "Hextra Tech: расширенное основание ровно прилегает к коже — игла остаётся в жировом слое",
+        note: "По описанию производителя, расширенная поверхность контакта с кожей помогает контролировать глубину введения иглы. Иллюстрация поясняющая, пропорции условны.",
+      },
       items: [
         ["Боль и дискомфорт",
           "Человек, ежедневно вводящий инсулин, может чувствовать **боль или жжение** при проникновении иглы. Это делает уколы тяжелее и психологически.",
@@ -358,6 +370,12 @@ export const TXT = {
       title: "4 problems of daily injections — and how EasyDrip addresses them.",
       colProblem: "Problem",
       colSolution: "EasyDrip solution",
+      depth: {
+        title: "Penetration depth: why hub width matters",
+        left: "A narrow hub presses into the skin — the needle may go deeper, even into muscle",
+        right: "Hextra Tech: the enlarged base sits flat on the skin — the needle stays in the fat layer",
+        note: "According to the manufacturer, the enlarged skin-contact surface helps control needle penetration depth. Illustrative image, proportions are approximate.",
+      },
       items: [
         ["Pain and discomfort",
           "Someone injecting insulin every day may feel **pain or stinging** as the needle enters. This makes injections psychologically harder too.",
