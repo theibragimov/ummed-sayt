@@ -184,6 +184,56 @@ export default function EasyDripLanding() {
                 <p className={BODY} style={muted}>{t.sizes.note} {t.sizes.pack}</p>
               </Tile>
             </div>
+
+            {/* Texnik jadval: artikul, igna rasmi, yo'g'onlik, uzunlik, qadoq */}
+            <Tile className="mt-3 !p-3 sm:!p-4">
+              <h3 className={`${H3} px-3 pt-3 pb-4 sm:px-4`} style={text}>{t.sizes.table.title}</h3>
+              {/* Kompyuter: jadval */}
+              <table className="hidden md:table w-full border-separate border-spacing-0 rounded-[20px] overflow-hidden text-center" style={{ backgroundColor: "var(--bg)" }}>
+                <thead>
+                  <tr className="text-white" style={{ background: ORANGE }}>
+                    {t.sizes.table.cols.map((c, i) => (
+                      <th key={c} className="px-4 py-4 text-[15px] font-semibold leading-snug">
+                        {c}{i === 0 && <span className="block text-xs font-medium opacity-85 mt-0.5">{t.sizes.table.sub}</span>}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.sizes.rows.map(([g, len, , sku], i) => (
+                    <tr key={sku} className="text-[17px]" style={text}>
+                      <td className="px-4 py-3 font-semibold tabular-nums" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{sku}</td>
+                      <td className="px-4 py-3" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>
+                        <Image src={`/images/easydrip/caps/cap-${len.replace(/\D/g, "")}mm.jpg`} alt={`${g} × ${len}`} width={52} height={78} className="mx-auto rounded-lg object-cover" />
+                      </td>
+                      <td className="px-4 py-3" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{g} {t.sizes.table.needle}</td>
+                      <td className="px-4 py-3 font-semibold" style={{ borderTop: i ? "1px solid var(--border-strong, #e5e5e5)" : undefined }}>{len}</td>
+                      {i === 0 && (
+                        <td rowSpan={t.sizes.rows.length} className="px-4 py-3 font-semibold leading-loose" style={{ ...TILE, borderLeft: "1px solid var(--border-strong, #e5e5e5)" }}>
+                          {t.sizes.table.pack.map((p) => <span key={p} className="block">{p}</span>)}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* Telefon: har bir o'lcham — alohida qator-kartochka */}
+              <div className="md:hidden space-y-2">
+                {t.sizes.rows.map(([g, len, , sku]) => (
+                  <div key={sku} className="flex items-center gap-4 rounded-2xl p-3" style={{ backgroundColor: "var(--bg)" }}>
+                    <Image src={`/images/easydrip/caps/cap-${len.replace(/\D/g, "")}mm.jpg`} alt={`${g} × ${len}`} width={48} height={72} className="rounded-lg object-cover flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-xl font-semibold" style={text}>{len} <span className="text-base" style={{ color: ORANGE }}>· {g}</span></p>
+                      <p className="text-[15px]" style={muted}>{t.sizes.table.cols[0]}: <b style={text}>{sku}</b></p>
+                    </div>
+                  </div>
+                ))}
+                <p className="rounded-2xl p-4 text-[17px] font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>{t.sizes.table.cols[4]}: {t.sizes.table.pack.join(" · ")}</p>
+              </div>
+              <ol className="px-3 sm:px-4 pt-4 pb-2 space-y-1 text-[15px] leading-relaxed list-decimal list-inside" style={muted}>
+                {t.sizes.table.notes.map((n) => <li key={n}>{n}</li>)}
+              </ol>
+            </Tile>
           </section>
 
           {/* ── Xususiyatlar: 4 ta kartochka ── */}

@@ -147,6 +147,14 @@ export const TXT = {
         ["31G", "8 mm", "Shifokor tavsiyasiga ko'ra", "02-3108"],
       ],
       pack: "Qadoq: 100 dona/quti. Ulgurji — karobkalarda.",
+      table: {
+        title: "Texnik jadval",
+        cols: ["Artikul", "Rang", "Igna yo'g'onligi", "Igna uzunligi", "Standart qadoq"],
+        sub: "EasyDrip Plus · 3 qirrali uch",
+        needle: "igna",
+        pack: ["100 dona / quti", "2000 dona / karobka"],
+        notes: ["G (gauge) — igna yo'g'onligi: raqam qancha katta bo'lsa, igna shuncha ingichka.", "Boshqa o'lcham kerak bo'lsa, menejerimizga murojaat qiling."],
+      },
     },
     honest: {
       label: "05 — Bilish muhim",
@@ -284,6 +292,14 @@ export const TXT = {
         ["31G", "8 мм", "По рекомендации врача", "02-3108"],
       ],
       pack: "Упаковка: 100 шт./коробка. Опт — в коробах.",
+      table: {
+        title: "Технические характеристики",
+        cols: ["Артикул", "Цвет", "Толщина иглы", "Длина иглы", "Стандартная упаковка"],
+        sub: "EasyDrip Plus · 3-гранная заточка",
+        needle: "игла",
+        pack: ["100 шт. / коробка", "2000 шт. / короб"],
+        notes: ["G (gauge) — толщина иглы: чем больше число, тем тоньше игла.", "Если нужен другой размер, обратитесь к нашему менеджеру."],
+      },
     },
     honest: {
       label: "05 — Важно знать",
@@ -421,6 +437,14 @@ export const TXT = {
         ["31G", "8 mm", "As advised by a doctor", "02-3108"],
       ],
       pack: "Packaging: 100 pcs/box. Wholesale — in cases.",
+      table: {
+        title: "Specifications",
+        cols: ["Reorder #", "Color", "Needle gauge", "Needle length", "Standard package"],
+        sub: "EasyDrip Plus · 3-bevel tip",
+        needle: "needle",
+        pack: ["100 pcs / box", "2000 pcs / case"],
+        notes: ["Needle gauge is the needle thickness: the higher the gauge, the thinner the needle.", "Contact our manager if you need a different size."],
+      },
     },
     honest: {
       label: "05 — Good to know",
