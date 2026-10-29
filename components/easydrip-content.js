@@ -149,7 +149,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — O'lchamlar",
-      title: "To'g'ri igna tanlash — **to'g'ri ukolning** boshlanishi.",
+      title: "Har bir ehtiyoj uchun — **mos igna o‘lchami**",
       note: "G raqami qancha katta bo'lsa, igna shuncha ingichka. Mos o'lchamni shifokoringiz bilan tanlang.",
       sku: "Artikul",
       rows: [
@@ -158,7 +158,8 @@ export const TXT = {
         ["31G", "6 mm", "Shifokor tavsiyasiga ko'ra", "02-3106"],
         ["31G", "8 mm", "Shifokor tavsiyasiga ko'ra", "02-3108"],
       ],
-      pack: "Qadoq: 100 dona/quti. Ulgurji — karobkalarda.",
+      packTitle: "Qutida – **100 dona**",
+      pack: "EasyDrip Plus ignalari 100 donalik qadoqda taqdim etiladi.",
     },
     honest: {
       label: "05 — Bilish muhim",
@@ -297,7 +298,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — Размеры",
-      title: "Правильный выбор иглы — начало **правильного укола**.",
+      title: "Для каждой потребности — **подходящий размер иглы**",
       note: "Чем больше число G, тем тоньше игла. Подходящий размер выбирайте вместе с врачом.",
       sku: "Артикул",
       rows: [
@@ -306,7 +307,8 @@ export const TXT = {
         ["31G", "6 мм", "По рекомендации врача", "02-3106"],
         ["31G", "8 мм", "По рекомендации врача", "02-3108"],
       ],
-      pack: "Упаковка: 100 шт./коробка. Опт — в коробах.",
+      packTitle: "В коробке – **100 шт.**",
+      pack: "Иглы EasyDrip Plus поставляются в упаковке по 100 штук.",
     },
     honest: {
       label: "05 — Важно знать",
@@ -445,7 +447,7 @@ export const TXT = {
     },
     sizes: {
       label: "04 — Sizes",
-      title: "Choosing the right needle is where **a good injection** starts.",
+      title: "For every need — **the right needle size**",
       note: "The higher the G number, the thinner the needle. Choose the right size with your doctor.",
       sku: "Reorder #",
       rows: [
@@ -454,7 +456,8 @@ export const TXT = {
         ["31G", "6 mm", "As advised by a doctor", "02-3106"],
         ["31G", "8 mm", "As advised by a doctor", "02-3108"],
       ],
-      pack: "Packaging: 100 pcs/box. Wholesale — in cases.",
+      packTitle: "In the box – **100 pcs**",
+      pack: "EasyDrip Plus needles come in packs of 100.",
     },
     honest: {
       label: "05 — Good to know",

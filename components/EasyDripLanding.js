@@ -109,7 +109,7 @@ export default function EasyDripLanding() {
         <Image src={SIZE_IMG[sku]} alt={`Easy Drip Plus ${g} × ${len}`} fill sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 25vw" className="object-cover" />
         <div className="relative flex items-start justify-between gap-4">
           <p className="text-[28px] sm:text-[32px] font-semibold tracking-tight leading-none">
-            {len} <span className="text-lg font-semibold" style={{ color: ORANGE }}>· {g}</span>
+            {len} <span style={{ color: ORANGE }}>· {g}</span>
           </p>
         </div>
       </div>
@@ -224,10 +224,8 @@ export default function EasyDripLanding() {
                 <Image src={PH("sizes-lineup-spill")} alt="Easy Drip Plus 4, 5, 6 va 8 mm ignalar qadoqlari yonma-yon" fill sizes="(max-width: 1024px) 95vw, 60vw" className="object-contain p-4" />
               </div>
               <Tile className="flex flex-col justify-between gap-6">
-                <div className="flex items-start justify-between gap-4">
-                  <p className="text-2xl sm:text-3xl font-semibold tracking-tight" style={text}>{t.hero.chips[3]}</p>
-                </div>
-                <p className={BODY} style={muted}>{t.sizes.note} {t.sizes.pack}</p>
+                <p className="text-[32px] sm:text-[44px] font-semibold tracking-tight leading-[1.05]" style={text}>{rich(t.sizes.packTitle, { color: ORANGE })}</p>
+                <p className={BODY} style={muted}>{t.sizes.pack}</p>
               </Tile>
             </div>
           </section>
