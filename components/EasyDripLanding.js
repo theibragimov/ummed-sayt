@@ -194,19 +194,16 @@ export default function EasyDripLanding() {
             </div>
           </section>
 
-          {/* ── Ishonch: 4 ta raqamli kartochka ── */}
+          {/* ── Farqi: 4 ta asosiy xususiyat kartochkasi ── */}
           <section className="pt-16 sm:pt-24">
-            <Heading title={t.trust.title} className="!mb-4" />
-            <p className={`${BODY} max-w-[760px] px-1 mb-8`} style={muted}>{t.trust.lead}</p>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {t.trust.items.map(([label, value, sub]) => (
-                <Tile key={label} className="flex flex-col justify-between gap-8 sm:gap-10 min-h-[180px] sm:min-h-[220px]">
-                  <span className="self-start inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold" style={{ backgroundColor: "var(--bg)", ...text }}>
-                    {label}<span className="w-1.5 h-1.5 rounded-full" style={{ background: ORANGE }} />
-                  </span>
+            <Heading title={t.trust.title} />
+            <div className="grid sm:grid-cols-2 gap-3">
+              {t.trust.items.map(([title, body], i) => (
+                <Tile key={title} className="sm:!p-10 flex gap-5 sm:gap-6 items-start">
+                  <span className="w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 rounded-full flex items-center justify-center text-white text-lg font-bold" style={{ background: ORANGE }}>{i + 1}</span>
                   <div>
-                    <p className="text-[44px] sm:text-[64px] font-light leading-none tracking-tight" style={text}>{value}</p>
-                    <p className="text-[15px] mt-2" style={muted}>{sub}</p>
+                    <h3 className="text-[21px] sm:text-[26px] font-semibold leading-[1.2] tracking-tight" style={text}>{title}</h3>
+                    <p className={`mt-3 ${BODY}`} style={muted}>{body}</p>
                   </div>
                 </Tile>
               ))}

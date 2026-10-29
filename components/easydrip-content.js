@@ -81,9 +81,13 @@ export const TXT = {
       badge: ["Rasmiy distribyutor", "Sertifikatlar to'plami bilan ulgurji yetkazib beramiz"],
     },
     trust: {
-      title: "Nega EasyDrip Plus'ga **ishonishadi**",
-      lead: "Ishlab chiqaruvchi — Sandstone Medical (Suzhou), Xitoy. Ummed — O'zbekistondagi rasmiy distribyutor: dorixona va klinikalarga sertifikatlar to'plami bilan yetkazib beramiz.",
-      items: [["O'lchamlar", "4", "4 / 5 / 6 / 8 mm igna"], ["Eng ingichka", "32G", "4 mm igna uchun"], ["Qadoq", "100", "steril igna bir qutida"], ["Sertifikatlar", "6", "ISO 13485, CE, FDA 510(k) va boshq."]],
+      title: "EasyDrip Plus nimasi bilan **farq qiladi?**",
+      items: [
+        ["Hextra Tech — keng olti qirrali asos", "Ignani yuborish vaqtida barqarorroq ushlashga yordam beradi va uning egilishi yoki sinishi xavfini kamaytirishga mo‘ljallangan."],
+        ["Puxta o‘ylangan igna dizayni", "Ignaning konstruksiyasi teri ostiga yuborishga mos chuqurlikni ta’minlashga ko‘maklashish uchun ishlab chiqilgan."],
+        ["Ushlashga qulay qopqoqlar", "Kattalashtirilgan ichki va tashqi qopqoqlar ignani ushlashni osonlashtirish va qayta qopqoq bilan yopishda qulaylik yaratish uchun mo‘ljallangan."],
+        ["Yumshoq kiritishga mo‘ljallangan igna", "Ko‘p qirrali igna uchi va silikon qoplama ignaning teriga kiritilishidagi ishqalanishni kamaytirishga yordam berishga mo‘ljallangan."],
+      ],
     },
     about: {
       label: "01 — Mahsulot",
@@ -226,9 +230,13 @@ export const TXT = {
       badge: ["Официальный дистрибьютор", "Оптовые поставки с полным пакетом сертификатов"],
     },
     trust: {
-      title: "Почему EasyDrip Plus **доверяют**",
-      lead: "Производитель — Sandstone Medical (Сучжоу), Китай. Ummed — официальный дистрибьютор в Узбекистане: поставляем аптекам и клиникам с полным пакетом сертификатов.",
-      items: [["Размеры", "4", "иглы 4 / 5 / 6 / 8 мм"], ["Самая тонкая", "32G", "у иглы 4 мм"], ["Упаковка", "100", "стерильных игл в коробке"], ["Сертификаты", "6", "ISO 13485, CE, FDA 510(k) и др."]],
+      title: "Чем EasyDrip Plus **отличается?**",
+      items: [
+        ["Hextra Tech — широкое шестигранное основание", "Помогает стабильнее удерживать иглу во время введения и призвано снизить риск её изгиба или поломки."],
+        ["Продуманный дизайн иглы", "Конструкция иглы разработана, чтобы помогать обеспечивать подходящую глубину для подкожного введения."],
+        ["Удобные колпачки", "Увеличенные внутренний и внешний колпачки облегчают обращение с иглой и делают повторное закрытие колпачком удобнее."],
+        ["Игла для мягкого введения", "Многогранное остриё и силиконовое покрытие призваны помочь уменьшить трение при введении иглы в кожу."],
+      ],
     },
     about: {
       label: "01 — Продукт",
@@ -370,9 +378,13 @@ export const TXT = {
       badge: ["Official distributor", "Wholesale supply with a full set of certificates"],
     },
     trust: {
-      title: "Why people **trust** EasyDrip Plus",
-      lead: "Manufactured by Sandstone Medical (Suzhou), China. Ummed is the official distributor in Uzbekistan, supplying pharmacies and clinics with a full set of certificates.",
-      items: [["Sizes", "4", "4 / 5 / 6 / 8 mm needles"], ["Thinnest", "32G", "on the 4 mm needle"], ["Pack", "100", "sterile needles per box"], ["Certificates", "6", "ISO 13485, CE, FDA 510(k) and more"]],
+      title: "What makes EasyDrip Plus **different?**",
+      items: [
+        ["Hextra Tech — a wide hexagonal hub", "Helps hold the needle more steadily during injection and is designed to reduce the risk of bending or breaking."],
+        ["Thoughtful needle design", "The needle's construction is designed to help ensure an appropriate depth for subcutaneous injection."],
+        ["Easy-grip caps", "Enlarged inner and outer caps are designed to make the needle easier to handle and recapping more convenient."],
+        ["Designed for gentle insertion", "A multi-bevel tip and silicone coating are designed to help reduce friction as the needle enters the skin."],
+      ],
     },
     about: {
       label: "01 — The product",
