@@ -426,6 +426,46 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* EASYDRIP PLUS — sahifaga o'tish banneri (rasm doim oq, shuning uchun ranglar qat'iy) */}
+        <section className="pb-12 sm:pb-20" style={{ backgroundColor: "var(--bg)" }}>
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+            <Reveal variant="up">
+              <Link
+                href="/easydripplus"
+                className="group relative flex flex-col lg:block overflow-hidden rounded-[24px] bg-white lg:h-[460px]"
+                style={{ border: "1px solid var(--border-strong)" }}
+              >
+                <div className="relative h-[220px] sm:h-[340px] lg:absolute lg:inset-0 lg:h-auto">
+                  <Image
+                    src="/images/easydrip/photo/hero-4k-v2.jpg"
+                    alt="EasyDrip Plus insulin shprits-ruchka ignalari"
+                    fill
+                    sizes="(max-width: 1400px) 95vw, 1320px"
+                    className="object-cover object-[75%_50%] lg:object-right transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <div className="relative z-10 h-full flex flex-col justify-center p-6 sm:p-10 lg:p-14 lg:max-w-[44%]">
+                  <span className="self-start rounded-full px-3 py-1 text-xs sm:text-sm font-semibold text-white" style={{ background: "#E8491D" }}>
+                    {L("Yangi", "Новинка", "New")}
+                  </span>
+                  <h2 className="mt-4 text-2xl sm:text-4xl lg:text-5xl font-semibold leading-[1.08] tracking-tight" style={{ color: "#141414" }}>
+                    EasyDrip <span style={{ color: "#E8491D" }}>Plus</span>
+                  </h2>
+                  <p className="mt-3 text-base sm:text-xl leading-snug" style={{ color: "#55555b" }}>
+                    {L("Insulin qilishni xavfsizroq va osonroq qiling.", "Сделайте введение инсулина безопаснее и проще.", "Make your insulin routine safer and easier.")}
+                  </p>
+                  <span className="mt-6 sm:mt-8 self-start inline-flex items-center gap-2 rounded-full pl-6 pr-2 py-2 text-sm sm:text-base font-semibold text-white" style={{ background: "#E8491D" }}>
+                    {L("Batafsil", "Подробнее", "Learn more")}
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1" style={{ color: "#E8491D" }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </span>
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          </div>
+        </section>
+
         {/* DISTRIBYUTOR MAHSULOTLAR */}
         <section className="pt-8 pb-6 sm:pt-20 sm:pb-10" style={{ backgroundColor: "var(--bg)" }}>
           <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
