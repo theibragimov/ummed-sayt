@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
 
     // Build stock map
     const stockMap: Record<string, {
-      stock: number; imageHref: string; name: string; code: string;
+      stock: number; imageHref: string; name: string; code: string; article: string;
       defaultPrice: number; type: string;
       folderId: string; folderName: string;
       rootFolderId: string; rootFolderName: string;
@@ -119,6 +119,7 @@ export async function GET(req: NextRequest) {
         imageHref: miniatureHref,
         name: row.name || '',
         code: row.code || '',
+        article: row.article || '',
         defaultPrice: Number(row.salePrice) || 0,
         type: rowType,
         folderId,
@@ -193,12 +194,15 @@ export async function GET(req: NextRequest) {
     // Only id + attributes are requested (no images), so this stays cheap.
     const discountProductIds = new Set<string>();
     const productNameMap: Record<string, string> = {};
+    const productArticleMap: Record<string, string> = {};
     {
       let dOffset = 0;
       while (true) {
         const data = await safe(`/entity/product?limit=1000&offset=${dOffset}&expand=attributes`);
         if (!data?.rows?.length) break;
         for (const p of data.rows) {
+          // Artikul — variantlar ota mahsulotdan oladi, shuning uchun stockMap'da bo'lmasa ham yoziladi
+          if (p.article) productArticleMap[p.id] = String(p.article);
           if (!stockMap[p.id]) continue;
           if (p.name) productNameMap[p.id] = p.name;
           const hasDiscountAttr = (p.attributes || []).some((a: any) =>
@@ -223,6 +227,7 @@ export async function GET(req: NextRequest) {
           type: s.type,
           name: productNameMap[id] || variantNameMap[id] || s.name,
           code: s.code,
+          article: productArticleMap[id] || s.article || (parentProductId ? productArticleMap[parentProductId] || '' : ''),
           // Use direct folder for precise filtering
           categoryId: s.folderId || null,
           categoryName: s.folderName || '',

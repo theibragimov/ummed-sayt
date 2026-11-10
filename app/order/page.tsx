@@ -14,6 +14,7 @@ interface Product {
   type: string;
   name: string;
   code: string;
+  article?: string;
   categoryId: string | null;
   categoryName: string;
   rootCategoryId: string | null;
@@ -25,6 +26,11 @@ interface Product {
   discount?: boolean;
   variantLabel?: string;
 }
+
+// Faqat "Makon Mirzo" kategoriyasidagi mahsulotlarda kod o'rniga artikul ko'rsatiladi
+const isMakonMirzo = (p: Product) =>
+  /makon|макон/i.test(`${p.rootCategoryName} ${p.categoryName}`);
+const displayCode = (p: Product) => (isMakonMirzo(p) ? (p.article || '') : p.code);
 
 interface Category {
   id: string;
@@ -452,8 +458,8 @@ function ProductRow({
               {variant}
             </span>
           )}
-          {product.code && (
-            <span className="text-[11px] text-gray-400">{product.code}</span>
+          {displayCode(product) && (
+            <span className="text-[11px] text-gray-400">{displayCode(product)}</span>
           )}
         </div>
       </div>
@@ -648,8 +654,8 @@ function ProductCard({
                 {variant}
               </span>
             )}
-            {product.code && (
-              <span className="text-[10px] text-gray-400">{product.code}</span>
+            {displayCode(product) && (
+              <span className="text-[10px] text-gray-400">{displayCode(product)}</span>
             )}
           </div>
         </div>
@@ -1009,7 +1015,8 @@ export function OrderPageContent({
       const matchCat = isTop50View
         || !selectedCat || !!(p.categoryId && selectedCatDescendants?.has(p.categoryId));
       const q = search.toLowerCase();
-      const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+      const matchSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q)
+        || (p.article || '').toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
     // "Barcha mahsulotlar" ko'rinishida — chegirmali mahsulotlar doim ro'yxat boshida
