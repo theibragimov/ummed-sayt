@@ -27,6 +27,16 @@ interface Product {
   variantLabel?: string;
 }
 
+// MoySklad miniatyuralari ochiq CDN'da (token kerak emas) — brauzer ularni to'g'ridan-to'g'ri
+// yuklaydi. Vercel proksi orqali o'tish har bir rasmga ~1 soniya qo'shardi va rate-limitga tushardi.
+const MINI_HOSTS = ['miniature-prod.moysklad.ru', 'tinyimage-prod.moysklad.ru'];
+function miniImg(href: string): string {
+  try {
+    if (MINI_HOSTS.includes(new URL(href).hostname)) return href;
+  } catch {}
+  return `/api/order/image?href=${encodeURIComponent(href)}`;
+}
+
 // Faqat "Makon Mirzo" kategoriyasidagi mahsulotlarda kod o'rniga artikul ko'rsatiladi
 const isMakonMirzo = (p: Product) =>
   /makon|макон/i.test(`${p.rootCategoryName} ${p.categoryName}`);
@@ -338,7 +348,7 @@ function Lightbox({ product, onClose }: { product: Product; onClose: () => void 
         {/* Show miniature while full image loads */}
         {!loaded && product.imageHref && (
           <img
-            src={`/api/order/image?href=${encodeURIComponent(product.imageHref)}`}
+            src={miniImg(product.imageHref)}
             alt={product.name}
             className="w-full rounded-2xl object-contain"
             style={{ maxHeight: '70vh', filter: 'blur(0px)' }}
@@ -411,7 +421,7 @@ function ProductRow({
         }}>
         {product.imageHref && !imgErr ? (
           <img
-            src={`/api/order/image?href=${encodeURIComponent(product.imageHref)}`}
+            src={miniImg(product.imageHref)}
             alt={product.name}
             className="w-full h-full object-cover"
             onError={() => setImgErr(true)}
@@ -573,7 +583,7 @@ function ProductCard({
   const t = T[lang];
   const { base: baseName, variant } = getVariantDisplay(product);
   const fullSrc = `/api/order/image?id=${product.id}&t=${product.type}&full=1`;
-  const miniSrc = product.imageHref ? `/api/order/image?href=${encodeURIComponent(product.imageHref)}` : '';
+  const miniSrc = product.imageHref ? miniImg(product.imageHref) : '';
   const [imgSrc, setImgSrc] = useState(miniSrc || fullSrc);
   const [imgErr, setImgErr] = useState(false);
 
@@ -1851,7 +1861,7 @@ export function OrderPageContent({
                     <div key={i} className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: '1px solid #F8F8F8' }}>
                       <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: '#F5F5F5' }}>
                         {it.product?.imageHref ? (
-                          <img src={`/api/order/image?href=${encodeURIComponent(it.product.imageHref)}`}
+                          <img src={miniImg(it.product.imageHref)}
                             alt={it.name} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -1950,7 +1960,7 @@ export function OrderPageContent({
                     <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"
                       style={{ background: '#F5F5F5' }}>
                       {p.imageHref ? (
-                        <img src={`/api/order/image?href=${encodeURIComponent(p.imageHref)}`}
+                        <img src={miniImg(p.imageHref)}
                           alt={p.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
