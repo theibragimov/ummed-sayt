@@ -37,6 +37,9 @@ function miniImg(href: string): string {
   return `/api/order/image?href=${encodeURIComponent(href)}`;
 }
 
+// Oldindan yuklangan rasmlar (qayta yuklamaslik uchun)
+const prefetchedImages = new Set<string>();
+
 // Faqat "Makon Mirzo" kategoriyasidagi mahsulotlarda kod o'rniga artikul ko'rsatiladi
 const isMakonMirzo = (p: Product) =>
   /makon|макон/i.test(`${p.rootCategoryName} ${p.categoryName}`);
@@ -1039,6 +1042,33 @@ export function OrderPageContent({
     () => filteredProducts.slice(0, visibleCount),
     [filteredProducts, visibleCount]
   );
+
+  // Ro'yxatdagi rasmlarni orqa fonda oldindan yuklab qo'yamiz — scroll qilganda
+  // bo'sh kvadratlar kutib turmasin. Avval ekrandagi rasmlar yuklanishi uchun biroz kutiladi,
+  // so'ng bir vaqtda 6 tadan, brauzer keshiga olinadi.
+  useEffect(() => {
+    let cancelled = false;
+    const queue = visibleProducts
+      .map(p => p.imageHref)
+      .filter(h => h && !prefetchedImages.has(h));
+    const worker = async () => {
+      while (!cancelled && queue.length) {
+        const href = queue.shift()!;
+        if (prefetchedImages.has(href)) continue;
+        prefetchedImages.add(href);
+        await new Promise<void>(resolve => {
+          const img = new Image();
+          img.decoding = 'async';
+          img.onload = img.onerror = () => resolve();
+          img.src = miniImg(href);
+        });
+      }
+    };
+    const timer = setTimeout(() => {
+      for (let i = 0; i < 6; i++) worker();
+    }, 1500);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [visibleProducts]);
 
   async function handleSubmit() {
     const errors: Record<string, string> = {};
