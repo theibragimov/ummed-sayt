@@ -4,7 +4,7 @@ import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
   Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent, MapPin,
-  Link2, Check, History as HistoryIcon,
+  Link2, Check, History as HistoryIcon, Clock,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -26,6 +26,7 @@ interface Product {
   discount?: boolean;
   discountPercent?: number;
   oldPrice?: number;
+  promoUntil?: string;
   variantLabel?: string;
 }
 
@@ -229,7 +230,7 @@ function fmtPrice(val: number): string {
 }
 
 const CART_STORAGE_KEY = 'moysklad-order-cart-v1';
-const CATALOG_CACHE_PREFIX = 'moysklad-order-catalog-v1';
+const CATALOG_CACHE_PREFIX = 'moysklad-order-catalog-v2';
 const INITIAL_PRODUCT_LIMIT = 160;
 const PRODUCT_LIMIT_STEP = 160;
 const TOP50_CAT_ID = '__top50__';
@@ -416,7 +417,7 @@ function ProductRow({
   return (
     <div className="flex items-center gap-3 px-4 py-3"
       style={product.discountPercent
-        ? { borderBottom: '1px solid #F0F0F0', background: 'linear-gradient(90deg,#FFF1EC,#fff)', boxShadow: 'inset 3px 0 0 #E8491D' }
+        ? { borderBottom: '1px solid #F0F0F0', background: 'linear-gradient(90deg,#DBEAFE,#fff)', boxShadow: 'inset 3px 0 0 #2563EB' }
         : { borderBottom: '1px solid #F0F0F0' }}>
       {/* Thumbnail */}
       <button
@@ -580,6 +581,54 @@ function getVariantDisplay(product: Product): { base: string; variant: string | 
   return parseVariant(product.name);
 }
 
+// ─── Aksiya muddati (pastki qism) ────────────────────────────────────────────
+
+const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+const RU_MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+
+function PromoCountdown({ until, lang }: { until: string; lang: Lang }) {
+  const end = Date.parse(until);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const left = end - now;
+  if (!Number.isFinite(end) || left <= 0) return null;
+
+  // Oxirgi amal qiladigan kun (Toshkent vaqti)
+  const lastDay = new Date(end - 1 + 5 * 3600_000);
+  const day = lastDay.getUTCDate();
+  const month = lastDay.getUTCMonth();
+  const units = [
+    { v: Math.floor(left / 86400_000), l: lang === 'uz' ? 'kun' : 'дн' },
+    { v: Math.floor((left % 86400_000) / 3600_000), l: lang === 'uz' ? 'soat' : 'ч' },
+    { v: Math.floor((left % 3600_000) / 60_000), l: lang === 'uz' ? 'daq' : 'мин' },
+    { v: Math.floor((left % 60_000) / 1000), l: lang === 'uz' ? 'son' : 'сек' },
+  ];
+
+  return (
+    <div className="px-2 py-1.5 rounded-lg text-white" style={{ background: 'rgba(6,40,74,0.28)' }}>
+      <div className="flex items-center gap-1 mb-1">
+        <Clock size={11} className="flex-shrink-0" />
+        <p className="text-[10px] font-bold leading-tight truncate">
+          {lang === 'uz' ? `Aksiya ${day}-${UZ_MONTHS[month]}gacha` : `Акция до ${day} ${RU_MONTHS[month]}`}
+        </p>
+      </div>
+      <div className="grid grid-cols-4 gap-1">
+        {units.map((u, i) => (
+          <div key={i} className="flex flex-col items-center rounded-md py-0.5 bg-white">
+            <span className="text-[13px] font-extrabold leading-none tabular-nums" style={{ color: '#0B6DB0' }}>
+              {String(u.v).padStart(2, '0')}
+            </span>
+            <span className="text-[8px] font-semibold leading-tight text-gray-500">{u.l}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Product Card (Grid View) ─────────────────────────────────────────────────
 
 function ProductCard({
@@ -610,16 +659,18 @@ function ProductCard({
   }
 
   return (
-    <div className="relative flex flex-col rounded-2xl overflow-hidden"
+    <div className={`relative flex flex-col rounded-2xl overflow-hidden ${product.discountPercent ? 'promo-shine' : ''}`}
       style={product.discountPercent
-        ? { background: 'linear-gradient(180deg,#fff 55%,#FFF1EC)', border: '2px solid #E8491D', boxShadow: '0 8px 24px -6px rgba(232,73,29,0.45)' }
+        ? { background: 'linear-gradient(160deg,#2EAEE4 0%,#1592D4 50%,#0B6DB0 100%)', border: 'none', boxShadow: '0 10px 28px -6px rgba(21,146,212,0.5)' }
         : { background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       {/* Image */}
       <button
         onClick={product.imageHref && !imgErr ? onImageClick : undefined}
-        className="relative w-full aspect-square overflow-hidden"
+        className={product.discountPercent
+          ? 'relative m-2 mb-0 aspect-square overflow-hidden rounded-xl'
+          : 'relative w-full aspect-square overflow-hidden'}
         style={{
-          background: '#F8F8F8',
+          background: product.discountPercent ? '#fff' : '#F8F8F8',
           cursor: product.imageHref && !imgErr ? 'zoom-in' : 'default',
         }}>
         {!imgErr ? (
@@ -666,7 +717,7 @@ function ProductCard({
         )}
         {cartQty > 0 && (
           <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
-            style={{ background: '#FF6B35' }}>
+            style={{ background: product.discountPercent ? '#3DB851' : '#FF6B35' }}>
             {cartQty}
           </div>
         )}
@@ -675,30 +726,32 @@ function ProductCard({
       {/* Info */}
       <div className="flex flex-col flex-1 p-3 gap-2">
         <div className="flex-1">
-          <p className="text-[12px] font-semibold text-gray-800 leading-snug"
+          <p className={`text-[12px] font-semibold leading-snug ${product.discountPercent ? 'text-white' : 'text-gray-800'}`}
             style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' } as any}>
             {baseName}
           </p>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             {variant && (
               <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold"
-                style={{ background: 'rgba(255,107,53,0.1)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.25)' }}>
+                style={product.discountPercent
+                  ? { background: 'rgba(255,255,255,0.18)', color: '#fff', border: '1px solid rgba(255,255,255,0.35)' }
+                  : { background: 'rgba(255,107,53,0.1)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.25)' }}>
                 {variant}
               </span>
             )}
             {displayCode(product) && (
-              <span className="text-[10px] text-gray-400">{displayCode(product)}</span>
+              <span className={`text-[10px] ${product.discountPercent ? 'text-white/80' : 'text-gray-400'}`}>{displayCode(product)}</span>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-1 mt-auto">
+        <div className={`flex items-center justify-between gap-1 mt-auto ${product.discountPercent ? 'flex-wrap gap-y-2' : ''}`}>
           {product.price > 0 ? (
             product.oldPrice ? (
               <div className="leading-tight min-w-0 flex-shrink">
-                <p className="text-[10px] text-gray-400 line-through">{fmtPrice(product.oldPrice)}</p>
-                <p className="text-[14px] font-extrabold" style={{ color: '#DC2626' }}>
-                  {fmtPrice(product.price)} <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
+                <p className="text-[11px] font-semibold line-through" style={{ color: 'rgba(6,40,74,0.55)' }}>{fmtPrice(product.oldPrice)}</p>
+                <p className="text-[17px] font-extrabold text-white whitespace-nowrap" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.15)' }}>
+                  {fmtPrice(product.price)} <span className="text-[10px] font-medium text-white/80">{t.sum}</span>
                 </p>
               </div>
             ) : (
@@ -712,28 +765,35 @@ function ProductCard({
           {cartQty === 0 ? (
             <button
               onClick={e => { e.stopPropagation(); onAdd(); }}
-              className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 3px 8px rgba(255,107,53,0.35)' }}>
-              <Plus size={15} color="#fff" />
+              className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${product.discountPercent ? 'promo-add' : ''}`}
+              style={product.discountPercent
+                ? { background: 'linear-gradient(135deg,#4CD263,#3DB851)' }
+                : { background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 3px 8px rgba(255,107,53,0.35)' }}>
+              <Plus size={15} color="#fff" strokeWidth={product.discountPercent ? 3 : 2} />
             </button>
           ) : (
-            <div className="flex items-center gap-0.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
+            <div className={`flex items-center gap-0.5 flex-shrink-0 ${product.discountPercent ? 'ml-auto p-1 rounded-xl bg-white shadow-md' : ''}`} onClick={e => e.stopPropagation()}>
               <button
                 onClick={() => onQtyChange(cartQty - 1)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
-                {cartQty === 1 ? <Trash2 size={11} color="#FF6B35" /> : <Minus size={11} color="#FF6B35" />}
+                style={product.discountPercent
+                  ? { background: '#E9F8EC', border: '1px solid #BFE9C8' }
+                  : { background: '#FFF0EB', border: '1px solid #FFD5C5' }}>
+                {cartQty === 1
+                  ? <Trash2 size={11} color={product.discountPercent ? '#3DB851' : '#FF6B35'} />
+                  : <Minus size={11} color={product.discountPercent ? '#3DB851' : '#FF6B35'} />}
               </button>
               <CartQtyInput value={cartQty} onChange={onQtyChange} />
               <button
                 onClick={() => onQtyChange(cartQty + 1)}
                 className="w-7 h-7 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
+                style={{ background: product.discountPercent ? 'linear-gradient(135deg,#4CD263,#3DB851)' : 'linear-gradient(135deg,#FF6B35,#FF4500)' }}>
                 <Plus size={11} color="#fff" />
               </button>
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

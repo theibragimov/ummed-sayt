@@ -22,10 +22,17 @@ async function safe(path: string, urinishlar = 2): Promise<any> {
   throw oxirgiXato;
 }
 
-// Aksiyadagi mahsulotlar: MoySklad mahsulot ID → chegirma foizi
-const PROMO_DISCOUNTS: Record<string, number> = {
-  '7c802f10-959d-11ee-0a80-017900079a1d': 15, // Глюкометр Сателлит Экспресс (комплект)
+// Aksiyadagi mahsulotlar: MoySklad mahsulot ID → chegirma foizi va tugash vaqti.
+// `until` o'tgach mahsulot avtomatik oddiy narx va ko'rinishga qaytadi.
+const PROMO_DISCOUNTS: Record<string, { percent: number; until: string }> = {
+  // Глюкометр Сателлит Экспресс (комплект) — 20-noyabr kuni oxirigacha (Toshkent vaqti)
+  '7c802f10-959d-11ee-0a80-017900079a1d': { percent: 15, until: '2026-11-21T00:00:00+05:00' },
 };
+
+function activePromo(id: string) {
+  const promo = PROMO_DISCOUNTS[id];
+  return promo && Date.now() < Date.parse(promo.until) ? promo : null;
+}
 
 export async function GET(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -37,7 +44,7 @@ export async function GET(req: NextRequest) {
   const priceTypeId = searchParams.get('priceTypeId') || process.env.ORDER_PRICE_TYPE_ID || '';
 
   try {
-    const payload = await getCached(`order-catalog:${priceTypeId}`, 300_000, async () => {
+    const payload = await getCached(`order-catalog:${priceTypeId}`, 60_000, async () => {
     // 1. Price types (returns array directly, not {rows:[]})
     const priceTypesRaw = await safe('/context/companysettings/pricetype');
     const priceTypes: { id: string; name: string }[] = (Array.isArray(priceTypesRaw) ? priceTypesRaw : [])
@@ -227,7 +234,8 @@ export async function GET(req: NextRequest) {
         const basePrice = useCustomPrice ? (priceMap[id] || s.defaultPrice) : s.defaultPrice;
         const parentProductId = variantToProduct[id] || '';
         // Aksiya: foizli chegirma — narx shu yerda kamaytiriladi, savat va MoySklad'ga ham shu narx ketadi
-        const discountPercent = PROMO_DISCOUNTS[id] || (parentProductId ? PROMO_DISCOUNTS[parentProductId] : 0) || 0;
+        const promo = activePromo(id) || (parentProductId ? activePromo(parentProductId) : null);
+        const discountPercent = promo?.percent || 0;
         const price = discountPercent && basePrice > 0
           ? Math.round(basePrice * (100 - discountPercent) / 100 / 100) * 100
           : basePrice;
@@ -251,6 +259,7 @@ export async function GET(req: NextRequest) {
           parentProductId,
           discount,
           discountPercent: discountPercent || undefined,
+          promoUntil: promo?.until,
           oldPrice,
           variantLabel: variantLabelMap[id] || undefined,
         };
@@ -306,7 +315,8 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(payload, {
-      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
+      // CDN'da keshlanmaydi — narx/chegirma o'zgarsa mijoz birinchi kirishdayoq yangisini ko'radi
+      headers: { 'Cache-Control': 'no-store' },
     });
   } catch (e: any) {
     console.error('order/catalog xato:', e);

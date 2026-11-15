@@ -46,10 +46,11 @@ const nextConfig = {
           { key: 'Access-Control-Allow-Headers', value: 'Content-Type, x-webhook-secret' },
         ],
       },
-      {
+      // Faqat production: dev'da chunk nomlari o'zgarmaydi, immutable kesh eski kodni ko'rsatib qo'yadi
+      ...(process.env.NODE_ENV === 'production' ? [{
         source: '/_next/static/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
-      },
+      }] : []),
       {
         source: '/images/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }],
