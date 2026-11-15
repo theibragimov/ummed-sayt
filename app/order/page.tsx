@@ -4,7 +4,7 @@ import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
   Menu, ChevronRight, LayoutList, LayoutGrid, Trophy, Truck, BadgePercent, MapPin,
-  Link2, Check, History as HistoryIcon, Clock,
+  Link2, Check, History as HistoryIcon, CalendarDays, Clock,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -586,8 +586,46 @@ function getVariantDisplay(product: Product): { base: string; variant: string | 
 const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
 const RU_MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 
-function PromoCountdown({ until, lang }: { until: string; lang: Lang }) {
-  const end = Date.parse(until);
+// ─── Katalog yuklanish animatsiyasi ──────────────────────────────────────────
+
+function CatalogLoader({ lang }: { lang: Lang }) {
+  return (
+    <div className="px-3 lg:px-4 pt-3 lg:mx-4">
+      <div className="flex flex-col items-center justify-center py-8 gap-3">
+        <p className="text-[14px] font-semibold flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-center px-4" style={{ color: '#18181b' }}>
+          <Package size={17} color="#E8491D" strokeWidth={2.2} />
+          {lang === 'uz' ? 'Bir soniya, mahsulotlar siz uchun yuklanmoqda' : 'Секунду, загружаем товары для вас'}
+          <span className="loader-dots inline-flex gap-0.5">
+            <i /><i /><i />
+          </span>
+        </p>
+        <div className="loader-bar relative w-48 h-1 rounded-full overflow-hidden" style={{ background: '#F0F0F0' }} />
+      </div>
+      {/* Mahsulot kartalari skeleti */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="rounded-2xl overflow-hidden bg-white" style={{ border: '1px solid #F0F0F0' }}>
+            <div className="aspect-square skeleton-shimmer" />
+            <div className="p-3 flex flex-col gap-2">
+              <div className="h-3 rounded skeleton-shimmer" />
+              <div className="h-3 w-2/3 rounded skeleton-shimmer" />
+              <div className="flex items-center justify-between mt-2">
+                <div className="h-5 w-1/2 rounded skeleton-shimmer" />
+                <div className="w-8 h-8 rounded-xl skeleton-shimmer" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// O'lchamlar banner kengligiga bog'langan (cqw) — har qanday ekranda proporsional kichrayadi
+const cq = (px: number, vw: number) => `max(${px}px, ${vw}cqw)`;
+
+function PromoBanner({ product, lang }: { product: Product; lang: Lang }) {
+  const end = Date.parse(product.promoUntil || '');
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -596,34 +634,125 @@ function PromoCountdown({ until, lang }: { until: string; lang: Lang }) {
   const left = end - now;
   if (!Number.isFinite(end) || left <= 0) return null;
 
+  const uz = lang === 'uz';
   // Oxirgi amal qiladigan kun (Toshkent vaqti)
   const lastDay = new Date(end - 1 + 5 * 3600_000);
   const day = lastDay.getUTCDate();
   const month = lastDay.getUTCMonth();
   const units = [
-    { v: Math.floor(left / 86400_000), l: lang === 'uz' ? 'kun' : 'дн' },
-    { v: Math.floor((left % 86400_000) / 3600_000), l: lang === 'uz' ? 'soat' : 'ч' },
-    { v: Math.floor((left % 3600_000) / 60_000), l: lang === 'uz' ? 'daq' : 'мин' },
-    { v: Math.floor((left % 60_000) / 1000), l: lang === 'uz' ? 'son' : 'сек' },
+    { v: Math.floor(left / 86400_000), l: uz ? 'kun' : 'дн' },
+    { v: Math.floor((left % 86400_000) / 3600_000), l: uz ? 'soat' : 'ч' },
+    { v: Math.floor((left % 3600_000) / 60_000), l: uz ? 'daqiqa' : 'мин' },
+    { v: Math.floor((left % 60_000) / 1000), l: uz ? 'soniya' : 'сек' },
   ];
+  const fmt = (v: number) => `${fmtPrice(v).replace(/\s/g, '.')} ${uz ? 'so‘m' : 'сум'}`;
 
   return (
-    <div className="px-2 py-1.5 rounded-lg text-white" style={{ background: 'rgba(6,40,74,0.28)' }}>
-      <div className="flex items-center gap-1 mb-1">
-        <Clock size={11} className="flex-shrink-0" />
-        <p className="text-[10px] font-bold leading-tight truncate">
-          {lang === 'uz' ? `Aksiya ${day}-${UZ_MONTHS[month]}gacha` : `Акция до ${day} ${RU_MONTHS[month]}`}
-        </p>
-      </div>
-      <div className="grid grid-cols-4 gap-1">
-        {units.map((u, i) => (
-          <div key={i} className="flex flex-col items-center rounded-md py-0.5 bg-white">
-            <span className="text-[13px] font-extrabold leading-none tabular-nums" style={{ color: '#0B6DB0' }}>
-              {String(u.v).padStart(2, '0')}
+    // Desktopda balandligi 4 talik karta qatori bilan bir xil: kvadrat rasm + ~122px ma'lumot qismi
+    <div className="promo-banner promo-shine relative overflow-hidden rounded-2xl lg:h-[calc((100cqw-36px)/4+122px)]"
+      style={{
+        containerType: 'inline-size',
+        // To'liq ko'k gradient — mahsulot (fonsiz rasm) ham shu gradient ustida turadi
+        background: 'linear-gradient(115deg,#0029A8 0%,#0048C2 28%,#0A7BE6 58%,#52C3FF 100%)',
+        animation: 'none',
+        fontFamily: '"Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      } as React.CSSProperties}>
+
+      <div className="relative h-full grid grid-cols-[1fr_1.05fr] lg:grid-cols-[1.15fr_0.95fr_1fr] items-stretch"
+        style={{ gap: cq(10, 2.2), padding: cq(14, 2.6) }}>
+
+        {/* ── A: diabet kuni + sarlavha + chegirma + narx ── */}
+        <div className="relative z-10 flex flex-col justify-center items-start min-w-0" style={{ gap: cq(9, 1.1) }}>
+          <div className="inline-flex items-center rounded-full max-w-full"
+            style={{ gap: cq(5, 0.7), padding: `${cq(4, 0.5)} ${cq(9, 1.2)} ${cq(4, 0.5)} ${cq(4, 0.5)}`, background: 'rgba(255,255,255,0.16)', border: '1px solid rgba(255,255,255,0.35)' }}>
+            <span className="flex items-center justify-center rounded-full flex-shrink-0"
+              style={{ width: cq(18, 2.6), height: cq(18, 2.6), background: '#fff' }}>
+              <CalendarDays color="#1E5FE0" strokeWidth={2.4} style={{ width: cq(10, 1.5), height: cq(10, 1.5) }} />
             </span>
-            <span className="text-[8px] font-semibold leading-tight text-gray-500">{u.l}</span>
+            <span className="font-semibold leading-tight" style={{ fontSize: cq(11, 1.3), color: 'rgba(255,255,255,0.85)' }}>
+              <b className="font-extrabold whitespace-nowrap" style={{ color: '#fff' }}>{uz ? '14-noyabr' : '14 ноября'}</b>
+              {' · '}
+              <b className="font-extrabold whitespace-nowrap" style={{ color: '#FFE066' }}>{uz ? 'Diabetlar kuni' : 'День диабета'}</b>
+            </span>
           </div>
-        ))}
+
+          <h2 className="font-black leading-[1.04] tracking-tight" style={{ fontSize: cq(21, 3.3) }}>
+            <span style={{ color: '#fff' }}>{uz ? 'Glyukometr' : 'Глюкометр'}</span><br />
+            <span style={{ color: '#BFE6FF' }}>
+              {uz ? 'Satellite Ekspress' : 'Сателлит Экспресс'}
+            </span>
+          </h2>
+
+          {/* CHEGIRMA −15% — bir qator */}
+          <div className="inline-flex items-center rounded-xl"
+            style={{ gap: cq(5, 0.7), padding: cq(3, 0.45), background: 'linear-gradient(135deg,#FF3B2F,#FF6A1A)', boxShadow: '0 10px 22px -10px rgba(255,59,47,0.75)' }}>
+            <span className="font-black italic uppercase text-white leading-none" style={{ fontSize: cq(13, 1.7), padding: `0 ${cq(4, 0.6)}`, letterSpacing: '0.02em' }}>
+              {uz ? 'Chegirma' : 'Скидка'}
+            </span>
+            <span className="font-black italic leading-none rounded-lg bg-white" style={{ fontSize: cq(16, 2.1), color: '#E5262A', padding: `${cq(3, 0.45)} ${cq(6, 0.9)}` }}>
+              −{product.discountPercent}%
+            </span>
+          </div>
+
+          {/* Narx */}
+          <div className="flex flex-col items-start" style={{ marginTop: cq(2, 0.4) }}>
+            {product.oldPrice && (
+              <span className="relative font-bold leading-none" style={{ fontSize: cq(14, 1.7), color: 'rgba(255,255,255,0.75)', marginLeft: cq(8, 1.2) }}>
+                {fmt(product.oldPrice)}
+                <span className="absolute left-[-4%] right-[-4%] top-1/2 rounded" style={{ height: 2, background: '#FF5A4E', transform: 'rotate(-6deg)' }} />
+              </span>
+            )}
+            <span className="rounded-2xl font-black leading-none whitespace-nowrap"
+              style={{ marginTop: cq(5, 0.7), padding: `${cq(7, 0.9)} ${cq(12, 1.7)}`, fontSize: cq(21, 2.9), color: '#1550C8', background: '#fff', boxShadow: '0 12px 24px -12px rgba(5,30,90,0.6)' }}>
+              {fmt(product.price)}
+            </span>
+          </div>
+        </div>
+
+        {/* ── B: cheklangan + muddat + taymer ── */}
+        <div className="order-3 col-span-2 lg:col-span-1 lg:order-2 flex flex-col justify-center min-w-0" style={{ gap: cq(8, 1.3) }}>
+          <div className="self-start inline-flex items-center rounded-lg"
+            style={{ gap: cq(5, 0.7), padding: `${cq(5, 0.6)} ${cq(8, 1.1)}`, background: '#FFECEC', border: '1px solid #FFD0D0' }}>
+            <Package color="#E5262A" strokeWidth={2.4} style={{ width: cq(13, 1.8), height: cq(13, 1.8) }} />
+            <span className="font-extrabold leading-none whitespace-nowrap" style={{ fontSize: cq(10, 1.35), color: '#E5262A' }}>
+              {uz ? 'Mahsulot soni cheklangan!' : 'Количество ограничено!'}
+            </span>
+          </div>
+
+          <div className="flex items-center" style={{ gap: cq(5, 0.6) }}>
+            <Clock color="#fff" strokeWidth={2.4} style={{ width: cq(13, 1.8), height: cq(13, 1.8), flexShrink: 0 }} />
+            <span className="font-extrabold leading-tight" style={{ fontSize: cq(11, 1.5), color: '#fff', textShadow: '0 1px 2px rgba(5,30,90,0.35)' }}>
+              {uz ? 'Chegirma tugashiga qoldi' : 'До конца скидки осталось'}
+              <span className="font-semibold" style={{ color: '#FFE066' }}>
+                {uz ? ` · ${day}-${UZ_MONTHS[month]}gacha` : ` · до ${day} ${RU_MONTHS[month]}`}
+              </span>
+            </span>
+          </div>
+
+          {/* Orqaga sanovchi taymer */}
+          <div className="grid grid-cols-4" style={{ gap: cq(5, 0.7) }}>
+            {units.map((u, i) => (
+              <div key={i} className="flex flex-col items-center justify-center bg-white rounded-xl"
+                style={{ padding: `${cq(5, 0.9)} 0`, boxShadow: '0 6px 14px -8px rgba(21,80,200,0.45)', border: '1px solid #DCEAFB' }}>
+                <span className="font-black leading-none tabular-nums" style={{ fontSize: cq(18, 2.8), color: '#1550C8' }}>
+                  {String(u.v).padStart(2, '0')}
+                </span>
+                <span className="font-semibold" style={{ fontSize: cq(9, 1.1), color: '#7A819E', marginTop: 3 }}>{u.l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── C: mahsulot rasmi ── */}
+        <div className="order-2 lg:order-3 relative min-w-0 min-h-[240px] lg:min-h-0">
+          <img src="/images/promo/satellit-express-box.webp" alt={product.name}
+            className="absolute top-0 bottom-0 right-0 -left-[12%] lg:left-0 w-[112%] max-w-none lg:w-full h-full object-contain object-right lg:object-center"
+            style={{ paddingRight: '22%', filter: 'drop-shadow(0 14px 20px rgba(0,20,80,0.45))' }} />
+          {/* Glyukometr — quti yonida, biroz kichikroq, oldinda */}
+          <img src="/images/promo/satellit-express-meter.webp" alt=""
+            className="absolute object-contain max-w-none"
+            style={{ right: '-2%', bottom: '0%', width: '52%', filter: 'drop-shadow(0 12px 16px rgba(0,20,80,0.5))' }} />
+        </div>
       </div>
     </div>
   );
@@ -1129,6 +1258,10 @@ export function OrderPageContent({
     }
     return filtered;
   }, [products, selectedCat, selectedCatDescendants, search, top50DisplayList]);
+  const promoProduct = useMemo(
+    () => products.find(p => p.promoUntil && p.discountPercent && Date.parse(p.promoUntil) > Date.now()) || null,
+    [products]
+  );
   const visibleProducts = useMemo(
     () => filteredProducts.slice(0, visibleCount),
     [filteredProducts, visibleCount]
@@ -1808,13 +1941,7 @@ export function OrderPageContent({
               </div>
             )}
 
-            {loading && (
-              <div className="flex flex-col items-center justify-center py-24 gap-3">
-                <div className="w-10 h-10 rounded-full border-t-transparent animate-spin"
-                  style={{ borderWidth: 3, borderStyle: 'solid', borderColor: '#FF6B35 transparent transparent transparent' }} />
-                <p className="text-[13px] text-gray-400">{t.loading}</p>
-              </div>
-            )}
+            {loading && <CatalogLoader lang={lang} />}
 
             {loadError && (
               <div className="flex flex-col items-center py-16 gap-4 px-6">
@@ -1831,6 +1958,13 @@ export function OrderPageContent({
               <div className="flex flex-col items-center py-20 gap-3">
                 <Package size={40} color="#D1D5DB" />
                 <p className="text-[13px] text-gray-400">{t.noProducts}</p>
+              </div>
+            )}
+
+            {/* AKSIYA BANNERI — "Barcha mahsulotlar"da, qidiruvsiz, 4 ta karta qatori kengligida */}
+            {!loading && !loadError && !selectedCat && !search && promoProduct && (
+              <div className="px-3 lg:px-4 pt-3 lg:mx-4" style={{ containerType: 'inline-size' } as React.CSSProperties}>
+                <PromoBanner product={promoProduct} lang={lang} />
               </div>
             )}
 

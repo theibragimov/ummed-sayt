@@ -617,6 +617,19 @@ html[data-theme="dark"] .hero-water .bg-white {
   0%, 45% { transform: translateX(-320%) skewX(-20deg); }
   100%    { transform: translateX(420%) skewX(-20deg); }
 }
+/* Katalog yuklanishi: nuqtalar, yuguruvchi chiziq va skelet shimmer */
+.loader-dots i { width: 4px; height: 4px; border-radius: 9999px; background: #E8491D; display: inline-block; animation: loaderDot 1s ease-in-out infinite; }
+.loader-dots i:nth-child(2) { animation-delay: .15s; }
+.loader-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes loaderDot { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.loader-bar::after { content: ''; position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 9999px; background: linear-gradient(90deg,#E8491D,#3DB851); animation: loaderBar 1.2s ease-in-out infinite; }
+@keyframes loaderBar { from { left: -40%; } to { left: 100%; } }
+.skeleton-shimmer {
+  background: linear-gradient(90deg,#F2F2F2 0%,#FAFAFA 40%,#F2F2F2 80%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.3s linear infinite;
+}
+@keyframes skeletonShimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 /* Aksiya kartasidagi yashil "+" tugmasi: bosishga undovchi puls */
 .promo-add { animation: promoAddPulse 1.6s ease-in-out infinite; }
 @keyframes promoAddPulse {
@@ -630,7 +643,7 @@ html[data-theme="dark"] .hero-water .bg-white {
 }
 @media (prefers-reduced-motion: reduce) {
   .cta-shine::after, .promo-shine::after { display: none; }
-  .promo-shine, .promo-add { animation: none; }
+  .promo-shine, .promo-add, .skeleton-shimmer, .loader-dots i, .loader-bar::after { animation: none; }
 }
 
 .anim-fade-up    { opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
