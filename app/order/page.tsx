@@ -720,7 +720,7 @@ export function OrderPageContent({
   submitApiUrl?: string;
   requireCompanyAddress?: boolean;
 }) {
-  const [lang, setLang] = useState<Lang>('ru');
+  const [lang, setLang] = useState<Lang>('uz');
   const t = T[lang];
 
   const [view, setView] = useState<View>('landing');
@@ -1243,7 +1243,9 @@ export function OrderPageContent({
             {/* Features */}
             <div className="w-full flex flex-col gap-2.5 mb-9">
               {features.map(({ Icon, label, bg }, i) => (
-                <div key={i} className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl anim-fade-up"
+                <div key={i} onClick={openCatalog} role="button" tabIndex={0}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCatalog(); } }}
+                  className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl anim-fade-up cursor-pointer transition-transform active:scale-[0.99]"
                   style={{ border: '1px solid rgba(0,0,0,0.06)', background: '#fafafa', animationDelay: `${260 + i * 80}ms` }}>
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ background: bg }}>
@@ -1278,7 +1280,7 @@ export function OrderPageContent({
           </div>
 
           {/* Right: decorative order-card mockup (desktop only) */}
-          <div className="hidden lg:flex relative justify-center items-center h-full min-h-[420px]">
+          <div onClick={openCatalog} className="hidden lg:flex relative justify-center items-center h-full min-h-[420px] cursor-pointer">
             {/* Back card for depth */}
             <div className="absolute w-[320px] h-[380px] rounded-3xl anim-fade-in"
               style={{ background: '#FFF3EC', transform: 'rotate(-7deg) translateY(10px)', animationDelay: '300ms' }} />
