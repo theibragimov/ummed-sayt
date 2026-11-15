@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   const priceTypeId = searchParams.get('priceTypeId') || process.env.ORDER_PRICE_TYPE_ID || '';
 
   try {
-    const payload = await getCached(`order-catalog:${priceTypeId}`, 60_000, async () => {
+    const payload = await getCached(`order-catalog:${priceTypeId}`, 300_000, async () => {
     // 1. Price types (returns array directly, not {rows:[]})
     const priceTypesRaw = await safe('/context/companysettings/pricetype');
     const priceTypes: { id: string; name: string }[] = (Array.isArray(priceTypesRaw) ? priceTypesRaw : [])
@@ -315,8 +315,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(payload, {
-      // CDN'da keshlanmaydi — narx/chegirma o'zgarsa mijoz birinchi kirishdayoq yangisini ko'radi
-      headers: { 'Cache-Control': 'no-store' },
+      headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     });
   } catch (e: any) {
     console.error('order/catalog xato:', e);
