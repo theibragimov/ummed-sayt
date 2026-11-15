@@ -24,6 +24,8 @@ interface Product {
   imageHref: string;
   parentProductId?: string;
   discount?: boolean;
+  discountPercent?: number;
+  oldPrice?: number;
   variantLabel?: string;
 }
 
@@ -413,7 +415,9 @@ function ProductRow({
 
   return (
     <div className="flex items-center gap-3 px-4 py-3"
-      style={{ borderBottom: '1px solid #F0F0F0' }}>
+      style={product.discountPercent
+        ? { borderBottom: '1px solid #F0F0F0', background: 'linear-gradient(90deg,#FFF1EC,#fff)', boxShadow: 'inset 3px 0 0 #E8491D' }
+        : { borderBottom: '1px solid #F0F0F0' }}>
       {/* Thumbnail */}
       <button
         onClick={product.imageHref && !imgErr ? onImageClick : undefined}
@@ -444,7 +448,7 @@ function ProductRow({
           {product.discount && (
             <span className="px-1.5 py-0.5 rounded text-white text-[10px] font-bold flex-shrink-0"
               style={{ background: '#DC2626' }}>
-              {t.discountBadge}
+              {product.discountPercent ? `-${product.discountPercent}% ${t.discountBadge}` : t.discountBadge}
             </span>
           )}
           {isNewArrival && (
@@ -480,9 +484,16 @@ function ProductRow({
       {/* Price + control */}
       <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
         {product.price > 0 && (
-          <p className="text-[13px] font-bold text-gray-900 whitespace-nowrap">
-            {fmtPrice(product.price)} <span className="text-[10px] font-normal text-gray-400">{t.sum}</span>
-          </p>
+          <div className="text-right">
+            {product.oldPrice && (
+              <p className="text-[11px] text-gray-400 line-through whitespace-nowrap leading-none mb-0.5">
+                {fmtPrice(product.oldPrice)}
+              </p>
+            )}
+            <p className="text-[13px] font-bold whitespace-nowrap" style={{ color: product.oldPrice ? '#DC2626' : '#111827' }}>
+              {fmtPrice(product.price)} <span className="text-[10px] font-normal text-gray-400">{t.sum}</span>
+            </p>
+          </div>
         )}
 
         {cartQty === 0 ? (
@@ -599,8 +610,10 @@ function ProductCard({
   }
 
   return (
-    <div className="flex flex-col rounded-2xl overflow-hidden"
-      style={{ background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+    <div className="relative flex flex-col rounded-2xl overflow-hidden"
+      style={product.discountPercent
+        ? { background: 'linear-gradient(180deg,#fff 55%,#FFF1EC)', border: '2px solid #E8491D', boxShadow: '0 8px 24px -6px rgba(232,73,29,0.45)' }
+        : { background: '#fff', border: '1px solid #F0F0F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       {/* Image */}
       <button
         onClick={product.imageHref && !imgErr ? onImageClick : undefined}
@@ -625,7 +638,13 @@ function ProductCard({
         )}
         {(isNewArrival || isTop50 || product.discount) && (
           <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
-            {product.discount && (
+            {product.discountPercent ? (
+              <div className="px-2 py-1 rounded-lg text-white font-extrabold leading-none"
+                style={{ background: 'linear-gradient(135deg,#FF3B1F,#DC2626)', boxShadow: '0 4px 12px rgba(220,38,38,0.45)' }}>
+                <span className="text-[15px]">-{product.discountPercent}%</span>
+                <span className="block text-[8px] font-bold uppercase mt-0.5" style={{ letterSpacing: '0.06em' }}>{t.discountBadge}</span>
+              </div>
+            ) : product.discount && (
               <div className="px-1.5 py-0.5 rounded-md text-white text-[10px] font-bold"
                 style={{ background: '#DC2626', letterSpacing: '0.03em' }}>
                 {t.discountBadge}
@@ -675,10 +694,19 @@ function ProductCard({
 
         <div className="flex items-center justify-between gap-1 mt-auto">
           {product.price > 0 ? (
-            <p className="text-[12px] font-bold text-gray-900 leading-tight min-w-0 flex-shrink">
-              {fmtPrice(product.price)}<br />
-              <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
-            </p>
+            product.oldPrice ? (
+              <div className="leading-tight min-w-0 flex-shrink">
+                <p className="text-[10px] text-gray-400 line-through">{fmtPrice(product.oldPrice)}</p>
+                <p className="text-[14px] font-extrabold" style={{ color: '#DC2626' }}>
+                  {fmtPrice(product.price)} <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
+                </p>
+              </div>
+            ) : (
+              <p className="text-[12px] font-bold text-gray-900 leading-tight min-w-0 flex-shrink">
+                {fmtPrice(product.price)}<br />
+                <span className="text-[9px] font-normal text-gray-400">{t.sum}</span>
+              </p>
+            )
           ) : <div />}
 
           {cartQty === 0 ? (
@@ -1032,9 +1060,12 @@ export function OrderPageContent({
         || (p.article || '').toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
-    // "Barcha mahsulotlar" ko'rinishida — chegirmali mahsulotlar doim ro'yxat boshida
-    if (!isTop50View && !selectedCat) {
-      return [...filtered].sort((a, b) => Number(!!b.discount) - Number(!!a.discount));
+    // Aksiyadagi (foizli chegirma) mahsulotlar doim eng birinchi;
+    // "Barcha mahsulotlar" ko'rinishida — keyin boshqa chegirmali mahsulotlar
+    if (!isTop50View) {
+      return [...filtered].sort((a, b) =>
+        (b.discountPercent || 0) - (a.discountPercent || 0)
+        || (!selectedCat ? Number(!!b.discount) - Number(!!a.discount) : 0));
     }
     return filtered;
   }, [products, selectedCat, selectedCatDescendants, search, top50DisplayList]);

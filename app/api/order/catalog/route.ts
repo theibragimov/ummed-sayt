@@ -22,6 +22,11 @@ async function safe(path: string, urinishlar = 2): Promise<any> {
   throw oxirgiXato;
 }
 
+// Aksiyadagi mahsulotlar: MoySklad mahsulot ID → chegirma foizi
+const PROMO_DISCOUNTS: Record<string, number> = {
+  '7c802f10-959d-11ee-0a80-017900079a1d': 15, // Глюкометр Сателлит Экспресс (комплект)
+};
+
 export async function GET(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   if (!checkRateLimit(`catalog:${ip}`, 60, 60_000)) {
@@ -219,9 +224,15 @@ export async function GET(req: NextRequest) {
     const products = productIds
       .map(id => {
         const s = stockMap[id];
-        const price = useCustomPrice ? (priceMap[id] || s.defaultPrice) : s.defaultPrice;
+        const basePrice = useCustomPrice ? (priceMap[id] || s.defaultPrice) : s.defaultPrice;
         const parentProductId = variantToProduct[id] || '';
-        const discount = discountProductIds.has(id) || (!!parentProductId && discountProductIds.has(parentProductId));
+        // Aksiya: foizli chegirma — narx shu yerda kamaytiriladi, savat va MoySklad'ga ham shu narx ketadi
+        const discountPercent = PROMO_DISCOUNTS[id] || (parentProductId ? PROMO_DISCOUNTS[parentProductId] : 0) || 0;
+        const price = discountPercent && basePrice > 0
+          ? Math.round(basePrice * (100 - discountPercent) / 100 / 100) * 100
+          : basePrice;
+        const oldPrice = discountPercent && basePrice > 0 ? basePrice : undefined;
+        const discount = !!discountPercent || discountProductIds.has(id) || (!!parentProductId && discountProductIds.has(parentProductId));
         return {
           id,
           type: s.type,
@@ -239,6 +250,8 @@ export async function GET(req: NextRequest) {
           imageHref: s.imageHref,
           parentProductId,
           discount,
+          discountPercent: discountPercent || undefined,
+          oldPrice,
           variantLabel: variantLabelMap[id] || undefined,
         };
       })
