@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   ShoppingCart, Plus, Minus, Trash2, ChevronLeft, CheckCircle,
   Search, Package, X, ChevronDown, ChevronUp, Phone, User, Building2,
@@ -618,9 +618,11 @@ function CatalogLoader({ lang }: { lang: Lang }) {
 
 // ─── Aksiya banneri (tayyor rasm: desktop va mobil uchun alohida) ────────────
 
-function PromoBanner({ product }: { product: Product }) {
-  const end = Date.parse(product.promoUntil || '');
-  // Aksiya tugagach banner o'zi yashirinadi
+const BANNER_INTERVAL_MS = 5000;
+
+function PromoBanner({ product }: { product: Product | null }) {
+  const end = Date.parse(product?.promoUntil || '');
+  // Aksiya tugagach Satellit banneri o'zi yashirinadi (qolgan bannerlar qoladi)
   const [active, setActive] = useState(() => Date.now() < end);
   useEffect(() => {
     if (!active) return;
@@ -628,14 +630,74 @@ function PromoBanner({ product }: { product: Product }) {
     const id = setTimeout(() => setActive(Date.now() < end), Math.min(Math.max(0, end - Date.now()), 2 ** 31 - 1));
     return () => clearTimeout(id);
   }, [active, end]);
-  if (!Number.isFinite(end) || !active) return null;
+  const showPromo = !!product && Number.isFinite(end) && active;
+
+  const slides = [
+    ...(showPromo ? [{ key: 'satellit', alt: product!.name, desktop: '/images/promo/satellit-banner-desktop.webp', mobile: '/images/promo/satellit-banner-mobile.webp' }] : []),
+    { key: 'dori-qutichalari', alt: 'Ummed dori qutichalari', desktop: '/images/promo/dori-qutichalari-banner.webp', mobile: '/images/promo/dori-qutichalari-banner.webp' },
+  ];
+  const count = slides.length;
+
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const touchX = useRef<number | null>(null);
+  const current = Math.min(idx, count - 1);
+  const go = (next: number) => setIdx(((next % count) + count) % count);
+
+  // Har 5 soniyada keyingi bannerga o'tadi; qo'lda o'tkazilsa taymer qaytadan boshlanadi
+  useEffect(() => {
+    if (count < 2 || paused) return;
+    const id = setTimeout(() => setIdx(i => (i + 1) % count), BANNER_INTERVAL_MS);
+    return () => clearTimeout(id);
+  }, [current, count, paused]);
 
   return (
-    <picture className="block overflow-hidden rounded-2xl">
-      <source media="(min-width: 1024px)" srcSet="/images/promo/satellit-banner-desktop.webp" />
-      <img src="/images/promo/satellit-banner-mobile.webp" alt={product.name}
-        className="block w-full h-auto" />
-    </picture>
+    <div className="relative overflow-hidden rounded-2xl bg-white select-none"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
+      onTouchEnd={e => {
+        if (touchX.current === null) return;
+        const dx = e.changedTouches[0].clientX - touchX.current;
+        if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
+        touchX.current = null;
+      }}>
+      <div className="flex transition-transform duration-500 ease-out"
+        style={{ transform: `translateX(-${current * 100}%)` }}>
+        {slides.map((s, i) => (
+          <div key={s.key} className="relative w-full flex-shrink-0 flex items-center overflow-hidden" aria-hidden={i !== current}>
+            {/* Mobil versiyasi yo'q keng banner: bo'sh joyni shu rasmning xira foni to'ldiradi */}
+            {s.mobile === s.desktop && (
+              <img src={s.desktop} alt="" draggable={false}
+                className="lg:hidden absolute inset-0 w-full h-full object-cover blur-2xl scale-125 opacity-70" />
+            )}
+            <picture className="relative block w-full">
+              <source media="(min-width: 1024px)" srcSet={s.desktop} />
+              <img src={s.mobile} alt={s.alt} draggable={false} className="block w-full h-auto" />
+            </picture>
+          </div>
+        ))}
+      </div>
+
+      {count > 1 && (
+        <>
+          <button type="button" aria-label="Oldingi banner" onClick={() => go(current - 1)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-white/85 hover:bg-white shadow-md flex items-center justify-center text-gray-800 transition-colors">
+            <ChevronLeft size={20} />
+          </button>
+          <button type="button" aria-label="Keyingi banner" onClick={() => go(current + 1)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-white/85 hover:bg-white shadow-md flex items-center justify-center text-gray-800 transition-colors">
+            <ChevronRight size={20} />
+          </button>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {slides.map((s, i) => (
+              <button key={s.key} type="button" aria-label={`${i + 1}-banner`} onClick={() => go(i)}
+                className={`h-1.5 rounded-full transition-all ${i === current ? 'w-5 bg-white shadow' : 'w-1.5 bg-white/60'}`} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -1843,7 +1905,7 @@ export function OrderPageContent({
             )}
 
             {/* AKSIYA BANNERI — "Barcha mahsulotlar"da, qidiruvsiz, 4 ta karta qatori kengligida */}
-            {!loading && !loadError && !selectedCat && !search && promoProduct && (
+            {!loading && !loadError && !selectedCat && !search && (
               <div className="px-3 lg:px-4 pt-3 lg:mx-4">
                 <PromoBanner product={promoProduct} />
               </div>
