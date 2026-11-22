@@ -1143,6 +1143,13 @@ export function OrderPageContent({
     storeCart(cart);
   }, [cart, cartHydrated]);
 
+  // Mahsulot rasmlarini qurilmada saqlab qo'yuvchi service worker (public/order-sw.js)
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/order-sw.js', { scope: '/order' }).catch(() => {});
+    }
+  }, []);
+
   // loadCatalog is called when user taps CTA on landing screen (not on mount)
   useEffect(() => { window.scrollTo({ top: 0 }); }, [view]);
   useEffect(() => {
