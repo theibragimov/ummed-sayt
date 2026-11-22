@@ -637,7 +637,7 @@ function PromoBanner({ product, onOpenCategory }: { product: Product | null; onO
 
   const slides = [
     ...(showPromo ? [{ key: 'satellit', alt: product!.name, desktop: '/images/promo/satellit-banner-desktop.webp', mobile: '/images/promo/satellit-banner-mobile.webp', catId: '' }] : []),
-    { key: 'dori-qutichalari', alt: 'Ummed dori qutichalari', desktop: '/images/promo/dori-qutichalari-banner.webp', mobile: '/images/promo/dori-qutichalari-banner.webp', catId: PILLBOX_CAT_ID },
+    { key: 'dori-qutichalari', alt: 'Ummed dori qutichalari', desktop: '/images/promo/dori-qutichalari-banner.webp', mobile: '/images/promo/dori-qutichalari-banner-mobile.webp', catId: PILLBOX_CAT_ID },
   ];
   const count = slides.length;
 
