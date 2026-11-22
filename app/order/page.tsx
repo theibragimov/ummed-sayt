@@ -620,7 +620,10 @@ function CatalogLoader({ lang }: { lang: Lang }) {
 
 const BANNER_INTERVAL_MS = 5000;
 
-function PromoBanner({ product }: { product: Product | null }) {
+// Dori qutichalari banneri bosilganda ochiladigan kategoriya: "8. Таблетницы"
+const PILLBOX_CAT_ID = '23521418-e1ea-11ee-0a80-01b700004f86';
+
+function PromoBanner({ product, onOpenCategory }: { product: Product | null; onOpenCategory: (catId: string) => void }) {
   const end = Date.parse(product?.promoUntil || '');
   // Aksiya tugagach Satellit banneri o'zi yashirinadi (qolgan bannerlar qoladi)
   const [active, setActive] = useState(() => Date.now() < end);
@@ -633,8 +636,8 @@ function PromoBanner({ product }: { product: Product | null }) {
   const showPromo = !!product && Number.isFinite(end) && active;
 
   const slides = [
-    ...(showPromo ? [{ key: 'satellit', alt: product!.name, desktop: '/images/promo/satellit-banner-desktop.webp', mobile: '/images/promo/satellit-banner-mobile.webp' }] : []),
-    { key: 'dori-qutichalari', alt: 'Ummed dori qutichalari', desktop: '/images/promo/dori-qutichalari-banner.webp', mobile: '/images/promo/dori-qutichalari-banner.webp' },
+    ...(showPromo ? [{ key: 'satellit', alt: product!.name, desktop: '/images/promo/satellit-banner-desktop.webp', mobile: '/images/promo/satellit-banner-mobile.webp', catId: '' }] : []),
+    { key: 'dori-qutichalari', alt: 'Ummed dori qutichalari', desktop: '/images/promo/dori-qutichalari-banner.webp', mobile: '/images/promo/dori-qutichalari-banner.webp', catId: PILLBOX_CAT_ID },
   ];
   const count = slides.length;
 
@@ -665,7 +668,9 @@ function PromoBanner({ product }: { product: Product | null }) {
       <div className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${current * 100}%)` }}>
         {slides.map((s, i) => (
-          <div key={s.key} className="relative w-full flex-shrink-0 flex items-center overflow-hidden" aria-hidden={i !== current}>
+          <div key={s.key} aria-hidden={i !== current}
+            onClick={s.catId ? () => onOpenCategory(s.catId) : undefined}
+            className={`relative w-full flex-shrink-0 flex items-center overflow-hidden ${s.catId ? 'cursor-pointer' : ''}`}>
             {/* Mobil versiyasi yo'q keng banner: bo'sh joyni shu rasmning xira foni to'ldiradi */}
             {s.mobile === s.desktop && (
               <img src={s.desktop} alt="" draggable={false}
@@ -1907,7 +1912,7 @@ export function OrderPageContent({
             {/* AKSIYA BANNERI — "Barcha mahsulotlar"da, qidiruvsiz, 4 ta karta qatori kengligida */}
             {!loading && !loadError && !selectedCat && !search && (
               <div className="px-3 lg:px-4 pt-3 lg:mx-4">
-                <PromoBanner product={promoProduct} />
+                <PromoBanner product={promoProduct} onOpenCategory={id => { setSelectedCat(id); window.scrollTo({ top: 0 }); }} />
               </div>
             )}
 
