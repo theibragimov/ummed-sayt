@@ -1215,6 +1215,19 @@ export function OrderPageContent({
     [filteredProducts, visibleCount]
   );
 
+  // Ro'yxat oxiriga yaqinlashganda keyingi mahsulotlar avtomatik yuklanadi
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const hasMoreProducts = visibleProducts.length < filteredProducts.length;
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el || !hasMoreProducts) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0]?.isIntersecting) setVisibleCount(c => c + PRODUCT_LIMIT_STEP);
+    }, { rootMargin: '600px 0px' });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMoreProducts, visibleProducts.length, view, loading]);
+
   // Ro'yxatdagi rasmlarni orqa fonda oldindan yuklab qo'yamiz — scroll qilganda
   // bo'sh kvadratlar kutib turmasin. Avval ekrandagi rasmlar yuklanishi uchun biroz kutiladi,
   // so'ng bir vaqtda 6 tadan, brauzer keshiga olinadi.
@@ -1359,10 +1372,8 @@ export function OrderPageContent({
         {/* ── Header ── */}
         <header className="relative z-10 flex items-center gap-3 px-5 sm:px-8 py-4 border-b"
           style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
-          <a href="/" aria-label="Bosh sahifa" className="flex items-center gap-3">
-            <img src="/logo.webp" alt="Ummed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
-            <span className="text-xl font-medium tracking-tight" style={{ color: '#0a0a0a' }}>Ummed</span>
-          </a>
+          <img src="/logo.webp" alt="Ummed" style={{ width: 34, height: 34, objectFit: 'contain' }} />
+          <span className="text-xl font-medium tracking-tight" style={{ color: '#0a0a0a' }}>Ummed</span>
           <div className="flex-1" />
           <button onClick={() => { setHistoryBackView('landing'); setView('history'); }}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold"
@@ -1680,10 +1691,12 @@ export function OrderPageContent({
         <header className="sticky top-0 bg-white"
           style={{ borderBottom: '1px solid #EBEBEB', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', zIndex: activeOnboarding ? 60 : 40 }}>
           <div className="flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 h-14 max-w-5xl mx-auto">
-            <a href="/" aria-label="Bosh sahifa" className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+            <button type="button" aria-label={t.allCategories}
+              onClick={() => { setSelectedCat(null); setSearch(''); window.scrollTo({ top: 0 }); }}
+              className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
               <img src="/logo.webp" alt="Logo" className="flex-shrink-0" style={{ width: 32, height: 32, objectFit: 'contain' }} />
               <span className="hidden sm:inline font-bold text-gray-900 text-[15px] whitespace-nowrap flex-shrink-0">{t.storeName}</span>
-            </a>
+            </button>
             <span className="flex-shrink-0 px-1.5 py-0.5 rounded-md text-white text-[9px] font-bold whitespace-nowrap"
               style={{ background: '#2563EB' }}>
               TEST
@@ -1962,7 +1975,7 @@ export function OrderPageContent({
             )}
 
             {!loading && !loadError && visibleProducts.length < filteredProducts.length && (
-              <div className="px-4 py-5 flex justify-center">
+              <div ref={loadMoreRef} className="px-4 py-5 flex justify-center">
                 <button
                   onClick={() => setVisibleCount(c => c + PRODUCT_LIMIT_STEP)}
                   className="px-5 py-2.5 rounded-xl text-[13px] font-bold"
