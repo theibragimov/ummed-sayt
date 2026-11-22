@@ -122,6 +122,9 @@ const T = {
     top50Cat: "TOP 50 mahsulotlar",
     freeDeliveryNeed: "Toshkent shahar ichida bepul yetkazib berish uchun yana",
     freeDeliveryNeedEnd: "qoldi",
+    barFreeNeed: ["Bepul yetkazib berishgacha yana ", " so'm qoldi"],
+    barFreeAlmost: ["Oz qoldi! Yana ", " so'm — yetkazib berish bepul"],
+    barFreeDone: "Tabriklaymiz! Toshkent bo'ylab yetkazib berish bepul 🎉",
     freeDeliveryDone: "Tabriklaymiz! Toshkent shahar ichida yetkazib berish sizga bepul.",
     freeDeliveryConfirmTitle: "Haqiqatan ham rasmiylashtirmoqchimisiz?",
     freeDeliveryConfirmMsg: ["Buyurtma summasini ", "2 mln so'm", "dan oshirsangiz, Toshkent bo'ylab yetkazib berish bepul."],
@@ -188,6 +191,9 @@ const T = {
     top50Cat: "ТОП 50 товаров",
     freeDeliveryNeed: "До бесплатной доставки по Ташкенту осталось",
     freeDeliveryNeedEnd: "",
+    barFreeNeed: ["До бесплатной доставки осталось ", " сум"],
+    barFreeAlmost: ["Почти! Ещё ", " сум — и доставка бесплатно"],
+    barFreeDone: "Поздравляем! Доставка по Ташкенту бесплатно 🎉",
     freeDeliveryDone: "Поздравляем! Доставка по Ташкенту для вас бесплатна.",
     freeDeliveryConfirmTitle: "Вы действительно хотите оформить заказ?",
     freeDeliveryConfirmMsg: ["Если сумма заказа превысит ", "2 млн сум", ", доставка по Ташкенту будет бесплатной."],
@@ -1163,6 +1169,19 @@ export function OrderPageContent({
   const cartCount = cartItems.reduce((s, i) => s + i.quantity, 0);
   const cartTotal = cartItems.reduce((s, i) => s + i.product.price * i.quantity, 0);
 
+  // Savatga mahsulot qo'shilganda pastki panel "silkinib", ichidan yaltiroq o'tadi — e'tibor tortish uchun
+  const cartBarRef = useRef<HTMLButtonElement>(null);
+  const prevCartTotal = useRef(cartTotal);
+  useEffect(() => {
+    const el = cartBarRef.current;
+    if (el && cartTotal > prevCartTotal.current) {
+      el.classList.remove('cart-bar-bump');
+      void el.offsetWidth; // animatsiyani qaytadan boshlash uchun
+      el.classList.add('cart-bar-bump');
+    }
+    prevCartTotal.current = cartTotal;
+  }, [cartTotal]);
+
   function addToCart(p: Product) {
     setCart(prev => ({ ...prev, [p.id]: { product: p, quantity: (prev[p.id]?.quantity || 0) + 1 } }));
   }
@@ -1998,20 +2017,44 @@ export function OrderPageContent({
         {cartCount > 0 && (
           <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-2"
             style={{ background: 'linear-gradient(to top, white 60%, transparent)' }}>
-            <button
-              onClick={() => setView('cart')}
-              className="w-full max-w-5xl mx-auto flex items-center justify-between px-5 py-3.5 rounded-2xl text-white font-bold text-[14px]"
-              style={{ background: 'linear-gradient(135deg,#FF6B35,#FF4500)', boxShadow: '0 8px 24px rgba(255,107,53,0.4)', display: 'flex' }}>
-              <div className="flex items-center gap-2">
-                <ShoppingCart size={17} />
-                <span>{cartCount} {t.items}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>{fmtPrice(cartTotal)}</span>
-                <span className="text-[11px] opacity-80">{t.sum}</span>
-                <ChevronRight size={16} />
-              </div>
-            </button>
+            {(() => {
+              const freePct = Math.min(cartTotal / FREE_DELIVERY_THRESHOLD, 1);
+              const freeDone = freePct >= 1;
+              const left = fmtPrice(FREE_DELIVERY_THRESHOLD - cartTotal);
+              const msg = freeDone ? t.barFreeDone : freePct >= 0.75
+                ? <>{t.barFreeAlmost[0]}<b>{left}</b>{t.barFreeAlmost[1]}</>
+                : <>{t.barFreeNeed[0]}<b>{left}</b>{t.barFreeNeed[1]}</>;
+              return (
+                <button
+                  ref={cartBarRef}
+                  onClick={() => setView('cart')}
+                  className="cart-bar relative overflow-hidden w-full max-w-5xl mx-auto block rounded-2xl text-white font-bold text-[14px]"
+                  style={{ background: 'linear-gradient(135deg,#B8400F,#9A3412)', boxShadow: `0 8px 24px ${freeDone ? 'rgba(61,184,81,0.4)' : 'rgba(255,107,53,0.4)'}` }}>
+                  {/* Suyuqlik: 2 mln so'mga qarab chapdan o'ngga to'lib boradi */}
+                  <span aria-hidden className={`cart-fill ${freeDone ? 'cart-fill-done' : ''}`} style={{ width: `${freePct * 100}%` }}>
+                    {!freeDone && freePct > 0 && <span className="cart-fill-wave" />}
+                    <span className="cart-fill-shine" />
+                  </span>
+                  <span className="relative flex flex-col gap-1 px-5 py-3 text-left">
+                    <span className="flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <ShoppingCart size={17} />
+                        <span>{cartCount} {t.items}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span>{fmtPrice(cartTotal)}</span>
+                        <span className="text-[11px] opacity-80">{t.sum}</span>
+                        <ChevronRight size={16} />
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1.5 text-[11.5px] font-medium min-w-0" style={{ opacity: 0.95 }}>
+                      <Truck size={13} className="flex-shrink-0" />
+                      <span className="truncate">{msg}</span>
+                    </span>
+                  </span>
+                </button>
+              );
+            })()}
           </div>
         )}
       </div>
