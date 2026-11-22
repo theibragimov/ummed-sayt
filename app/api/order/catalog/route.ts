@@ -25,8 +25,8 @@ async function safe(path: string, urinishlar = 2): Promise<any> {
 // Aksiyadagi mahsulotlar: MoySklad mahsulot ID → chegirma foizi va tugash vaqti.
 // `until` o'tgach mahsulot avtomatik oddiy narx va ko'rinishga qaytadi.
 const PROMO_DISCOUNTS: Record<string, { percent: number; until: string }> = {
-  // Глюкометр Сателлит Экспресс (комплект) — 20-noyabr kuni oxirigacha (Toshkent vaqti)
-  '7c802f10-959d-11ee-0a80-017900079a1d': { percent: 15, until: '2026-11-21T00:00:00+05:00' },
+  // Глюкометр Сателлит Экспресс (комплект) — 30-noyabr kuni oxirigacha (Toshkent vaqti)
+  '7c802f10-959d-11ee-0a80-017900079a1d': { percent: 15, until: '2026-12-01T00:00:00+05:00' },
 };
 
 function activePromo(id: string) {
